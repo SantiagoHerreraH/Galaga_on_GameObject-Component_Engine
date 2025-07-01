@@ -9,6 +9,13 @@
 #include "SceneManager.h"
 #include "Renderer.h"
 #include "ResourceManager.h"
+#include <chrono>
+#include <thread>
+#include "Time.h"
+#include "ConsoleAudio.h"
+#include "ServiceLocator.h"
+#include <memory>
+//#include "FileManager.h"
 
 SDL_Window* g_window{};
 
@@ -40,7 +47,7 @@ void PrintSDLVersion()
 		version.major, version.minor, version.patch);
 }
 
-dae::Minigin::Minigin(const std::filesystem::path& dataPath)
+dae::Minigin::Minigin(const std::string &dataPath)
 {
 	PrintSDLVersion();
 	
@@ -48,13 +55,13 @@ dae::Minigin::Minigin(const std::filesystem::path& dataPath)
 	{
 		throw std::runtime_error(std::string("SDL_Init Error: ") + SDL_GetError());
 	}
-
+	
 	g_window = SDL_CreateWindow(
 		"Programming 4 assignment",
 		SDL_WINDOWPOS_CENTERED,
 		SDL_WINDOWPOS_CENTERED,
-		640,
-		480,
+		g_WindowWidth,
+		g_WindowHeight,
 		SDL_WINDOW_OPENGL
 	);
 	if (g_window == nullptr) 
@@ -63,7 +70,10 @@ dae::Minigin::Minigin(const std::filesystem::path& dataPath)
 	}
 
 	Renderer::GetInstance().Init(g_window);
+
 	ResourceManager::GetInstance().Init(dataPath);
+
+	//FileManager::GetInstance().Init(dataPath);
 }
 
 dae::Minigin::~Minigin()
@@ -77,17 +87,60 @@ dae::Minigin::~Minigin()
 void dae::Minigin::Run(const std::function<void()>& load)
 {
 	load();
+	
+	srand((unsigned int)std::time(nullptr));
 
 	auto& renderer = Renderer::GetInstance();
 	auto& sceneManager = SceneManager::GetInstance();
 	auto& input = InputManager::GetInstance();
 
+	Audio* audioService = ServiceLocator::GetInstance().GetService<Audio>();
+
+	if (!audioService)
+	{
+		audioService = ServiceLocator::GetInstance().SetService<Audio>(std::make_unique<ConsoleAudio>());
+	}
+
+	std::thread audioThread(&Audio::Update, audioService);
+
 	// todo: this update loop could use some work.
+	const float fixedTimeStep{ 0.02f };
+	const long long millisecondsPerFrame = long long(1000/60.f) ;
 	bool doContinue = true;
+	auto lastTime = std::chrono::high_resolution_clock::now();
+	float lag = 0.0f;
+	Time::GetInstance().m_FixedTimeStep = fixedTimeStep;
+
+	sceneManager.Start(); //if you need delta seconds, call it inside loop
+
 	while (doContinue)
 	{
-		doContinue = input.ProcessInput();
+		const auto currentTime = std::chrono::high_resolution_clock::now();
+		const float deltaTime = std::chrono::duration<float>(currentTime - lastTime).count();
+		Time::GetInstance().m_ElapsedSeconds = deltaTime;
+		lastTime = currentTime;
+		lag += deltaTime;
+
+
+		input.ProcessInput();
+		Time::GetInstance().UpdateTimers();
+
+		while (lag >= fixedTimeStep)
+		{
+			sceneManager.FixedUpdate();
+			lag -= fixedTimeStep;
+		}
+
 		sceneManager.Update();
 		renderer.Render();
+
+		const auto sleepTime = 
+			currentTime + 
+			std::chrono::milliseconds(millisecondsPerFrame) -
+			std::chrono::high_resolution_clock::now();
+
+		std::this_thread::sleep_for(sleepTime);
 	}
+
+	audioThread.join();
 }

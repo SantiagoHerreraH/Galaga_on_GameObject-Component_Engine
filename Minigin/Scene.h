@@ -1,19 +1,40 @@
 #pragma once
+#include <unordered_set>
+#include <any>
+#include <typeindex>
 #include "SceneManager.h"
+#include "ISystem.h"
+#include "GameObject.h"
+#include "Component.h"
 
 namespace dae
 {
-	class GameObject;
+
 	class Scene final
 	{
-		friend Scene& SceneManager::CreateScene(const std::string& name);
+		friend Scene& SceneManager::AddScene(const std::string& name, const std::function<void(Scene&)>& sceneCreationFunction);
 	public:
-		void Add(std::shared_ptr<GameObject> object);
-		void Remove(std::shared_ptr<GameObject> object);
-		void RemoveAll();
+		
+		/*
+			ORDER OF ADDITION IS ORDER OF EXECUTION
+		*/
+		GameObjectHandle CreateGameObject();
+		void AddGameObjectHandle(const GameObjectHandle& gameObjectHandle);
+		void RemoveGameObjectHandle(const GameObjectHandle& gameObjectHandle);
+		void DestroyAllGameObjects();
 
+		bool AddSystem(std::shared_ptr<ISystem> system);
+
+		void Start();
+		void FixedUpdate();
 		void Update();
 		void Render() const;
+		void End();
+
+		template<DerivedFromComponent ComponentType>
+		std::vector<std::shared_ptr<ComponentType>> GetAllComponentsOfType();
+
+		const std::string& Name() const { return m_Name; }
 
 		~Scene();
 		Scene(const Scene& other) = delete;
@@ -22,12 +43,37 @@ namespace dae
 		Scene& operator=(Scene&& other) = delete;
 
 	private: 
-		explicit Scene(const std::string& name);
+		explicit Scene(const std::string& name, const std::function<void(Scene&)>& sceneCreationFunction);
 
-		std::string m_name;
-		std::vector < std::shared_ptr<GameObject>> m_objects{};
+		std::function<void(Scene&)> m_SceneCreationFunction;
+
+		std::string m_Name;
+
+		std::unordered_set<GameObjectHandle> m_HandlesSet{};
+		std::vector<GameObjectHandle> m_HandlesVec{}; 
+		std::vector<std::shared_ptr<ISystem>> m_Systems{};
 
 		static unsigned int m_idCounter; 
 	};
+
+
+	template<DerivedFromComponent ComponentType>
+	inline std::vector<std::shared_ptr<ComponentType>> Scene::GetAllComponentsOfType()
+	{
+		std::vector<std::shared_ptr<ComponentType>> comps{};
+
+		for (size_t gameObjIdx = 0; gameObjIdx < m_HandlesVec.size(); gameObjIdx++)
+		{
+			auto gameObjComps{ m_HandlesVec[gameObjIdx]->GetComponentHandles<ComponentType>() };
+
+			for (size_t compIdx = 0; compIdx < gameObjComps.size(); compIdx++)
+			{
+				comps.push_back(gameObjComps[compIdx]);
+			}
+				
+		}
+
+		return comps;
+	}
 
 }

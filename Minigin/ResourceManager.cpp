@@ -3,7 +3,7 @@
 #include <SDL_ttf.h>
 #include "ResourceManager.h"
 #include "Renderer.h"
-#include "Texture2D.h"
+#include "Texture.h"
 #include "Font.h"
 
 namespace fs = std::filesystem;
@@ -18,39 +18,39 @@ void dae::ResourceManager::Init(const std::filesystem::path& dataPath)
 	}
 }
 
-std::shared_ptr<dae::Texture2D> dae::ResourceManager::LoadTexture(const std::string& file)
+std::shared_ptr<dae::TextureData> dae::ResourceManager::GetTextureData(const std::string& file)
 {
 	const auto fullPath = m_dataPath/file;
 	const auto filename = fs::path(fullPath).filename().string();
-	if(m_loadedTextures.find(filename) == m_loadedTextures.end())
-		m_loadedTextures.insert(std::pair(filename,std::make_shared<Texture2D>(fullPath.string())));
-	return m_loadedTextures.at(filename);
+	if(m_TextureName_To_Texture.find(filename) == m_TextureName_To_Texture.end())
+		m_TextureName_To_Texture.insert(std::pair(filename,std::make_shared<TextureData>(fullPath.string())));
+	return m_TextureName_To_Texture.at(filename);
 }
 
-std::shared_ptr<dae::Font> dae::ResourceManager::LoadFont(const std::string& file, uint8_t size)
+std::shared_ptr<dae::FontData> dae::ResourceManager::GetFontData(const std::string& file, uint8_t size)
 {
 	const auto fullPath = m_dataPath/file;
 	const auto filename = fs::path(fullPath).filename().string();
 	const auto key = std::pair<std::string, uint8_t>(filename, size);
-	if(m_loadedFonts.find(key) == m_loadedFonts.end())
-		m_loadedFonts.insert(std::pair(key,std::make_shared<Font>(fullPath.string(), size)));
-	return m_loadedFonts.at(key);
+	if(m_FontData_To_Font.find(key) == m_FontData_To_Font.end())
+		m_FontData_To_Font.insert(std::pair(key,std::make_shared<FontData>(fullPath.string(), size)));
+	return m_FontData_To_Font.at(key);
 }
 
 void dae::ResourceManager::UnloadUnusedResources()
 {
-	for (auto it = m_loadedTextures.begin(); it != m_loadedTextures.end();)
+	for (auto it = m_TextureName_To_Texture.begin(); it != m_TextureName_To_Texture.end();)
 	{
 		if (it->second.use_count() == 1)
-			it = m_loadedTextures.erase(it);
+			it = m_TextureName_To_Texture.erase(it);
 		else
 			++it;
 	}
 
-	for (auto it = m_loadedFonts.begin(); it != m_loadedFonts.end();)
+	for (auto it = m_FontData_To_Font.begin(); it != m_FontData_To_Font.end();)
 	{
 		if (it->second.use_count() == 1)
-			it = m_loadedFonts.erase(it);
+			it = m_FontData_To_Font.erase(it);
 		else
 			++it;
 	}
