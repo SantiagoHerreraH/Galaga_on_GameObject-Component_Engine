@@ -19,7 +19,21 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="GalagaPlayer.cpp" />
     <ClCompile Include="Main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Behaviour_CaptureZone.h" />
+    <ClInclude Include="Behaviour_Swirl.h" />
+    <ClInclude Include="Behaviour_UDive.h" />
+    <ClInclude Include="Behaviour_ZigZagDive.h" />
+    <ClInclude Include="Bullets.h" />
+    <ClInclude Include="CollisionLayers.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="PlayerScore.h" />
+    <ClInclude Include="GalagaStats.h" />
+    <ClInclude Include="Settings.h" />
+    <ClInclude Include="Swirls.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

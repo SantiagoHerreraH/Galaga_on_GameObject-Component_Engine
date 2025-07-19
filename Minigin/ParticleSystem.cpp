@@ -1,6 +1,6 @@
 #include "ParticleSystem.h"
 #include "Renderer.h"
-#include "Time.h"
+#include "GameTime.h"
 #include "Random.hpp"
 
 void dae::CParticleSystem::Render() const

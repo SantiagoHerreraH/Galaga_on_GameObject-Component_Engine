@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include "SingletonSceneSystem.h"
+#include "SceneSingleton.h"
 #include "EventSystem.h"
 #include "ActivatableFlatMap.h"
 
@@ -65,7 +65,7 @@ namespace dae {
 
 	using TimerKey = size_t;
 
-	class TimerSystem final : public SingletonSceneSystem<TimerSystem>
+	class TimerSystem final : public SceneSingleton<TimerSystem>
 	{
 	public:
 		size_t GetActivatedTimersSize()const;
@@ -89,7 +89,7 @@ namespace dae {
 	private:
 
 		ActivatableFlatMap<TimerKey, Timer> m_Timers;
-		size_t m_LastKey;
+		size_t m_LastKey{};
 	};
 
 }

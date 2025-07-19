@@ -11,7 +11,7 @@
 #include "ResourceManager.h"
 #include <chrono>
 #include <thread>
-#include "Time.h"
+#include "GameTime.h"
 #include "ConsoleAudio.h"
 #include "ServiceLocator.h"
 #include <memory>
@@ -123,7 +123,6 @@ void dae::Minigin::Run(const std::function<void()>& load)
 
 
 		input.ProcessInput();
-		Time::GetInstance().UpdateTimers();
 
 		while (lag >= fixedTimeStep)
 		{

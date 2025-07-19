@@ -60,15 +60,15 @@ namespace dae {
 	{
 		m_RenderCollider = render;
 	}
-	Event<const GameObject&, const GameObject&>& CCollider::OnCollisionBeginEvent()
+	Event<GameObject&, GameObject&>& CCollider::OnCollisionBeginEvent()
 	{
 		return m_OnCollisionBeginEvent;
 	}
-	Event<const GameObject&, const GameObject&>& CCollider::OnCollisionStayEvent()
+	Event<GameObject&, GameObject&>& CCollider::OnCollisionStayEvent()
 	{
 		return m_OnCollisionStayEvent;
 	}
-	Event<const GameObject&, const GameObject&>& CCollider::OnCollisionEndEvent()
+	Event<GameObject&, GameObject&>& CCollider::OnCollisionEndEvent()
 	{
 		return m_OnCollisionEndEvent;
 	}
@@ -77,14 +77,14 @@ namespace dae {
 	{
 		glm::vec3 pos = OwnerConst().TransformConst().GetWorldTransform().Position;
 
-		m_TransformedRect.Left = m_OriginalRect.Left + m_Offset.x + pos.x; //FINISH THIS
-		m_TransformedRect.Top = m_OriginalRect.Top + m_Offset.y + pos.y; //FINISH THIS
+		m_TransformedRect.Left = int(m_OriginalRect.Left + m_Offset.x + pos.x); 
+		m_TransformedRect.Top = int(m_OriginalRect.Top + m_Offset.y + pos.y);
 	}
-	bool CCollider::IsStayOverlappingWith(const GameObjectHandle& other)
+	bool CCollider::IsStayOverlappingWith(const GameObject& other)
 	{
 		for (size_t i = 0; i < m_CollidingWithEntities.size(); i++)
 		{
-			if (m_CollidingWithEntities[i] == other)
+			if (m_CollidingWithEntities[i] == &other)
 			{
 				return true;
 			}
@@ -116,35 +116,34 @@ namespace dae {
 	}
 	void CCollider::FixedUpdate()
 	{
-		const GameObject& owner{ OwnerConst() };
+		GameObject& owner{ Owner() };
 		const Rect& transformedRect{ GetTransformedRect() };
 		bool isStayOverlapping{};
 		for (size_t i = 0; i < m_CollidersToCollideWith.size(); i++)
 		{
 			if (m_CollidersToCollideWith[i]->IsActive())
 			{
-				const GameObject& otherOwner = m_CollidersToCollideWith[i]->OwnerConst();
-				const GameObjectHandle& otherOwnerHandle = m_CollidersToCollideWith[i]->OwnerHandleConst();
-				isStayOverlapping = IsStayOverlappingWith(m_CollidersToCollideWith[i]->OwnerHandleConst());
+				GameObject* otherOwner = &m_CollidersToCollideWith[i]->Owner();
+				isStayOverlapping = IsStayOverlappingWith(m_CollidersToCollideWith[i]->Owner());
 
 				if (IsColliding(transformedRect, m_CollidersToCollideWith[i]->GetTransformedRect()))
 				{
 					if (!isStayOverlapping)
 					{
-						m_OnCollisionBeginEvent.Invoke(owner, otherOwner);
+						m_OnCollisionBeginEvent.Invoke(owner, *otherOwner);
 
-						m_CollidingWithEntities.push_back(otherOwnerHandle);
-						m_CollidersToCollideWith[i]->m_CollidingWithEntities.push_back(OwnerHandle());
+						m_CollidingWithEntities.push_back(otherOwner);
+						m_CollidersToCollideWith[i]->m_CollidingWithEntities.push_back(&Owner());
 					}
 
-					m_OnCollisionStayEvent.Invoke(owner, otherOwner);
+					m_OnCollisionStayEvent.Invoke(owner, *otherOwner);
 				}
 				else if(isStayOverlapping)
 				{
-					m_OnCollisionEndEvent.Invoke(owner, otherOwner);
+					m_OnCollisionEndEvent.Invoke(owner, *otherOwner);
 
-					std::erase(m_CollidingWithEntities, otherOwnerHandle);
-					std::erase(m_CollidersToCollideWith[i]->m_CollidingWithEntities, OwnerHandle());
+					std::erase(m_CollidingWithEntities, otherOwner);
+					std::erase(m_CollidersToCollideWith[i]->m_CollidingWithEntities, &Owner());
 
 				}
 				

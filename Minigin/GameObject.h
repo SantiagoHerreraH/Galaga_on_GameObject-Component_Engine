@@ -1,17 +1,18 @@
 #pragma once
 #include <memory>
 #include "Transform.h"
+#include "Component.h"
 
 namespace dae
 {
-	class Component;
-	using ComponentHandle = std::shared_ptr<Component>;
-
 	template<typename T>
 	concept DerivedFromComponent = std::derived_from<T, Component>;
 
+	class Scene;
+
 	class GameObject final
 	{
+
 	public:
 		GameObject();
 		virtual ~GameObject();
@@ -35,7 +36,7 @@ namespace dae
 		template <DerivedFromComponent ComponentType>
 		bool HasComponent()const;
 		template <DerivedFromComponent ComponentType>
-		ComponentType* GetComponent(); 
+		ComponentType* GetComponent();
 		template <DerivedFromComponent ComponentType>
 		const ComponentType* const GetComponentConst()const;
 		template <DerivedFromComponent ComponentType>
@@ -60,11 +61,11 @@ namespace dae
 	template<DerivedFromComponent ComponentType>
 	inline bool GameObject::HasComponent() const
 	{
-		std::type_info typeInfo{ typeid(ComponentType) };
+		std::type_index typeIndex{ typeid(ComponentType) };
 
 		for (size_t i = 0; i < m_Components.size(); i++)
 		{
-			if (m_Components[i]->GetType() == typeInfo)
+			if (m_Components[i]->GetType() == typeIndex)
 			{
 				return true;
 			}
@@ -76,11 +77,11 @@ namespace dae
 	template<DerivedFromComponent ComponentType>
 	inline ComponentType* GameObject::GetComponent()
 	{
-		std::type_info typeInfo{ typeid(ComponentType) };
+		std::type_index typeIndex{ typeid(ComponentType) };
 
 		for (size_t i = 0; i < m_Components.size(); i++)
 		{
-			if (m_Components[i]->GetType() == typeInfo)
+			if (m_Components[i]->GetType() == typeIndex)
 			{
 				return m_Components[i].get();
 			}
@@ -92,7 +93,7 @@ namespace dae
 	template<DerivedFromComponent ComponentType>
 	inline const ComponentType* const GameObject::GetComponentConst() const
 	{
-		std::type_info typeInfo{ typeid(ComponentType) };
+		std::type_index typeInfo{ typeid(ComponentType) };
 
 		for (size_t i = 0; i < m_Components.size(); i++)
 		{
@@ -107,13 +108,13 @@ namespace dae
 	template<DerivedFromComponent ComponentType>
 	inline std::shared_ptr<ComponentType> GameObject::GetComponentHandle() 
 	{
-		std::type_info typeInfo{ typeid(ComponentType) };
+		std::type_index typeIndex{ typeid(ComponentType) };
 
 		for (size_t i = 0; i < m_Components.size(); i++)
 		{
-			if (m_Components[i]->GetType() == typeInfo)
+			if (m_Components[i]->GetType() == typeIndex)
 			{
-				return m_Components[i];
+				return std::dynamic_pointer_cast<ComponentType>(m_Components[i]);
 			}
 		}
 
@@ -122,14 +123,14 @@ namespace dae
 	template<DerivedFromComponent ComponentType>
 	inline std::vector<std::shared_ptr<ComponentType>> GameObject::GetComponentHandles()
 	{
-		std::vector<ComponentHandle> handles{};
-		std::type_info typeInfo{ typeid(ComponentType) };
+		std::vector<std::shared_ptr<ComponentType>> handles{};
+		std::type_index typeIndex{ typeid(ComponentType) };
 
 		for (size_t i = 0; i < m_Components.size(); i++)
 		{
-			if (m_Components[i]->GetType() == typeInfo)
+			if (m_Components[i]->GetType() == typeIndex)
 			{
-				handles.push_back(m_Components[i]);
+				handles.push_back(std::dynamic_pointer_cast<ComponentType>(m_Components[i]));
 			}
 		}
 
@@ -138,11 +139,11 @@ namespace dae
 	template<DerivedFromComponent ComponentType>
 	inline bool GameObject::SetComponent(const ComponentType& component) const
 	{
-		std::type_info typeInfo{ typeid(ComponentType) };
+		std::type_index typeIndex{ typeid(ComponentType) };
 
 		for (size_t i = 0; i < m_Components.size(); i++)
 		{
-			if (m_Components[i]->GetType() == typeInfo)
+			if (m_Components[i]->GetType() == typeIndex)
 			{
 				*m_Components[i].get() = component;
 

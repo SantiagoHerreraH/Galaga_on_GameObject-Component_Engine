@@ -8,7 +8,7 @@
 #include <algorithm> 
 
 
-dae::Transform::Transform(GameObjectHandle self) : m_Self(self)
+dae::Transform::Transform(GameObject& self) : m_Self(self)
 {
 }
 
@@ -18,20 +18,20 @@ void dae::Transform::MakeRootNode()
 	{
 		m_LocalTransform = GetWorldTransform();
 
-		Transform& pastParentTransform = m_Self->Transform();
-		std::erase(pastParentTransform.m_Children, m_Self);
+		Transform& pastParentTransform = m_Self.Transform();
+		std::erase(pastParentTransform.m_Children, &m_Self);
 
 		m_Parent = nullptr;
 		
 	}
 }
 
-bool dae::Transform::SetParent(const GameObjectHandle& parent, ETransformReparentType transformReparentType)
+bool dae::Transform::SetParent(GameObject& parent, ETransformReparentType transformReparentType)
 {
-	if (parent != nullptr && m_Self != parent)
+	if (&m_Self != &parent)
 	{
 
-		Transform& newParentTransform = parent->Transform();
+		Transform& newParentTransform = parent.Transform();
 
 		if (IsDescendant(parent))
 		{
@@ -40,12 +40,12 @@ bool dae::Transform::SetParent(const GameObjectHandle& parent, ETransformReparen
 
 		if (m_Parent != nullptr)
 		{
-			Transform& pastParentTransform = m_Self->Transform();
-			std::erase(pastParentTransform.m_Children, m_Self);
+			Transform& pastParentTransform = m_Self.Transform();
+			std::erase(pastParentTransform.m_Children, &m_Self);
 		}
 
-		newParentTransform.m_Children.push_back(m_Self);
-		m_Parent = parent;
+		newParentTransform.m_Children.push_back(&m_Self);
+		m_Parent = &parent;
 
 		switch (transformReparentType)
 		{
@@ -69,34 +69,31 @@ bool dae::Transform::SetParent(const GameObjectHandle& parent, ETransformReparen
 	return false;
 }
 
-const std::vector<dae::GameObjectHandle>& dae::Transform::GetChildren() const
+const std::vector<dae::GameObject*>& dae::Transform::GetChildren() const
 {
 	return m_Children;
 }
 
-bool dae::Transform::IsDescendant(const GameObjectHandle& descendant)
+bool dae::Transform::IsDescendant(const GameObject& descendant)
 {
-	if (descendant != nullptr)
+	const Transform* parentTransform = &descendant.TransformConst();
+
+	while (parentTransform)
 	{
-		Transform* parentTransform = &descendant->Transform();
-
-		while (parentTransform)
+		if (parentTransform->HasParent())
 		{
-			if (parentTransform->HasParent())
-			{
-				parentTransform = &parentTransform->GetParent()->Transform();
+			parentTransform = &parentTransform->GetParent()->TransformConst();
 
-				if (parentTransform == this)
-				{
-					return true;
-				}
-			}
-			else
+			if (parentTransform == this)
 			{
-				break;
+				return true;
 			}
-
 		}
+		else
+		{
+			break;
+		}
+
 	}
 
 	return false;
@@ -114,7 +111,7 @@ bool dae::Transform::HasChildren() const
 	return m_Children.size() > 0;
 }
 
-const dae::GameObjectHandle& dae::Transform::GetParent() const
+const dae::GameObject* dae::Transform::GetParent() const
 {
 	return m_Parent;
 }
@@ -352,7 +349,7 @@ void dae::Transform::NeedsToRecalculateWorldTransform()
 				currentParentTransform = transforms.front();
 				transforms.pop();
 
-				const std::vector<GameObjectHandle>& children = currentParentTransform->GetChildren();
+				const std::vector<GameObject*>& children = currentParentTransform->GetChildren();
 
 				for (size_t i = 0; i < children.size(); i++)
 				{

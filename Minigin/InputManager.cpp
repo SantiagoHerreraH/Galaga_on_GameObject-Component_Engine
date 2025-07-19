@@ -150,17 +150,17 @@ void dae::InputManager::ProcessControllerInputs()
 		{
 		case ButtonState::BUTTON_DOWN:
 			if (IsDownThisFrame(gamepadEvent.GamepadButton, currentId))
-				gamepadEvent.OnTriggered->Execute(*gamepadEvent.PlayerGameObject.get());
+				gamepadEvent.OnTriggered->Execute(*gamepadEvent.PlayerGameObject);
 			break;
 
 		case ButtonState::BUTTON_PRESSED:
 			if (IsPressed(gamepadEvent.GamepadButton, currentId))
-				gamepadEvent.OnTriggered->Execute(*gamepadEvent.PlayerGameObject.get());
+				gamepadEvent.OnTriggered->Execute(*gamepadEvent.PlayerGameObject);
 			break;
 
 		case ButtonState::BUTTON_UP:
 			if (IsUpThisFrame(gamepadEvent.GamepadButton, currentId))
-				gamepadEvent.OnTriggered->Execute(*gamepadEvent.PlayerGameObject.get());
+				gamepadEvent.OnTriggered->Execute(*gamepadEvent.PlayerGameObject);
 			break;
 		}
 	}
@@ -193,7 +193,7 @@ void dae::InputManager::ProcessKeyboardInputs()
 		
 		if (triggered)
 		{
-			keyboardEvent.OnTriggered->Execute(*keyboardEvent.PlayerGameObject.get());
+			keyboardEvent.OnTriggered->Execute(*keyboardEvent.PlayerGameObject);
 		}
 	}
 }

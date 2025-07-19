@@ -1,5 +1,6 @@
 #include "Rigidbody.h"
-#include "Time.h"
+#include "GameTime.h"
+#include "GameObject.h"
 
 namespace dae {
 

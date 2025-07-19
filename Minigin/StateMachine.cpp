@@ -58,7 +58,6 @@ namespace dae {
 		if (m_StateName_To_StateData.contains(from) && m_StateName_To_StateData.contains(to))
 		{
 			StateData& fromData = *m_StateName_To_StateData[from].get();
-			StateData& toData = *m_StateName_To_StateData[to].get();
 			StateConnection& stateConnection = GetStateConnection(fromData, to);
 			stateConnection.ConditionsToTransitionToState.push_back(condition);
 

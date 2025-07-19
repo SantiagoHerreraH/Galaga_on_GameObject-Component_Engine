@@ -3,6 +3,7 @@
 #include <SDL_ttf.h>
 #include <iostream>
 #include "Renderer.h"
+#include "GameObject.h"
 
 dae::CText::~CText()
 {
@@ -11,6 +12,18 @@ dae::CText::~CText()
 dae::CText::CText(const std::string& fullPath, uint8_t size)
 {
 	SetFont(fullPath, size);
+}
+
+void dae::CText::Render()const
+{
+	TransformData transformData{ OwnerConst().TransformConst().GetWorldTransform() };
+	transformData += GetTextureTransform();
+
+	Renderer::GetInstance().RenderTexture(
+		*Data(),
+		transformData.Position,
+		transformData.Rotation,
+		transformData.Scale);
 }
 
 void dae::CText::SetText(std::string text)
@@ -50,7 +63,7 @@ bool dae::CText::IsFontValid()
 bool dae::CText::SetFont(const std::string& fullPath, uint8_t size)
 {
 	m_FontData = ResourceManager::GetInstance().GetFontData(fullPath, size);
-	m_IsFontValid = m_FontData->GetData() != nullptr;
+	m_IsFontValid = m_FontData.get()->GetData() != nullptr;
 	m_TextureNeedsUpdate = true;
 	return m_IsFontValid;
 }

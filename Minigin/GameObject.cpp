@@ -4,7 +4,7 @@
 #include "Renderer.h"
 #include "Component.h"
 
-dae::GameObject::GameObject() : m_Transform(std::make_shared<GameObject>(this))
+dae::GameObject::GameObject() : m_Transform(*this)
 {
 }
 
@@ -39,6 +39,17 @@ void dae::GameObject::AddComponent(const Component& component)
 {
 	m_Components.push_back(std::make_shared<Component>(component));
 	m_Components.back()->SetOwner(*this);
+}
+
+void dae::GameObject::Start()
+{
+	for (size_t i = 0; i < m_Components.size(); i++)
+	{
+		if (m_Components[i]->IsActive())
+		{
+			m_Components[i]->Start();
+		}
+	}
 }
 
 void dae::GameObject::Update()

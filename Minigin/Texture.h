@@ -5,6 +5,7 @@
 #include <memory>
 #include "Rect.h"
 #include "Transform.h"
+#include "Component.h"
 
 struct SDL_Texture;
 namespace dae
@@ -30,11 +31,15 @@ namespace dae
 		SDL_Texture* m_texture;
 	};
 
-	class CTextureHandle final{
+	class CTextureHandle final : public Component
+	{
 
 	public:
 		CTextureHandle() {}
 		CTextureHandle(const std::string& path);
+
+		virtual void Render()const override;
+
 		bool IsValid();
 		bool SetTexture(const std::string& path, bool resetTextureTransform = true);
 		void SetTextureView(const Rect& rect);

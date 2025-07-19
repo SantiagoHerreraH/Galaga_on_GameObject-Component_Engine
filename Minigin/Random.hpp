@@ -24,10 +24,10 @@ namespace dae {
 		static SDL_Color GetRandomBetweenRange(SDL_Color min, SDL_Color max)
 		{
 			SDL_Color color{};
-			 color.r = Random::GetRandomBetweenRange(min.r, max.r);
-			 color.g = Random::GetRandomBetweenRange(min.g, max.g);
-			 color.b = Random::GetRandomBetweenRange(min.b, max.b);
-			 color.a = Random::GetRandomBetweenRange(min.a, max.a);
+			 color.r = Uint8(Random::GetRandomBetweenRange(min.r, max.r));
+			 color.g = Uint8(Random::GetRandomBetweenRange(min.g, max.g));
+			 color.b = Uint8(Random::GetRandomBetweenRange(min.b, max.b));
+			 color.a = Uint8(Random::GetRandomBetweenRange(min.a, max.a));
 			 return color;
 		}
 

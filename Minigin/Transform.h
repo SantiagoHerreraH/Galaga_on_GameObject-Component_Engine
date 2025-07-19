@@ -38,15 +38,15 @@ namespace dae
 	class Transform final
 	{
 	public:
-		Transform(GameObjectHandle self);
+		Transform(GameObject& self);
 
 		bool HasParent()const;
 		bool HasChildren()const;
-		const GameObjectHandle& GetParent()const;
+		const GameObject* GetParent()const;
 		void MakeRootNode();
-		bool SetParent(const GameObjectHandle& parent, ETransformReparentType transformReparentType);
-		const std::vector<GameObjectHandle>& GetChildren()const;
-		bool IsDescendant(const GameObjectHandle& descendant);
+		bool SetParent(GameObject& parent, ETransformReparentType transformReparentType);
+		const std::vector<dae::GameObject*>& GetChildren()const;
+		bool IsDescendant(const GameObject& descendant);
 
 		void SetLocalScaleX(float scale);
 		void SetLocalScaleY(float scale);
@@ -111,9 +111,9 @@ namespace dae
 		TransformData m_LocalTransform{};
 		mutable glm::mat4 m_WorldMatrix{};
 
-		GameObjectHandle m_Self{nullptr};
-		GameObjectHandle m_Parent{nullptr};
-		std::vector<GameObjectHandle> m_Children{};
+		GameObject& m_Self;
+		GameObject* m_Parent{nullptr};
+		std::vector<GameObject*> m_Children{};
 
 		mutable bool m_NeedToRecalculateWorldTransform{true};
 

@@ -4,6 +4,7 @@
 #include "Component.h"
 #include "EventSystem.h"
 #include "Rect.h"
+#include <glm.hpp>
 
 namespace dae {
 
@@ -30,9 +31,9 @@ namespace dae {
 		
 		void RenderCollider(bool render);
 
-		Event<const GameObject&, const GameObject&>& OnCollisionBeginEvent();
-		Event<const GameObject&, const GameObject&>& OnCollisionStayEvent();
-		Event<const GameObject&, const GameObject&>& OnCollisionEndEvent();
+		Event<GameObject&, GameObject&>& OnCollisionBeginEvent();
+		Event<GameObject&, GameObject&>& OnCollisionStayEvent();
+		Event<GameObject&, GameObject&>& OnCollisionEndEvent();
 
 	private:
 		glm::vec2 m_Offset;
@@ -46,12 +47,12 @@ namespace dae {
 		bool m_RenderCollider{ false };
 		std::vector<std::shared_ptr<CCollider>> m_CollidersToCollideWith;
 
-		bool IsStayOverlappingWith(const GameObjectHandle& other);
-		std::vector<GameObjectHandle> m_CollidingWithEntities;
+		bool IsStayOverlappingWith(const GameObject& other);
+		std::vector<GameObject*> m_CollidingWithEntities;
 
-		Event<const GameObject&, const GameObject&> m_OnCollisionStayEvent{ }; //self, other
-		Event<const GameObject&, const GameObject&> m_OnCollisionBeginEvent{ }; //self, other
-		Event<const GameObject&, const GameObject&> m_OnCollisionEndEvent{ }; //self, other 
+		Event<GameObject&, GameObject&> m_OnCollisionStayEvent{ }; //self, other
+		Event<GameObject&, GameObject&> m_OnCollisionBeginEvent{ }; //self, other
+		Event<GameObject&, GameObject&> m_OnCollisionEndEvent{ }; //self, other 
 	};
 
 }

@@ -3,6 +3,7 @@
 #include "Texture.h"
 #include "Renderer.h"
 #include "ResourceManager.h"
+#include "GameObject.h"
 #include <stdexcept>
 
 #pragma region Texture Data
@@ -43,6 +44,18 @@ dae::TextureData::TextureData(SDL_Texture* texture)	: m_texture{ texture }
 dae::CTextureHandle::CTextureHandle(const std::string& path)
 {
 	SetTexture(path);
+}
+
+void dae::CTextureHandle::Render()const 
+{
+	TransformData transformData{ OwnerConst().TransformConst().GetWorldTransform()};
+	transformData += GetTextureTransform();
+	
+	Renderer::GetInstance().RenderTexture(
+		*Data(),
+		transformData.Position,
+		transformData.Rotation,
+		transformData.Scale);
 }
 
 bool dae::CTextureHandle::IsValid()

@@ -7,12 +7,13 @@
 #include "Command.h"
 #include "EventSystem.h"
 
-
+#include <SDL.h>
 #include <Windows.h>
 #include <Xinput.h>
 
 namespace dae
 {
+	using PlayerId = int;
 
 	enum class GamepadButton
 	{
@@ -50,20 +51,19 @@ namespace dae
 		PlayerId PlayerId{0};
 	};
 
-	//don't change the type here to a non integer value, it will break the implementation
-	using PlayerId = int;
+	
 	struct GamepadKeyData {
 		ButtonState ButtonState;
 		GamepadButton GamepadButton;
 		PlayerId PlayerId;
-		GameObjectHandle PlayerGameObject;
-		std::unique_ptr<ICommand> OnTriggered;
+		GameObject* PlayerGameObject;
+		std::shared_ptr<ICommand> OnTriggered;
 	}; 
 	struct KeyboardKeyData {
 		ButtonState ButtonState;
 		SDL_Scancode Key;
-		GameObjectHandle PlayerGameObject;
-		std::unique_ptr<ICommand> OnTriggered;
+		GameObject* PlayerGameObject;
+		std::shared_ptr<ICommand> OnTriggered;
 	};
 	using GamepadEvents = std::vector<GamepadKeyData>;
 	using KeyboardEvents = std::vector<KeyboardKeyData>;
@@ -76,7 +76,7 @@ namespace dae
 	struct InputControllerData {
 		bool AllowKeyboard = true;
 		HowToTreatKeyboardController HowToTreatKeyboardController;
-		unsigned int MaxControllers = XUSER_MAX_COUNT;
+		int MaxControllers = XUSER_MAX_COUNT;
 		Event<> OnConnected{};
 		Event<> OnDisconnected{};
 	};

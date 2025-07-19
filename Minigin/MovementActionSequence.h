@@ -2,8 +2,8 @@
 
 #include <glm.hpp>
 #include <memory>
-#include "Time.h"
-#include "GameObject.h"
+#include "TimerSystem.h"
+#include "Scene.h"
 
 namespace dae {
 
@@ -14,7 +14,6 @@ namespace dae {
 	};
 
 	struct MovementAction {
-
 
 		TimerKey TimerKey;
 
@@ -30,9 +29,8 @@ namespace dae {
 	{
 		
 	public:
-		MovementActionSequence(const GameObject& self, const std::string& sequenceName = "NoSequenceName");
+		MovementActionSequence(dae::Scene& scene, dae::GameObjectHandle self, const std::string& sequenceName = "NoSequenceName");
 
-		const GameObject& GetSelf()const { return m_Self; }
 		const std::string& GetName()const { return m_SequenceName; }
 		void SetName(const std::string& sequenceName) { m_SequenceName = sequenceName; }
 
@@ -62,8 +60,8 @@ namespace dae {
 		void AddEndSubAction(const std::function<void()>& subAction);
 
 	private:
-
-		GameObject m_Self;
+		dae::GameObjectHandle m_Self;//temp
+		dae::Scene& m_Scene;
 		std::string m_SequenceName;
 
 		std::vector<std::function<bool()>> m_ConditionsToStartSequence;

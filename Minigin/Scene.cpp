@@ -27,7 +27,7 @@ Scene::~Scene() = default;
 
 GameObjectHandle dae::Scene::CreateGameObject()
 {
-	GameObjectHandle handle{std::make_shared<GameObject>()};
+	GameObjectHandle handle{std::make_shared<GameObject>(*this)};
 
 	m_HandlesSet.insert(handle);
 	m_HandlesVec.push_back(handle);

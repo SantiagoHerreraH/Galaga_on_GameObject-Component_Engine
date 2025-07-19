@@ -1,5 +1,5 @@
 #include "TimerSystem.h"
-#include "Time.h"
+#include "GameTime.h"
 
 dae::Timer::Timer()
 {
@@ -215,15 +215,15 @@ dae::TimerKey dae::TimerSystem::TriggerFunctionAfterSeconds(const std::function<
 	Timer timer{ seconds, startTimerPaused };
 	timer.GetOnEndEvent().Subscribe(function);
 	
-	std::shared_ptr<Scene> sceneHandle = GetSceneHandle();
+	Scene* scenePtr = GetScenePtr();
 
 	TimerKey key = AddTimer(timer);
 	if (removeTimerAfterTriggering)
 	{
-		TimerAt(key).GetOnEndEvent().Subscribe([key, sceneHandle]()
+		TimerAt(key).GetOnEndEvent().Subscribe([key, scenePtr]()
 			{
 
-				SingletonSceneSystem::GetFromScene(sceneHandle).RemoveTimer(key);
+				SceneSingleton::GetFromScene(scenePtr).RemoveTimer(key);
 
 			});
 	}
@@ -237,15 +237,15 @@ dae::TimerKey dae::TimerSystem::StartEndFunctionWithDuration(const std::function
 	timer.GetOnStartEvent().Subscribe(start);
 	timer.GetOnEndEvent().Subscribe(end);
 
-	std::shared_ptr<Scene> sceneHandle = GetSceneHandle();
+	Scene* scenePtr = GetScenePtr();
 
 	TimerKey key = AddTimer(timer);
 	if (removeTimerAfterTriggering)
 	{
-		TimerAt(key).GetOnEndEvent().Subscribe([key, sceneHandle]()
+		TimerAt(key).GetOnEndEvent().Subscribe([key, scenePtr]()
 			{
 
-				SingletonSceneSystem::GetFromScene(sceneHandle).RemoveTimer(key);
+				SceneSingleton::GetFromScene(scenePtr).RemoveTimer(key);
 
 			});
 	}

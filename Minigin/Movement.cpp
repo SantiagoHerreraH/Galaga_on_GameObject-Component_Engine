@@ -1,4 +1,5 @@
 #include "Movement.h"
+#include "GameObject.h"
 
 void dae::CMovement2D::Start()
 {

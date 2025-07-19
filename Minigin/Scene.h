@@ -1,6 +1,8 @@
 #pragma once
 #include <unordered_set>
 #include <any>
+#include <vector>
+#include <string>
 #include <typeindex>
 #include "SceneManager.h"
 #include "ISystem.h"
@@ -56,6 +58,8 @@ namespace dae
 		static unsigned int m_idCounter; 
 	};
 
+
+	using SceneHandle = std::shared_ptr<Scene>;
 
 	template<DerivedFromComponent ComponentType>
 	inline std::vector<std::shared_ptr<ComponentType>> Scene::GetAllComponentsOfType()

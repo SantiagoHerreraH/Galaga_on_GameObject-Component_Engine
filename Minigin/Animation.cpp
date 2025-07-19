@@ -1,6 +1,7 @@
 #include "Animation.h"
 #include "Renderer.h"
-#include "Time.h"
+#include "GameTime.h"
+#include "GameObject.h"
 #include <algorithm>
 
 namespace dae {
@@ -104,7 +105,7 @@ namespace dae {
 
 	void CAnimation::Render() const
 	{
-		TransformData transformData{ Owner().Transform().GetWorldTransform() };
+		TransformData transformData = OwnerConst().TransformConst().GetWorldTransform();
 		transformData += GetCurrentFrame().GetTextureTransform();
 
 		Renderer::GetInstance().RenderTexture(

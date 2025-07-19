@@ -2,6 +2,7 @@
 
 #include <unordered_map>
 #include "EventSystem.h"
+#include "Component.h"
 
 namespace dae {
 
@@ -24,7 +25,7 @@ namespace dae {
 	};
 
 	template<typename StatKey, typename StatValueType>
-	class StatController {
+	class StatController final : public Component{
 	public:
 
 		void CreateStat(const StatKey& statKey, const Stat<StatValueType>& stat, bool* outChangedPrevious = nullptr);
@@ -170,7 +171,7 @@ namespace dae {
 	template<typename StatKey, typename StatValueType>
 	inline Event<>& StatController<StatKey, StatValueType>::OnResetCurrentStatEvent(const StatKey& statKey)
 	{
-		return m_Stats.at(statKey).OnResetCurrentStatEvent;
+		return m_Stats.at(statKey).OnResetCurrentStat;
 	}
 
 	template<typename StatKey, typename StatValueType>

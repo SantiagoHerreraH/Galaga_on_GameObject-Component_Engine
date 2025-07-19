@@ -3,14 +3,18 @@
 #include "Font.h"
 #include "Texture.h"
 #include "SDL_pixels.h"
+#include "Component.h"
 
 namespace dae {
 
-	struct CText final{
+	struct CText final : public Component{
 	public:
 		CText() {}
 		~CText();
 		CText(const std::string& fontFullPath, uint8_t fontSize);
+
+		virtual void Render()const override;
+
 		void SetText(std::string text); 
 		void AddText(const std::string& text,bool center = true);
 		void SetColor(const SDL_Color& color);

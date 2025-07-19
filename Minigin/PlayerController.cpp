@@ -11,7 +11,7 @@ void dae::PlayerController::Start()
 	{
 		GamepadKeyData gamePagKeyData{};
 		gamePagKeyData.PlayerId = m_ControllerInstance.PlayerId;
-		gamePagKeyData.PlayerGameObject = OwnerHandle();
+		gamePagKeyData.PlayerGameObject = &Owner();
 
 		for (size_t i = 0; i < m_PlayerGamepadKeyData.size(); i++)
 		{
@@ -22,7 +22,7 @@ void dae::PlayerController::Start()
 		}
 
 		KeyboardKeyData keyboardKeyData{};
-		keyboardKeyData.PlayerGameObject = OwnerHandle();
+		keyboardKeyData.PlayerGameObject = &Owner();
 
 		for (size_t i = 0; i < m_PlayerKeyboardKeyData.size(); i++)
 		{
@@ -58,7 +58,7 @@ bool dae::PlayerController::BindKey(PlayerGamepadKeyData playerGamepadKeyData)
 		{
 			GamepadKeyData gamePagKeyData{};
 			gamePagKeyData.PlayerId = m_ControllerInstance.PlayerId;
-			gamePagKeyData.PlayerGameObject = OwnerHandle();
+			gamePagKeyData.PlayerGameObject = &Owner();
 
 			gamePagKeyData.ButtonState = playerGamepadKeyData.ButtonState;
 			gamePagKeyData.GamepadButton = playerGamepadKeyData.GamepadButton;
@@ -69,7 +69,11 @@ bool dae::PlayerController::BindKey(PlayerGamepadKeyData playerGamepadKeyData)
 		{
 			m_PlayerGamepadKeyData.push_back(std::move(playerGamepadKeyData));
 		}
+
+		return true;
 	}
+
+	return false;
 }
 
 bool dae::PlayerController::BindKey(PlayerKeyboardKeyData playerKeyboardKeyData)
@@ -79,7 +83,7 @@ bool dae::PlayerController::BindKey(PlayerKeyboardKeyData playerKeyboardKeyData)
 		if (HasOwner())
 		{
 			KeyboardKeyData gamePagKeyData{};
-			gamePagKeyData.PlayerGameObject = OwnerHandle();
+			gamePagKeyData.PlayerGameObject = &Owner();
 			gamePagKeyData.ButtonState = playerKeyboardKeyData.ButtonState;
 			gamePagKeyData.Key = playerKeyboardKeyData.Key;
 			gamePagKeyData.OnTriggered = std::move(playerKeyboardKeyData.OnTriggered);
@@ -90,5 +94,8 @@ bool dae::PlayerController::BindKey(PlayerKeyboardKeyData playerKeyboardKeyData)
 			m_PlayerKeyboardKeyData.push_back(std::move(playerKeyboardKeyData));
 		}
 
+		return true;
 	}
+
+	return false;
 }
