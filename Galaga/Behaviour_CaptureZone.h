@@ -3,6 +3,7 @@
 
 #define _USE_MATH_DEFINES
 #include <cmath>
+#include "Enemy.h"
 #include "MovementActionSequence.h"
 #include "Scene.h"
 #include "Swirls.h"
@@ -176,186 +177,197 @@ namespace dae {
 		return captureZone;
 	}
 
-	MovementActionSequence AddCaptureZoneBehavior(GameObjectHandle enemy, GameObjectHandle grid, GameObjectHandle player, dae::Scene& scene, const glm::vec3& relativePos, std::shared_ptr<Event<GameObject&>> onEndAction, std::shared_ptr<Event<GameObject&>>  onDie) {
+	class CaptureZoneBehaviour final : public EnemyBehaviour {
 
-		std::shared_ptr<bool> isPlayerCaptured{ std::make_shared<bool>(false) };
-		GameObjectHandle playerDummy = scene.CreateGameObject();
-		GameObjectHandle captureZone = CreateCaptureZone(enemy, player, scene, glm::vec3{ 0,50,0 }, playerDummy, isPlayerCaptured);
+	public:
 
-		onDie->Subscribe([playerDummy, captureZone](GameObject&) mutable {
-			playerDummy->SetActive(false);
-			captureZone->SetActive(false);
-			});
+		MovementActionSequence CreateInstance(Enemy& enemyCreator) override
+		{
 
-		//------ PARENTING
+			GameObjectHandle enemy{ enemyCreator.GetGameObjectHandle() };
+			GameObjectHandle player{ enemyCreator.GetEnemyInstanceData().Player };
+			GameObjectHandle grid{ enemyCreator.GetEnemyInstanceData().Grid };
+			Scene& scene{ *enemyCreator.GetEnemyInstanceData().Scene };
+			glm::vec3 relativePos{ };
+			relativePos.x = enemyCreator.GetEnemyInstanceData().RelativePos.x;
+			relativePos.y = enemyCreator.GetEnemyInstanceData().RelativePos.y;
+			bool goTowardsLeft = enemyCreator.GetEnemyInstanceData().MoveTowardsLeft;
 
-		auto unParent = [enemy]() mutable {
-			enemy->Transform().MakeRootNode();
-			};
+			std::shared_ptr<bool> isPlayerCaptured{ std::make_shared<bool>(false) };
+			GameObjectHandle playerDummy = scene.CreateGameObject();
+			GameObjectHandle captureZone = CreateCaptureZone(enemy, player, scene, glm::vec3{ 0,50,0 }, playerDummy, isPlayerCaptured);
 
-		auto reParent = [enemy, grid, relativePos]() mutable {
-			enemy->Transform().SetParent(*grid, ETransformReparentType::KeepLocalTransform);
-			enemy->Transform().OverrideWorldScaleWithLocalScale(true);
-			enemy->Transform().SetLocalPosition(relativePos);
-			};
+			enemyCreator.OnDie().Subscribe([playerDummy, captureZone]() mutable {
+				playerDummy->SetActive(false);
+				captureZone->SetActive(false);
+				});
 
+			//------ PARENTING
 
-		MovementActionSequence captureZoneBehavior{ scene, enemy, "CaptureZoneBehavior" };
+			auto unParent = [enemy]() mutable {
+				enemy->Transform().MakeRootNode();
+				};
 
-		captureZoneBehavior.AddConditionToStartSequence([playerDummy]() {
-
-			return !playerDummy->IsActive();
-			});
-
-		//--------------------- Move towards enemy
-		const float movementDuration = 1;
-		const float targetDistanceFromPlayer = 50;
-
-		captureZoneBehavior.AddAction("Move Towards Enemy");
-		captureZoneBehavior.AddStartSubAction(unParent);
-		captureZoneBehavior.SetActionDependsOnDuration(true, movementDuration);
-		captureZoneBehavior.SetMovementPathDecidingFunction([enemy, player, targetDistanceFromPlayer]() mutable {
-
-			glm::vec2 goalPos{ player->Transform().GetWorldTransform().Position };
-			goalPos.y -= targetDistanceFromPlayer;
-
-			glm::vec2 movementPath = goalPos - (glm::vec2)enemy->Transform().GetWorldTransform().Position;
-
-			return movementPath;
-			});
+			auto reParent = [enemy, grid, relativePos]() mutable {
+				enemy->Transform().SetParent(*grid, ETransformReparentType::KeepLocalTransform);
+				enemy->Transform().OverrideWorldScaleWithLocalScale(true);
+				enemy->Transform().SetLocalPosition(relativePos);
+				};
 
 
-		captureZoneBehavior.AddActionFunction([movementDuration, enemy](float timeSinceStarted, const MovementData& data) mutable {
+			MovementActionSequence captureZoneBehavior{ scene, enemy, "CaptureZoneBehavior" };
 
-			glm::vec2 pos = data.BeginningPosition + (data.BeginningDeltaTowardsTarget * (timeSinceStarted / movementDuration));
+			captureZoneBehavior.AddConditionToStartSequence([playerDummy]() {
 
-			glm::vec2 normalizedDelta{ glm::normalize(data.BeginningDeltaTowardsTarget) };
+				return !playerDummy->IsActive();
+				});
 
-			enemy->Transform().SetLocalRotationZ(glm::degrees(std::atan2f(-normalizedDelta.x, normalizedDelta.y)));
-			enemy->Transform().SetLocalPositionX(pos.x);
-			enemy->Transform().SetLocalPositionY(pos.y);
+			//--------------------- Move towards enemy
+			const float movementDuration = 1;
+			const float targetDistanceFromPlayer = 50;
 
-			return false;
+			captureZoneBehavior.AddAction("Move Towards Enemy");
+			captureZoneBehavior.AddStartSubAction(unParent);
+			captureZoneBehavior.SetActionDependsOnDuration(true, movementDuration);
+			captureZoneBehavior.SetMovementPathDecidingFunction([enemy, player, targetDistanceFromPlayer]() mutable {
 
-			});
+				glm::vec2 goalPos{ player->Transform().GetWorldTransform().Position };
+				goalPos.y -= targetDistanceFromPlayer;
 
-		//--------------------- Activate CaptureZone
+				glm::vec2 movementPath = goalPos - (glm::vec2)enemy->Transform().GetWorldTransform().Position;
 
-
-		const float captureZoneDuration = 3;
-		captureZoneBehavior.AddAction("Activate Capture Zone");
-		captureZoneBehavior.SetActionDependsOnDuration(true, captureZoneDuration);
-		captureZoneBehavior.AddStartSubAction([captureZone, enemy]() mutable {
-
-			captureZone->SetActive(true);
-			enemy->Transform().SetLocalRotationZ(glm::degrees(std::atan2f(0, 1)));
-
-			});
-		captureZoneBehavior.AddEndSubAction([captureZone]() mutable {
-
-			captureZone->SetActive(false);
-
-			});
-
-		//------------------- Loop Back to Formation
+				return movementPath;
+				});
 
 
-		const float speedToReturn = 120;// m/s
+			captureZoneBehavior.AddActionFunction([movementDuration, enemy](float timeSinceStarted, const MovementData& data) mutable {
 
-		const int xBoundsOffsetFromWindowWidth{ 10 };
-		const int yBoundsOffsetFromWindowHeight{ 10 };
+				glm::vec2 pos = data.BeginningPosition + (data.BeginningDeltaTowardsTarget * (timeSinceStarted / movementDuration));
 
-		const int xBounds{ xBoundsOffsetFromWindowWidth + g_WindowWidth };
-		const int yBounds{ yBoundsOffsetFromWindowHeight + g_WindowHeight };
+				glm::vec2 normalizedDelta{ glm::normalize(data.BeginningDeltaTowardsTarget) };
 
-		captureZoneBehavior.AddAction("Loop Back To Formation");
-		captureZoneBehavior.SetActionDependsOnDuration(false);
-
-		captureZoneBehavior.AddConditionToStartOrRestartAction([isPlayerCaptured]() {
-
-			bool startCondition = !(*isPlayerCaptured);
-
-			(*isPlayerCaptured) = false;
-
-			return startCondition; // start action if player is not captured
-
-			});
-
-		captureZoneBehavior.SetMovementPathDecidingFunction([]() {return glm::vec2{ 0,1 }; }); //just to calculate begin pos
-
-		captureZoneBehavior.AddActionFunction([
-			enemy,
-			grid,
-			relativePos,
-			speedToReturn,
-			reParent,
-			xBoundsOffsetFromWindowWidth,
-			yBoundsOffsetFromWindowHeight,
-			xBounds,
-			yBounds
-		]
-			(float,
-				const MovementData& data) mutable
-			{
-
-				enemy->Transform().MoveLocalPositionY(speedToReturn * Time::GetInstance().GetElapsedSeconds());
-
-				glm::vec2 endPos{ enemy->Transform().GetWorldTransform().Position };
-
-				//looping
-				if (MathTools::IsOutOfBounds((int)endPos.x, -xBoundsOffsetFromWindowWidth, xBounds) ||
-					MathTools::IsOutOfBounds((int)endPos.y, -yBoundsOffsetFromWindowHeight, yBounds))
-				{
-					endPos = data.BeginningPosition;
-					endPos.y = 0;
-
-					enemy->Transform().SetLocalPositionX(endPos.x);
-					enemy->Transform().SetLocalPositionY(endPos.y);
-
-					return true;
-				}
+				enemy->Transform().SetLocalRotationZ(glm::degrees(std::atan2f(-normalizedDelta.x, normalizedDelta.y)));
+				enemy->Transform().SetLocalPositionX(pos.x);
+				enemy->Transform().SetLocalPositionY(pos.y);
 
 				return false;
 
-			});
+				});
 
-			//------------------- Go Back to Formation
+			//--------------------- Activate CaptureZone
 
 
-			const float radiusToAttach = 7;
-			captureZoneBehavior.AddAction("Go Back To Formation");
+			const float captureZoneDuration = 3;
+			captureZoneBehavior.AddAction("Activate Capture Zone");
+			captureZoneBehavior.SetActionDependsOnDuration(true, captureZoneDuration);
+			captureZoneBehavior.AddStartSubAction([captureZone, enemy]() mutable {
+
+				captureZone->SetActive(true);
+				enemy->Transform().SetLocalRotationZ(glm::degrees(std::atan2f(0, 1)));
+
+				});
+			captureZoneBehavior.AddEndSubAction([captureZone]() mutable {
+
+				captureZone->SetActive(false);
+
+				});
+
+			//------------------- Loop Back to Formation
+
+
+			const float speedToReturn = 120;// m/s
+
+			const int xBoundsOffsetFromWindowWidth{ 10 };
+			const int yBoundsOffsetFromWindowHeight{ 10 };
+
+			const int xBounds{ xBoundsOffsetFromWindowWidth + g_WindowWidth };
+			const int yBounds{ yBoundsOffsetFromWindowHeight + g_WindowHeight };
+
+			captureZoneBehavior.AddAction("Loop Back To Formation");
 			captureZoneBehavior.SetActionDependsOnDuration(false);
 
-			captureZoneBehavior.AddActionFunction([enemy, grid, relativePos, speedToReturn, radiusToAttach, reParent]
-			(float,
-				const MovementData&) mutable
+			captureZoneBehavior.AddConditionToStartOrRestartAction([isPlayerCaptured]() {
+
+				bool startCondition = !(*isPlayerCaptured);
+
+				(*isPlayerCaptured) = false;
+
+				return startCondition; // start action if player is not captured
+
+				});
+
+			captureZoneBehavior.SetMovementPathDecidingFunction([]() {return glm::vec2{ 0,1 }; }); //just to calculate begin pos
+
+			captureZoneBehavior.AddActionFunction([
+				enemy,
+				grid,
+				relativePos,
+				speedToReturn,
+				reParent,
+				xBoundsOffsetFromWindowWidth,
+				yBoundsOffsetFromWindowHeight,
+				xBounds,
+				yBounds
+			]
+				(float,
+					const MovementData& data) mutable
 				{
-					glm::vec3 delta{ grid->Transform().LocalToWorldVec(relativePos) - enemy->Transform().GetWorldTransform().Position };
 
-					if (glm::length(delta) > radiusToAttach)
+					enemy->Transform().MoveLocalPositionY(speedToReturn * Time::GetInstance().GetElapsedSeconds());
+
+					glm::vec2 endPos{ enemy->Transform().GetWorldTransform().Position };
+
+					//looping
+					if (MathTools::IsOutOfBounds((int)endPos.x, -xBoundsOffsetFromWindowWidth, xBounds) ||
+						MathTools::IsOutOfBounds((int)endPos.y, -yBoundsOffsetFromWindowHeight, yBounds))
 					{
+						endPos = data.BeginningPosition;
+						endPos.y = 0;
 
-						delta = glm::normalize(delta) * speedToReturn * Time::GetInstance().GetElapsedSeconds();
+						enemy->Transform().SetLocalPositionX(endPos.x);
+						enemy->Transform().SetLocalPositionY(endPos.y);
 
-						enemy->Transform().MoveLocalPositionX(delta.x);
-						enemy->Transform().MoveLocalPositionY(delta.y);
-
-						return false;
+						return true;
 					}
 
-					reParent();
-					return true;
+					return false;
 
 				});
 
-
-			captureZoneBehavior.AddEndSubAction([enemy, onEndAction]() mutable {
-
-				onEndAction->Invoke(*enemy);
-				});
+				//------------------- Go Back to Formation
 
 
-			return captureZoneBehavior;
-	}
+				const float radiusToAttach = 7;
+				captureZoneBehavior.AddAction("Go Back To Formation");
+				captureZoneBehavior.SetActionDependsOnDuration(false);
+
+				captureZoneBehavior.AddActionFunction([enemy, grid, relativePos, speedToReturn, radiusToAttach, reParent]
+				(float,
+					const MovementData&) mutable
+					{
+						glm::vec3 delta{ grid->Transform().LocalToWorldVec(relativePos) - enemy->Transform().GetWorldTransform().Position };
+
+						if (glm::length(delta) > radiusToAttach)
+						{
+
+							delta = glm::normalize(delta) * speedToReturn * Time::GetInstance().GetElapsedSeconds();
+
+							enemy->Transform().MoveLocalPositionX(delta.x);
+							enemy->Transform().MoveLocalPositionY(delta.y);
+
+							return false;
+						}
+
+						reParent();
+						return true;
+
+					});
+
+
+				return captureZoneBehavior;
+		}
+
+	};
+
 
 }

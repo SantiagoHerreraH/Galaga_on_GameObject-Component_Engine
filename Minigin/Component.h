@@ -20,8 +20,8 @@ namespace dae {
 		const GameObject& OwnerConst() const{ return *m_Owner; }
 		GameObject& Owner() { return *m_Owner; }
 		bool HasOwner()const { return m_Owner != nullptr; };
-		bool IsActive()const;
-		void SetActive(bool active);
+		virtual bool IsActive()const;
+		virtual void SetActive(bool active);
 
 		std::type_index GetType();
 

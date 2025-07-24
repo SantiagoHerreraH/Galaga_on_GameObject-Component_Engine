@@ -18,10 +18,10 @@ namespace dae {
 		std::unique_ptr<ICommand> OnTriggered;
 	};
 
-	class PlayerController final : public Component
+	class CPlayerController final : public Component
 	{
 	public:
-		PlayerController();
+		CPlayerController();
 		
 		void Start()override;
 

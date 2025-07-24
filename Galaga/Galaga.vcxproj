@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -19,21 +19,47 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="EnemyFormation.cpp" />
     <ClCompile Include="GalagaPlayer.cpp" />
+    <ClCompile Include="Gun.cpp" />
+    <ClCompile Include="Lifetime.cpp" />
+    <ClCompile Include="PlayerHealthComponent.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="RoundManager.cpp" />
+    <ClCompile Include="RoundUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Behaviour_CaptureZone.h" />
     <ClInclude Include="Behaviour_Swirl.h" />
     <ClInclude Include="Behaviour_UDive.h" />
     <ClInclude Include="Behaviour_ZigZagDive.h" />
-    <ClInclude Include="Bullets.h" />
+    <ClInclude Include="Bullet.h" />
     <ClInclude Include="CollisionLayers.h" />
+    <ClInclude Include="DefineData_EnemyGridData.h" />
+    <ClInclude Include="DefineData_EnemyType.h" />
+    <ClInclude Include="Enemy.h" />
+    <ClInclude Include="EnemyInstanceData.h" />
+    <ClInclude Include="EnemyFormation.h" />
+    <ClInclude Include="EnemyFormationType.h" />
+    <ClInclude Include="EnemyPointsIndicator.h" />
+    <ClInclude Include="Enemy_Bee.h" />
+    <ClInclude Include="Enemy_Bird.h" />
+    <ClInclude Include="Enemy_Butterfly.h" />
+    <ClInclude Include="EnemyGridData.h" />
+    <ClInclude Include="Gun.h" />
+    <ClInclude Include="Lifetime.h" />
+    <ClInclude Include="PlayerHealth.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerScore.h" />
     <ClInclude Include="GalagaStats.h" />
+    <ClInclude Include="RoundManager.h" />
+    <ClInclude Include="RoundUI.h" />
     <ClInclude Include="Settings.h" />
-    <ClInclude Include="Swirls.h" />
+    <ClInclude Include="StringToDataModifier.h" />
+    <ClInclude Include="SwirlData.h" />
+    <ClInclude Include="DefineData_SwirlData.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

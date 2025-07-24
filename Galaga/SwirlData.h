@@ -1,6 +1,8 @@
 #pragma once
 
 #include <glm.hpp>
+#include "Settings.h"
+#include <vector>
 
 namespace dae {
 
@@ -21,4 +23,13 @@ namespace dae {
 		float PostSwirlSpeedToReturn{ 50 };
 		float PostSwirlRadiusToAttach{ 10 };
 	};
+
+	struct EnemyUnitSwirlData {
+		std::vector<SwirlData> SwirlDataPerUnit;
+		int EnemiesInAUnit{ 4 };
+	};
+
+	
+
+
 }

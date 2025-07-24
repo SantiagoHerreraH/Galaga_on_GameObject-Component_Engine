@@ -3,6 +3,8 @@
 #include "ResourceManager.h"
 #include "Renderer.h"
 #include "Component.h"
+#include "Scene.h"
+#include "SceneManager.h"
 
 dae::GameObject::GameObject() : m_Transform(*this)
 {
@@ -25,13 +27,23 @@ bool dae::GameObject::IsActive() const
 	return m_IsActive;
 }
 
-void dae::GameObject::SetActive(bool active)
+void dae::GameObject::SetActive(bool active, bool affectChildren)
 {
 	m_IsActive = active;
 
 	for (size_t i = 0; i < m_Components.size(); i++)
 	{
 		m_Components[i]->SetActive(active);
+	}
+
+	if (affectChildren)
+	{
+		std::vector<GameObject*> children = m_Transform.GetChildren();
+
+		for (size_t i = 0; i < children.size(); i++)
+		{
+			children[i]->SetActive(active, true);
+		}
 	}
 }
 
@@ -43,6 +55,7 @@ void dae::GameObject::AddComponent(const Component& component)
 
 void dae::GameObject::Start()
 {
+
 	for (size_t i = 0; i < m_Components.size(); i++)
 	{
 		if (m_Components[i]->IsActive())

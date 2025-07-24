@@ -27,7 +27,7 @@ namespace dae
 		void Render() const;
 
 		bool IsActive()const;
-		void SetActive(bool active);
+		void SetActive(bool active, bool affectChildren = true);
 
 		const dae::Transform& TransformConst()const;
 		dae::Transform& Transform();

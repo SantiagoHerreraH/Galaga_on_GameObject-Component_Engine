@@ -29,14 +29,18 @@ namespace dae {
 	{
 		
 	public:
+		MovementActionSequence() {}
 		MovementActionSequence(dae::Scene& scene, dae::GameObjectHandle self, const std::string& sequenceName = "NoSequenceName");
 
+		GameObjectHandle GetSelf() { return m_Self; }
 		const std::string& GetName()const { return m_SequenceName; }
 		void SetName(const std::string& sequenceName) { m_SequenceName = sequenceName; }
 
 		bool StartSequence();
 		bool RestartSequence();
 		void StopSequence();
+
+		bool IsActing()const;
 
 		bool CanStartSequence()const;
 		void AddConditionToStartSequence(const std::function<bool()>& condition);//conditions are and 
@@ -59,10 +63,11 @@ namespace dae {
 		void AddUpdateSubAction(const std::function<void()>& subAction);
 		void AddEndSubAction(const std::function<void()>& subAction);
 
+
 	private:
-		dae::GameObjectHandle m_Self;//temp
-		dae::Scene& m_Scene;
-		std::string m_SequenceName;
+		dae::GameObjectHandle m_Self{nullptr};//temp
+		dae::Scene* m_Scene{nullptr};
+		std::string m_SequenceName{ "NoSequenceName" };
 
 		std::vector<std::function<bool()>> m_ConditionsToStartSequence;
 		std::vector<MovementAction> m_MovementActions;

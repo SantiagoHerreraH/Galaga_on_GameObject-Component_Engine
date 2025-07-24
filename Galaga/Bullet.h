@@ -7,11 +7,12 @@
 #include "TimerSystem.h"
 
 #include "GalagaStats.h"
-#include "GalagaCollisionLayers.h"
+#include "CollisionLayers.h"
+#include "Lifetime.h"
 
 namespace dae {
 
-	dae::GameObjectHandle CreateBullets(dae::Scene& scene, GameObjectHandle owner, size_t& outLifeTimerKey) {
+	dae::GameObjectHandle CreateBullet(GameObjectHandle owner) {
 
 		//----- COMPONENTS
 
@@ -59,26 +60,20 @@ namespace dae {
 
 		dae::CTextureHandle currentTexture{ "bullet.png" };
 
+		// -- Lifetime
+
+		dae::CLifeTime lifeTime{ 1.5, true };
+
 
 		//------ Create GameObject
 
-		GameObjectHandle currentBullet{ scene.CreateGameObject() };
+		GameObjectHandle currentBullet{ std::make_shared<GameObject>()};
 		currentBullet->AddComponent(currentTexture);
 		currentBullet->AddComponent(rigidBody);
 		currentBullet->AddComponent(collider);
+		currentBullet->AddComponent(lifeTime);
 
 		currentBullet->SetActive(false);
-
-
-		//T----- imed Action For Bullet Lifetime
-
-		auto deactiveAction = [currentBullet]() mutable { currentBullet->SetActive(false); };
-		Event<> onTimerEndEvent{};
-		onTimerEndEvent.Subscribe(deactiveAction);
-
-		Timer bulletLifetime{ 1.5f, true };
-		bulletLifetime.SetOnEndEvent(onTimerEndEvent);
-		outLifeTimerKey = TimerSystem::GetFromScene(&scene).AddTimer(bulletLifetime);
 
 		return currentBullet;
 	}

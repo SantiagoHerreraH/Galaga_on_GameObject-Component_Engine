@@ -73,6 +73,14 @@ bool dae::Timer::IsPaused() const
 	return m_IsPaused;
 }
 
+void dae::Timer::ClearEvents()
+{
+	m_OnRestart.UnsubscribeAll();
+	m_OnStart.UnsubscribeAll();
+	m_OnUpdate.UnsubscribeAll();
+	m_OnEnd.UnsubscribeAll();
+}
+
 void dae::Timer::End()
 {
 	if (!IsFinished())
@@ -141,6 +149,11 @@ dae::TimerKey dae::TimerSystem::AddTimer(const Timer& timer)
 bool dae::TimerSystem::RemoveTimer(TimerKey key)
 {
 	return m_Timers.Erase(key);
+}
+
+void dae::TimerSystem::ClearTimerEvents(TimerKey key)
+{
+	m_Timers.ValueAt(key).
 }
 
 dae::Timer& dae::TimerSystem::TimerAt(TimerKey key)

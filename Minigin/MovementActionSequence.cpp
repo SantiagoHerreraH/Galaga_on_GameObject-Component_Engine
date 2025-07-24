@@ -2,7 +2,7 @@
 #include "MathTools.h"
 
 dae::MovementActionSequence::MovementActionSequence(dae::Scene& scene, dae::GameObjectHandle self, const std::string& sequenceName) :
-m_Scene(scene),
+m_Scene(&scene),
 m_Self(self),
 m_SequenceName(sequenceName)
 {
@@ -12,7 +12,7 @@ bool dae::MovementActionSequence::StartSequence()
 {
 	if (CanStartSequence())
 	{
-		TimerSystem::GetFromScene(&m_Scene).RestartTimer(m_MovementActions.front().TimerKey);
+		TimerSystem::GetFromScene(m_Scene).RestartTimer(m_MovementActions.front().TimerKey);
 		return true;
 	}
 
@@ -28,10 +28,10 @@ bool dae::MovementActionSequence::RestartSequence()
 
 	for (size_t i = 0; i < m_MovementActions.size(); i++)
 	{
-		TimerSystem::GetFromScene(&m_Scene).PauseTimer(m_MovementActions[i].TimerKey);
+		TimerSystem::GetFromScene(m_Scene).PauseTimer(m_MovementActions[i].TimerKey);
 	}
 
-	TimerSystem::GetFromScene(&m_Scene).RestartTimer(m_MovementActions.front().TimerKey);
+	TimerSystem::GetFromScene(m_Scene).RestartTimer(m_MovementActions.front().TimerKey);
 
 	return true;
 }
@@ -40,8 +40,22 @@ void dae::MovementActionSequence::StopSequence()
 {
 	for (size_t i = 0; i < m_MovementActions.size(); i++)
 	{
-		TimerSystem::GetFromScene(&m_Scene).PauseTimer(m_MovementActions[i].TimerKey);
+		TimerSystem::GetFromScene(m_Scene).PauseTimer(m_MovementActions[i].TimerKey);
 	}
+}
+
+
+bool dae::MovementActionSequence::IsActing()const 
+{
+	for (size_t i = 0; i < m_MovementActions.size(); i++)
+	{
+		if (TimerSystem::GetFromScene(m_Scene).IsTimerActive(m_MovementActions[i].TimerKey))
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
 
 bool dae::MovementActionSequence::CanStartSequence() const
@@ -83,16 +97,16 @@ std::vector<dae::TimerKey> dae::MovementActionSequence::GetActionTimerKeys() con
 void dae::MovementActionSequence::AddAction(const std::string& actionName)
 {
 	MovementAction GalagaEnemyAction{};
-	GalagaEnemyAction.TimerKey = TimerSystem::GetFromScene(&m_Scene).AddTimer(Timer{10, true, m_SequenceName + " - " + actionName });
+	GalagaEnemyAction.TimerKey = TimerSystem::GetFromScene(m_Scene).AddTimer(Timer{10, true, m_SequenceName + " - " + actionName });
 	GalagaEnemyAction.MovementData = std::make_shared<MovementData>();
 	m_MovementActions.emplace_back(GalagaEnemyAction);
-	Scene* scenePtr = &m_Scene;
+	Scene* scenePtr = m_Scene;
 
 	if (m_MovementActions.size() > 1)
 	{
 		TimerKey currentTimerKey = GalagaEnemyAction.TimerKey;
 		TimerKey prevTimerKey = m_MovementActions[m_MovementActions.size() - 2].TimerKey;
-		TimerSystem::GetFromScene(&m_Scene).TimerAt(prevTimerKey).GetOnEndEvent().Subscribe([currentTimerKey, scenePtr](){
+		TimerSystem::GetFromScene(m_Scene).TimerAt(prevTimerKey).GetOnEndEvent().Subscribe([currentTimerKey, scenePtr](){
 			
 			TimerSystem::GetFromScene(scenePtr).RestartTimer(currentTimerKey);
 
@@ -103,7 +117,7 @@ void dae::MovementActionSequence::AddAction(const std::string& actionName)
 void dae::MovementActionSequence::AddConditionToStartOrRestartAction(const std::function<bool()>& condition)
 {
 	auto timerKey = m_MovementActions.back().TimerKey;
-	Scene* scenePtr = &m_Scene;
+	Scene* scenePtr = m_Scene;
 	auto conditionFunction = [condition, timerKey, scenePtr]()mutable {
 
 		if (!condition())
@@ -113,8 +127,8 @@ void dae::MovementActionSequence::AddConditionToStartOrRestartAction(const std::
 
 		};
 
-	TimerSystem::GetFromScene(&m_Scene).TimerAt(m_MovementActions.back().TimerKey).GetOnStartEvent().Subscribe(conditionFunction);
-	TimerSystem::GetFromScene(&m_Scene).TimerAt(m_MovementActions.back().TimerKey).GetOnRestartEvent().Subscribe(conditionFunction);
+	TimerSystem::GetFromScene(m_Scene).TimerAt(m_MovementActions.back().TimerKey).GetOnStartEvent().Subscribe(conditionFunction);
+	TimerSystem::GetFromScene(m_Scene).TimerAt(m_MovementActions.back().TimerKey).GetOnRestartEvent().Subscribe(conditionFunction);
 
 }
 
@@ -123,19 +137,19 @@ void dae::MovementActionSequence::SetActionDependsOnDuration(bool dependsOnTime,
 
 	time = dependsOnTime ? time : -1; //-1 == duration is infinite
 
-	TimerSystem::GetFromScene(&m_Scene).SetTimerDuration(m_MovementActions.back().TimerKey, time, false);
+	TimerSystem::GetFromScene(m_Scene).SetTimerDuration(m_MovementActions.back().TimerKey, time, false);
 
 }
 
 void dae::MovementActionSequence::SetActionDuration(float time)
 {
-	TimerSystem::GetFromScene(&m_Scene).SetTimerDuration(m_MovementActions.back().TimerKey, time, false);
+	TimerSystem::GetFromScene(m_Scene).SetTimerDuration(m_MovementActions.back().TimerKey, time, false);
 }
 
 void dae::MovementActionSequence::AddConditionToStopAction(const std::function<bool()>& condition)
 {
 	auto timerKey = m_MovementActions.back().TimerKey;
-	Scene* scenePtr = &m_Scene;
+	Scene* scenePtr = m_Scene;
 	auto conditionFunction = [condition, timerKey, scenePtr]()mutable {
 		
 		if (condition())
@@ -145,7 +159,7 @@ void dae::MovementActionSequence::AddConditionToStopAction(const std::function<b
 		
 		};
 
-	TimerSystem::GetFromScene(&m_Scene).TimerAt(m_MovementActions.back().TimerKey).GetOnUpdateEvent().Subscribe(conditionFunction);
+	TimerSystem::GetFromScene(m_Scene).TimerAt(m_MovementActions.back().TimerKey).GetOnUpdateEvent().Subscribe(conditionFunction);
 }
 
 void dae::MovementActionSequence::SetMovementPathDecidingFunction(std::function<glm::vec2()> functionThatReturnsVectorWithMovementDirectionAndMagnitude)
@@ -159,7 +173,7 @@ void dae::MovementActionSequence::SetMovementPathDecidingFunction(std::function<
 
 		};
 
-	TimerSystem::GetFromScene(&m_Scene).TimerAt(m_MovementActions.back().TimerKey).GetOnStartEvent().Subscribe(function);
+	TimerSystem::GetFromScene(m_Scene).TimerAt(m_MovementActions.back().TimerKey).GetOnStartEvent().Subscribe(function);
 }
 
 void dae::MovementActionSequence::AddActionFunction(std::function<bool(float timeSinceActionStarted, const MovementData&)> movementFuncThatReturnsWhenItIsDone)
@@ -168,7 +182,7 @@ void dae::MovementActionSequence::AddActionFunction(std::function<bool(float tim
 	auto timerKey = m_MovementActions.back().TimerKey;
 	std::shared_ptr<MovementData> movementData = m_MovementActions.back().MovementData;
 
-	Scene* scenePtr = &m_Scene;
+	Scene* scenePtr = m_Scene;
 
 	auto function = [movementFuncThatReturnsWhenItIsDone, movementData, timerKey, scenePtr]()mutable {
 
@@ -182,20 +196,20 @@ void dae::MovementActionSequence::AddActionFunction(std::function<bool(float tim
 
 		};
 
-	TimerSystem::GetFromScene(&m_Scene).TimerAt(m_MovementActions.back().TimerKey).GetOnUpdateEvent().Subscribe(function);
+	TimerSystem::GetFromScene(m_Scene).TimerAt(m_MovementActions.back().TimerKey).GetOnUpdateEvent().Subscribe(function);
 }
 
 void dae::MovementActionSequence::AddStartSubAction(const std::function<void()>& subAction)
 {
-	TimerSystem::GetFromScene(&m_Scene).TimerAt(m_MovementActions.back().TimerKey).GetOnStartEvent().Subscribe(subAction);
+	TimerSystem::GetFromScene(m_Scene).TimerAt(m_MovementActions.back().TimerKey).GetOnStartEvent().Subscribe(subAction);
 }
 
 void dae::MovementActionSequence::AddUpdateSubAction(const std::function<void()>& subAction)
 {
-	TimerSystem::GetFromScene(&m_Scene).TimerAt(m_MovementActions.back().TimerKey).GetOnUpdateEvent().Subscribe(subAction);
+	TimerSystem::GetFromScene(m_Scene).TimerAt(m_MovementActions.back().TimerKey).GetOnUpdateEvent().Subscribe(subAction);
 }
 
 void dae::MovementActionSequence::AddEndSubAction(const std::function<void()>& subAction)
 {
-	TimerSystem::GetFromScene(&m_Scene).TimerAt(m_MovementActions.back().TimerKey).GetOnEndEvent().Subscribe(subAction);
+	TimerSystem::GetFromScene(m_Scene).TimerAt(m_MovementActions.back().TimerKey).GetOnEndEvent().Subscribe(subAction);
 }

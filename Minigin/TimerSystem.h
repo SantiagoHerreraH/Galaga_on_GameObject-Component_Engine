@@ -40,6 +40,7 @@ namespace dae {
 
 		friend class TimerSystem;
 
+		void ClearEvents();
 		void End();
 		void Pause();
 		void Play();
@@ -72,6 +73,7 @@ namespace dae {
 		void UpdateTimers();
 		TimerKey AddTimer(const Timer& timer);
 		bool RemoveTimer(TimerKey key);
+		void ClearTimerEvents(TimerKey key);
 		Timer& TimerAt(TimerKey key);
 		bool IsTimerActive(TimerKey key)const;
 		void RestartTimer(TimerKey key);

@@ -1,11 +1,11 @@
 #include "PlayerController.h"
 
-dae::PlayerController::PlayerController()
+dae::CPlayerController::CPlayerController()
 {
 	m_IsValid = InputManager::GetInstance().GetNextAvailableControllerInstance(m_ControllerInstance);
 }
 
-void dae::PlayerController::Start()
+void dae::CPlayerController::Start()
 {
 	if (m_IsValid)
 	{
@@ -35,22 +35,22 @@ void dae::PlayerController::Start()
 	}
 }
 
-bool dae::PlayerController::IsValid() const
+bool dae::CPlayerController::IsValid() const
 {
 	return m_IsValid;
 }
 
-dae::PlayerId dae::PlayerController::GetPlayerId()
+dae::PlayerId dae::CPlayerController::GetPlayerId()
 {
 	return m_ControllerInstance.PlayerId;
 }
 
-dae::ControllerType dae::PlayerController::GetControllerType()
+dae::ControllerType dae::CPlayerController::GetControllerType()
 {
 	return m_ControllerInstance.ControllerType;
 }
 
-bool dae::PlayerController::BindKey(PlayerGamepadKeyData playerGamepadKeyData)
+bool dae::CPlayerController::BindKey(PlayerGamepadKeyData playerGamepadKeyData)
 {
 	if (m_IsValid && m_ControllerInstance.ControllerType != ControllerType::Keyboard)
 	{
@@ -76,7 +76,7 @@ bool dae::PlayerController::BindKey(PlayerGamepadKeyData playerGamepadKeyData)
 	return false;
 }
 
-bool dae::PlayerController::BindKey(PlayerKeyboardKeyData playerKeyboardKeyData)
+bool dae::CPlayerController::BindKey(PlayerKeyboardKeyData playerKeyboardKeyData)
 {
 	if (m_IsValid && m_ControllerInstance.ControllerType != ControllerType::Gamepad)
 	{

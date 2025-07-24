@@ -1,0 +1,183 @@
+#include "Player.h"
+#include "Gun.h"
+
+dae::GalagaPlayer::GalagaPlayer(const glm::vec2& startPos, float zRotation)
+{
+
+	//------- PLAYER
+
+	dae::GameObjectHandle currentPlayer = std::make_shared<GameObject>();
+
+	//------- SHOOTING PIVOT
+
+	dae::GameObjectHandle shootingPivot = std::make_shared<GameObject>();
+	m_ShootingPivot = shootingPivot;
+	shootingPivot->Transform().SetLocalPositionY(-10);
+	shootingPivot->Transform().SetParent(*currentPlayer, dae::ETransformReparentType::KeepLocalTransform);
+
+	GunData gunData{};
+	gunData.BulletAmount = 10;
+	gunData.BulletLifeTime = 1.5;
+	gunData.Shooter = currentPlayer;
+	gunData.TimeBetweenShots = 0.3f;
+	CGun gun{ gunData };
+	shootingPivot->AddComponent(gun);
+
+
+	//----- COMPONENTS -----
+
+	Rect rect{};
+	rect.Height = 32;
+	rect.Width = 32;
+
+	dae::CCollider collider{ rect, (int)GalagaCollisionLayers::Player };
+	collider.CenterRect();
+
+	currentPlayer->AddComponent(collider);
+
+	//-----
+
+	dae::CRigidbody2D rigidBody{};
+	currentPlayer->AddComponent(rigidBody);
+
+	//-----
+
+	dae::CMovement2D movement{};
+	movement.SetMaxSpeed(300);
+	currentPlayer->AddComponent(movement);
+
+	//-----
+
+	TransformData textureTransform{};
+	textureTransform.Scale = { 0.5f, 0.5f , 0.5f };
+	dae::CTextureHandle currentTexture{ "galaga.png" };
+	currentTexture.SetTextureTransform(textureTransform);
+	currentTexture.Center();
+
+	currentPlayer->AddComponent(currentTexture);
+
+	//-----
+
+	CPlayerController playerController{};
+	PlayerId playerId = playerController.GetPlayerId();
+
+	currentPlayer->AddComponent(playerController);
+
+	//-----
+
+	CStatController statController{};
+
+	IntStat initialHealth{ 3, 3, 3 };
+
+
+	const int maxInt = std::numeric_limits<int>::infinity();
+
+	IntStat initialPoints{ 0, maxInt, maxInt };
+	IntStat initialShotsFired{ 0, maxInt, maxInt };
+	IntStat initialNumberOfHits{ 0, maxInt, maxInt };
+
+	CreateCurrentScore(playerId, m_CurrentPlayerScore, m_CurrentPlayerScoreText);
+	dae::GameObjectHandle currentPlayerScore{ m_CurrentPlayerScore };
+
+	initialPoints.OnCurrentStatChange.Subscribe([currentPlayerScore](int statValue) mutable {
+		currentPlayerScore->GetComponent<CText>()->SetText(std::to_string(statValue));
+		});
+
+	statController.CreateStat(StatType::Health, initialHealth);
+
+	statController.CreateStat(StatType::Points, initialPoints);
+	statController.CreateStat(StatType::ShotsFired, initialShotsFired);
+	statController.CreateStat(StatType::NumberOfHits, initialNumberOfHits);
+
+	currentPlayer->AddComponent(statController);
+
+
+	//----
+
+	CPlayerHealth playerHealthComponent{ 3, glm::vec3{} };//change pos depending on how many players there are
+
+	currentPlayer->AddComponent(playerHealthComponent);
+
+	//DONT FORGET THE EVENTS FOR THE PLAYER HEALTH COMPONENT
+
+	//-----
+
+	currentPlayer->SetActive(false);
+
+	currentPlayer->Transform().SetLocalPositionX(startPos.x);
+	currentPlayer->Transform().SetLocalPositionY(startPos.y);
+	currentPlayer->Transform().SetLocalRotationZ(zRotation);
+
+	//----- ACTIONS -----
+
+	// - Movement Action
+	auto moveLeft = [](GameObject& gameObj) mutable {gameObj.GetComponent<CMovement2D>()->AddSingleFrameMovementInput(glm::vec2{ -1,  0 }); };
+	auto moveRight = [](GameObject& gameObj) mutable {gameObj.GetComponent<CMovement2D>()->AddSingleFrameMovementInput(glm::vec2{ 1,  0 }); };
+	auto moveUp = [](GameObject& gameObj) mutable {gameObj.GetComponent<CMovement2D>()->AddSingleFrameMovementInput(glm::vec2{ 0, -1 }); };
+	auto moveDown = [](GameObject& gameObj) mutable {gameObj.GetComponent<CMovement2D>()->AddSingleFrameMovementInput(glm::vec2{ 0,  1 }); };
+
+
+	// - Shooting Action
+
+	auto shootAction = [shootingPivot](GameObject&) mutable { shootingPivot->GetComponent<CGun>()->Shoot(); };
+
+	//Events
+
+	Event<GameObject&> shootEvent{};
+	Event<GameObject&> moveLeftEvent{};
+	Event<GameObject&> moveRightEvent{};
+	Event<GameObject&> moveUpEvent{};
+	Event<GameObject&> moveDownEvent{};
+
+	moveLeftEvent.Subscribe(moveLeft);
+	moveRightEvent.Subscribe(moveRight);
+	moveUpEvent.Subscribe(moveUp);
+	moveDownEvent.Subscribe(moveDown);
+	shootEvent.Subscribe(shootAction);
+
+	playerController.BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_SPACE,	std::make_unique<EventTriggerCommand>(shootEvent) });
+	playerController.BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_LEFT,	std::make_unique<EventTriggerCommand>(moveLeftEvent) });
+	playerController.BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_RIGHT,	std::make_unique<EventTriggerCommand>(moveRightEvent) });
+	playerController.BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_UP,		std::make_unique<EventTriggerCommand>(moveUpEvent) });
+	playerController.BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_DOWN,	std::make_unique<EventTriggerCommand>(moveDownEvent) });
+
+	playerController.BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_A,	 std::make_unique<EventTriggerCommand>(moveLeftEvent) });
+	playerController.BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_D,	 std::make_unique<EventTriggerCommand>(moveRightEvent) });
+	playerController.BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_W,	 std::make_unique<EventTriggerCommand>(moveUpEvent) });
+	playerController.BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_S,	 std::make_unique<EventTriggerCommand>(moveDownEvent) });
+
+
+	playerController.BindKey(dae::PlayerGamepadKeyData{ ButtonState::BUTTON_PRESSED, GamepadButton::ButtonX,	 std::make_unique<EventTriggerCommand>(shootEvent) });
+	playerController.BindKey(dae::PlayerGamepadKeyData{ ButtonState::BUTTON_PRESSED, GamepadButton::DpadLeft,	 std::make_unique<EventTriggerCommand>(moveLeftEvent) });
+	playerController.BindKey(dae::PlayerGamepadKeyData{ ButtonState::BUTTON_PRESSED, GamepadButton::DpadRight,	 std::make_unique<EventTriggerCommand>(moveRightEvent) });
+	playerController.BindKey(dae::PlayerGamepadKeyData{ ButtonState::BUTTON_PRESSED, GamepadButton::DpadUp,		 std::make_unique<EventTriggerCommand>(moveUpEvent) });
+	playerController.BindKey(dae::PlayerGamepadKeyData{ ButtonState::BUTTON_PRESSED, GamepadButton::DpadDown,	 std::make_unique<EventTriggerCommand>(moveDownEvent) });
+
+	m_CurrentPlayer = currentPlayer;
+}
+
+dae::GameObjectHandle dae::GalagaPlayer::GetGameObjectHandle()
+{
+	return m_CurrentPlayer;
+}
+
+void dae::GalagaPlayer::AddScene(Scene& scene)
+{
+	scene.AddGameObjectHandle(m_CurrentPlayer);
+	scene.AddGameObjectHandle(m_ShootingPivot);
+	scene.AddGameObjectHandle(m_CurrentPlayerScore);
+	scene.AddGameObjectHandle(m_CurrentPlayerScoreText);
+}
+
+void dae::GalagaPlayer::SubscribeOnPlayerDie(const std::function<void()>& func) {
+
+	m_CurrentPlayer->GetComponent<CPlayerHealth>()->SubscribeOnPlayerDie(func);
+}
+void dae::GalagaPlayer::SubscribeOnPlayerDespawnFromDamage(const std::function<void()>& func) {
+
+	m_CurrentPlayer->GetComponent<CPlayerHealth>()->SubscribeOnPlayerDespawnFromDamage(func);
+}
+void dae::GalagaPlayer::SubscribeOnPlayerRespawnFromDamage(const std::function<void()>& func) {
+
+	m_CurrentPlayer->GetComponent<CPlayerHealth>()->SubscribeOnPlayerRespawnFromDamage(func);
+}

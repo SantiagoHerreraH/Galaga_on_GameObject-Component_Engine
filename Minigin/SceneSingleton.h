@@ -20,6 +20,10 @@ namespace dae {
 		SceneSingleton() = default;
 	public:
 		
+		static Child& GetCurrent() {
+			return GetFromScene(&SceneManager::GetInstance().GetCurrentScene());
+		}
+
 		static Child& GetFromScene(dae::Scene* scene) 
 		{ 
 
