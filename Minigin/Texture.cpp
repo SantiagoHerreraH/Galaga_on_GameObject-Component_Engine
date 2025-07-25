@@ -15,9 +15,7 @@ dae::TextureData::~TextureData()
 
 glm::ivec2 dae::TextureData::GetPixelSize() const
 {
-	SDL_Rect dst;
-	SDL_QueryTexture(GetSDLTexture(), nullptr, nullptr, &dst.w, &dst.h);
-	return { dst.w,dst.h };
+	return m_PixelSize;
 }
 
 SDL_Texture* dae::TextureData::GetSDLTexture() const
@@ -30,11 +28,20 @@ dae::TextureData::TextureData(const std::string &fullPath)
 	m_texture = IMG_LoadTexture(Renderer::GetInstance().GetSDLRenderer(), fullPath.c_str());
 	if (m_texture == nullptr)
 		throw std::runtime_error(std::string("Failed to load texture: ") + SDL_GetError());
+		
+
+	SDL_Rect dst;
+	SDL_QueryTexture(GetSDLTexture(), nullptr, nullptr, &dst.w, &dst.h);
+	m_PixelSize = glm::ivec2{ dst.w,dst.h };
 }
 
 dae::TextureData::TextureData(SDL_Texture* texture)	: m_texture{ texture } 
 {
 	assert(m_texture != nullptr);
+
+	SDL_Rect dst;
+	SDL_QueryTexture(GetSDLTexture(), nullptr, nullptr, &dst.w, &dst.h);
+	m_PixelSize = glm::ivec2{ dst.w,dst.h };
 }
 
 #pragma endregion

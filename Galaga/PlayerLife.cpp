@@ -1,11 +1,11 @@
-#include "PlayerHealth.h"
+#include "PlayerLife.h"
 #include "GameObject.h"
 #include "PlayerScore.h"
 #include "GameInput.h"
 #include "PlayerController.h"
 #include "TimerSystem.h"
 
-void dae::CPlayerHealth::Start()
+void dae::CPlayerLife::Start()
 {
 	CPlayerController* playerController = GetPlayerController();
 	CStatController* currentStatController = GetStatController();
@@ -41,7 +41,7 @@ void dae::CPlayerHealth::Start()
 
 	onHealthChange.Subscribe(changeHealthIndicators);
 
-	CPlayerHealth* self{ this };
+	CPlayerLife* self{ this };
 	glm::vec2 respawnPoint{ m_RespawnPos };
 
 	self->Owner().Transform().SetLocalPositionX(respawnPoint.x);
@@ -78,22 +78,22 @@ void dae::CPlayerHealth::Start()
 		});
 }
 
-void dae::CPlayerHealth::SubscribeOnPlayerDie(const std::function<void()>& func)
+void dae::CPlayerLife::SubscribeOnPlayerDie(const std::function<void()>& func)
 {
 	m_OnDie.Subscribe(func);
 }
 
-void dae::CPlayerHealth::SubscribeOnPlayerDespawnFromDamage(const std::function<void()>& func)
+void dae::CPlayerLife::SubscribeOnPlayerDespawnFromDamage(const std::function<void()>& func)
 {
 	m_OnDespawnFromDamage.Subscribe(func);
 }
 
-void dae::CPlayerHealth::SubscribeOnPlayerRespawnFromDamage(const std::function<void()>& func)
+void dae::CPlayerLife::SubscribeOnPlayerRespawnFromDamage(const std::function<void()>& func)
 {
 	m_OnRespawnFromDamage.Subscribe(func);
 }
 
-dae::CStatController* dae::CPlayerHealth::GetStatController()
+dae::CStatController* dae::CPlayerLife::GetStatController()
 {
 	CStatController* currentStatController = Owner().GetComponent<CStatController>();
 	if (!currentStatController)
@@ -108,7 +108,7 @@ dae::CStatController* dae::CPlayerHealth::GetStatController()
 	return currentStatController;
 }
 
-dae::CPlayerController* dae::CPlayerHealth::GetPlayerController()
+dae::CPlayerController* dae::CPlayerLife::GetPlayerController()
 {
 	CPlayerController* playerController = Owner().GetComponent<CPlayerController>();
 	if (!playerController)
@@ -119,7 +119,7 @@ dae::CPlayerController* dae::CPlayerHealth::GetPlayerController()
 	return playerController;
 }
 
-std::vector<dae::GameObjectHandle> dae::CPlayerHealth::CreatePlayerHealthIndicator(dae::PlayerId playerId, int playerHealth, const glm::vec2& startPos, float symbolOffset, float textOffset)
+std::vector<dae::GameObjectHandle> dae::CPlayerLife::CreatePlayerHealthIndicator(dae::PlayerId playerId, int playerHealth, const glm::vec2& startPos, float symbolOffset, float textOffset)
 {
 
 

@@ -14,6 +14,17 @@ dae::CText::CText(const std::string& fullPath, uint8_t size)
 	SetFont(fullPath, size);
 }
 
+dae::CText::CText(const FontData& fontData) : CText(fontData.FontFullPath, fontData.FontSize){
+
+}
+
+
+dae::CText::CText(const TextData& textData) : CText(textData.FontData.FontFullPath, textData.FontData.FontSize) 
+{
+	SetColor(textData.Color);
+	SetText(textData.Text);
+}
+
 void dae::CText::Render()const
 {
 	TransformData transformData{ OwnerConst().TransformConst().GetWorldTransform() };
@@ -91,9 +102,21 @@ const dae::TextureData* dae::CText::Data() const
 	return m_TextTexture.get();
 }
 
+
+glm::vec2 dae::CText::GetScaledSize() const {
+
+	glm::vec2 size = Data()->GetPixelSize();
+
+	size.x *= m_TransformData.Scale.x;
+	size.y *= m_TransformData.Scale.y;
+
+	return size;
+}
+
 void dae::CText::Center()
 {
 	glm::vec2 size = Data()->GetPixelSize();
+
 	m_TransformData.Position.x = (-size.x / 2.f) * m_TransformData.Scale.x;
 	m_TransformData.Position.y = (-size.y / 2.f) * m_TransformData.Scale.y;
 }

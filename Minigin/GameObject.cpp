@@ -47,12 +47,6 @@ void dae::GameObject::SetActive(bool active, bool affectChildren)
 	}
 }
 
-void dae::GameObject::AddComponent(const Component& component)
-{
-	m_Components.push_back(std::make_shared<Component>(component));
-	m_Components.back()->SetOwner(*this);
-}
-
 void dae::GameObject::Start()
 {
 

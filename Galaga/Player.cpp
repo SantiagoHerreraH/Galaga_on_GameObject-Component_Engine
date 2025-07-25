@@ -1,4 +1,19 @@
 #include "Player.h"
+#include "PlayerController.h"
+#include "Collider.h"
+#include "Rigidbody.h"
+#include "Movement.h"
+#include "Texture.h"
+#include "StatSystem.h"
+#include "Text.h"
+#include "TimerSystem.h"
+#include "EventTriggerCommand.h"
+
+#include "PlayerLife.h"
+#include "GalagaStats.h"
+#include "CollisionLayers.h"
+#include "StatDisplayer.h"
+#include "Bullet.h"
 #include "Gun.h"
 
 dae::GalagaPlayer::GalagaPlayer(const glm::vec2& startPos, float zRotation)
@@ -76,13 +91,6 @@ dae::GalagaPlayer::GalagaPlayer(const glm::vec2& startPos, float zRotation)
 	IntStat initialShotsFired{ 0, maxInt, maxInt };
 	IntStat initialNumberOfHits{ 0, maxInt, maxInt };
 
-	CreateCurrentScore(playerId, m_CurrentPlayerScore, m_CurrentPlayerScoreText);
-	dae::GameObjectHandle currentPlayerScore{ m_CurrentPlayerScore };
-
-	initialPoints.OnCurrentStatChange.Subscribe([currentPlayerScore](int statValue) mutable {
-		currentPlayerScore->GetComponent<CText>()->SetText(std::to_string(statValue));
-		});
-
 	statController.CreateStat(StatType::Health, initialHealth);
 
 	statController.CreateStat(StatType::Points, initialPoints);
@@ -91,14 +99,27 @@ dae::GalagaPlayer::GalagaPlayer(const glm::vec2& startPos, float zRotation)
 
 	currentPlayer->AddComponent(statController);
 
+	//----
+
+	StatDisplayData statDisplayData{};
+	statDisplayData.StatNameTextData.FontData.FontFullPath = "Emulogic-zrEw.ttf";
+	statDisplayData.StatNameTextData.FontData.FontSize = 13;
+	statDisplayData.StatNameTextData.Color = {255, 0, 0 };
+	statDisplayData.StatNameTextData.Text = "1UP ";
+	statDisplayData.StatTypeToDisplay = StatType::Points;
+	statDisplayData.StatValueColor = { 255, 255, 255 };
+	statDisplayData.StatValueOffsetFromStatName = {0,5};
+	statDisplayData.Where = { g_WindowWidth * 4.3f / 5.f , (g_WindowHeight * 1.6f / 5.f) + (50 * playerId) };
+
+	CStatDisplayer statDisplayer{ statDisplayData };
+
+	currentPlayer->AddComponent(statDisplayer);
 
 	//----
 
-	CPlayerHealth playerHealthComponent{ 3, glm::vec3{} };//change pos depending on how many players there are
+	CPlayerLife playerHealthComponent{ 3, glm::vec3{g_WindowWidth/2.f, g_WindowHeight - 50, 0} };
 
 	currentPlayer->AddComponent(playerHealthComponent);
-
-	//DONT FORGET THE EVENTS FOR THE PLAYER HEALTH COMPONENT
 
 	//-----
 
@@ -165,19 +186,17 @@ void dae::GalagaPlayer::AddScene(Scene& scene)
 {
 	scene.AddGameObjectHandle(m_CurrentPlayer);
 	scene.AddGameObjectHandle(m_ShootingPivot);
-	scene.AddGameObjectHandle(m_CurrentPlayerScore);
-	scene.AddGameObjectHandle(m_CurrentPlayerScoreText);
 }
 
 void dae::GalagaPlayer::SubscribeOnPlayerDie(const std::function<void()>& func) {
 
-	m_CurrentPlayer->GetComponent<CPlayerHealth>()->SubscribeOnPlayerDie(func);
+	m_CurrentPlayer->GetComponent<CPlayerLife>()->SubscribeOnPlayerDie(func);
 }
 void dae::GalagaPlayer::SubscribeOnPlayerDespawnFromDamage(const std::function<void()>& func) {
 
-	m_CurrentPlayer->GetComponent<CPlayerHealth>()->SubscribeOnPlayerDespawnFromDamage(func);
+	m_CurrentPlayer->GetComponent<CPlayerLife>()->SubscribeOnPlayerDespawnFromDamage(func);
 }
 void dae::GalagaPlayer::SubscribeOnPlayerRespawnFromDamage(const std::function<void()>& func) {
 
-	m_CurrentPlayer->GetComponent<CPlayerHealth>()->SubscribeOnPlayerRespawnFromDamage(func);
+	m_CurrentPlayer->GetComponent<CPlayerLife>()->SubscribeOnPlayerRespawnFromDamage(func);
 }

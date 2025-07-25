@@ -8,16 +8,17 @@
 namespace dae
 {
 	class TextureData;
-	class FontData;
+	class Font;
 	class ResourceManager final : public Singleton<ResourceManager>
 	{
 	public:
 		void Init(const std::filesystem::path& data);
+		const std::filesystem::path& GetDataPath()const { return m_dataPath; }
 
 		//loads first time if not loaded yet
 		std::shared_ptr<TextureData> GetTextureData(const std::string& file);
 		//loads first time if not loaded yet
-		std::shared_ptr<FontData> GetFontData(const std::string& file, uint8_t size);
+		std::shared_ptr<Font> GetFontData(const std::string& file, uint8_t size);
 	private:
 		friend class Singleton<ResourceManager>;
 		ResourceManager() = default;
@@ -26,7 +27,7 @@ namespace dae
 		void UnloadUnusedResources();
 
 		std::map<std::string, std::shared_ptr<TextureData>> m_TextureName_To_Texture;
-		std::map<std::pair<std::string, uint8_t>, std::shared_ptr<FontData>> m_FontData_To_Font;
+		std::map<std::pair<std::string, uint8_t>, std::shared_ptr<Font>> m_FontData_To_Font;
 
 	};
 }

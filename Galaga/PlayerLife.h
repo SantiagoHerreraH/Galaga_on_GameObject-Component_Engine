@@ -11,10 +11,10 @@ namespace dae {
 
 	class CPlayerController;
 
-	class CPlayerHealth final: public Component
+	class CPlayerLife final: public Component
 	{
 	public:
-		CPlayerHealth(int maxHealth, const glm::vec3& respawnPos) : 
+		CPlayerLife(int maxHealth, const glm::vec3& respawnPos) : 
 			m_MaxHealth(maxHealth),
 			m_RespawnPos(respawnPos){}
 		virtual void Start()override;

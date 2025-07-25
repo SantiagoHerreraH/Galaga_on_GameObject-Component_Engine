@@ -1,4 +1,5 @@
 #include "EnemyFormation.h"
+#include "MainMenu.h"
 
 dae::CEnemyFormation::CEnemyFormation(
 	const glm::vec2& position,
@@ -213,6 +214,11 @@ void dae::CEnemyFormation::CreateGrid()
 
 	movementTimer.SetOnUpdateEvent(movementTimerUpdate);
 	movementTimer.SetOnEndEvent(movementTimerEnd);
+}
+
+dae::CButtonGrid* dae::MainMenu::MainMenuCreator::GetGrid()
+{
+	return m_ButtonGrid->GetComponent<CButtonGrid>();
 }
 
 void dae::CEnemyFormation::CreateEnemies()

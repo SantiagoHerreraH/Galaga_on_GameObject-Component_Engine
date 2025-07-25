@@ -7,11 +7,24 @@
 
 namespace dae {
 
+	struct FontData {
+		std::string FontFullPath;
+		uint8_t FontSize;
+	};
+
+	struct TextData {
+		FontData FontData;
+		SDL_Color Color;
+		std::string Text;
+	};
+
 	struct CText final : public Component{
 	public:
 		CText() {}
 		~CText();
 		CText(const std::string& fontFullPath, uint8_t fontSize);
+		CText(const FontData& fontData);
+		CText(const TextData& textData);
 
 		virtual void Render()const override;
 
@@ -23,13 +36,15 @@ namespace dae {
 		const TextureData* Data()const;
 		void SetTextTransform(const TransformData& transform) { m_TransformData = transform; }
 		const TransformData& GetTextureTransform() const { return m_TransformData; }
+		glm::vec2 GetScaledSize() const;
 		void Center();
 
 	private:
+
 		std::string m_Text;
 		SDL_Color m_Color{255 ,255 , 255 , 255 };
 		std::string m_FontPath;
-		std::shared_ptr<FontData> m_FontData;
+		std::shared_ptr<Font> m_FontData;
 		mutable std::shared_ptr<TextureData> m_TextTexture{};// needs to be muttable for dirty pattern on Data() call
 		TransformData m_TransformData;
 

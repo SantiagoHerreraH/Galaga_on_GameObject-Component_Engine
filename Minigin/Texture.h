@@ -28,6 +28,7 @@ namespace dae
 		TextureData & operator= (const TextureData &) = delete;
 		TextureData & operator= (const TextureData &&) = delete;
 	private:
+		glm::ivec2 m_PixelSize;
 		SDL_Texture* m_texture;
 	};
 

@@ -21,12 +21,15 @@
   <ItemGroup>
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="EnemyFormation.cpp" />
+    <ClCompile Include="ScoreSaver.cpp" />
     <ClCompile Include="GalagaPlayer.cpp" />
     <ClCompile Include="Gun.cpp" />
     <ClCompile Include="Lifetime.cpp" />
-    <ClCompile Include="PlayerHealthComponent.cpp" />
+    <ClCompile Include="MainMenu.cpp" />
+    <ClCompile Include="PlayerLife.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="StatDisplayer.cpp" />
     <ClCompile Include="RoundManager.cpp" />
     <ClCompile Include="RoundUI.cpp" />
   </ItemGroup>
@@ -48,11 +51,14 @@
     <ClInclude Include="Enemy_Bird.h" />
     <ClInclude Include="Enemy_Butterfly.h" />
     <ClInclude Include="EnemyGridData.h" />
+    <ClInclude Include="ScoreSaver.h" />
+    <ClInclude Include="Galaga.h" />
     <ClInclude Include="Gun.h" />
     <ClInclude Include="Lifetime.h" />
-    <ClInclude Include="PlayerHealth.h" />
+    <ClInclude Include="MainMenu.h" />
+    <ClInclude Include="PlayerLife.h" />
     <ClInclude Include="Player.h" />
-    <ClInclude Include="PlayerScore.h" />
+    <ClInclude Include="StatDisplayer.h" />
     <ClInclude Include="GalagaStats.h" />
     <ClInclude Include="RoundManager.h" />
     <ClInclude Include="RoundUI.h" />

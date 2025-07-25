@@ -33,6 +33,6 @@ namespace dae
 		friend class Singleton<SceneManager>;
 		SceneManager() = default;
 		std::vector<std::shared_ptr<dae::Scene>> m_Scenes;
-		int m_CurrentSceneIndex = 0;
+		int m_CurrentSceneIndex{0};
 	};
 }

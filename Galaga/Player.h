@@ -1,23 +1,10 @@
 #pragma once
 
+#include <functional>
 #include <limits>
 
 #include "Scene.h"
-#include "PlayerController.h"
-#include "Collider.h"
-#include "Rigidbody.h"
-#include "Movement.h"
-#include "Texture.h"
-#include "StatSystem.h"
-#include "Text.h"
-#include "TimerSystem.h"
-#include "EventTriggerCommand.h"
 
-#include "PlayerHealth.h"
-#include "GalagaStats.h"
-#include "CollisionLayers.h"
-#include "PlayerScore.h"
-#include "Bullet.h"
 
 
 namespace dae {
@@ -39,8 +26,6 @@ namespace dae {
 	private:
 		GameObjectHandle m_CurrentPlayer;
 		GameObjectHandle m_ShootingPivot;
-		GameObjectHandle m_CurrentPlayerScore;
-		GameObjectHandle m_CurrentPlayerScoreText;
 
 	};
 }

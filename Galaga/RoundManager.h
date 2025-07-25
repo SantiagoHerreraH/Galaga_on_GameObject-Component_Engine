@@ -39,6 +39,7 @@ namespace dae {
 		void CreateRounds();
 		void CreateHighscoreScene();
 		void CreatePlayer();
+		void CreateParticleSystem();
 
 		struct RoundManagerData {
 
@@ -64,6 +65,7 @@ namespace dae {
 			GalagaPlayer Player;
 			std::vector<std::string> SceneNames;
 			std::string HighscoreSceneName;
+			GameObjectHandle ParticleSystemGameObj;
 		};
 
 		std::shared_ptr<RoundManagerData> m_RoundManagerData;

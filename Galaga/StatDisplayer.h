@@ -10,12 +10,40 @@
 
 namespace dae {
 
+	struct StatDisplayData {
+		
+		TextData StatNameTextData;
+		StatType StatTypeToDisplay;
+		SDL_Color StatValueColor;
+
+		glm::vec2 Where;
+		glm::vec2 StatValueOffsetFromStatName;
+
+		GameObjectHandle FromWho;
+	};
+
+	class CStatDisplayer : public Component {
+
+	public:
+
+		CStatDisplayer(const StatDisplayData& statDisplayData);//if from who == nullptr -> from Owner()
+		void Start()override;
+		void StopDisplaying();
+		void StartDisplaying();
+
+	private:
+		bool m_Subscribed;
+		StatDisplayData m_StatDisplayData;
+		GameObjectHandle m_StatName;
+		GameObjectHandle m_StatValue;
+	};
+
 	void CreateCurrentScore(PlayerId playerId, dae::GameObjectHandle& currentScore, dae::GameObjectHandle& currentScoreText)
 	{
 		currentScore = std::make_shared<GameObject>();
 
 		currentScore->Transform().SetLocalPositionX(g_WindowWidth * 4.3f / 5.f);
-		currentScore->Transform().SetLocalPositionY((g_WindowHeight * 1.5f / 5.f) + (50 * playerId));
+		currentScore->Transform().SetLocalPositionY((g_WindowHeight * 1.6f / 5.f) + (50 * playerId));
 
 		CText currentText{ "Emulogic-zrEw.ttf", 13 };
 		currentText.SetText("1UP ");

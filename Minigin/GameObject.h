@@ -32,7 +32,9 @@ namespace dae
 		const dae::Transform& TransformConst()const;
 		dae::Transform& Transform();
 
-		void AddComponent(const Component& component);
+		template <DerivedFromComponent ComponentType>
+		std::shared_ptr<ComponentType> AddComponent(const ComponentType& component);
+
 		template <DerivedFromComponent ComponentType>
 		bool HasComponent()const;
 		template <DerivedFromComponent ComponentType>
@@ -57,6 +59,15 @@ namespace dae
 
 	using GameObjectHandle = std::shared_ptr<GameObject>;
 	
+
+	template<DerivedFromComponent ComponentType>
+	inline std::shared_ptr<ComponentType> GameObject::AddComponent(const ComponentType& component)
+	{
+		m_Components.push_back(std::make_shared<Component>(component));
+		m_Components.back()->SetOwner(*this);
+
+		return std::dynamic_pointer_cast<ComponentType>(m_Components.back());
+	}
 
 	template<DerivedFromComponent ComponentType>
 	inline bool GameObject::HasComponent() const

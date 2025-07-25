@@ -27,13 +27,13 @@ std::shared_ptr<dae::TextureData> dae::ResourceManager::GetTextureData(const std
 	return m_TextureName_To_Texture.at(filename);
 }
 
-std::shared_ptr<dae::FontData> dae::ResourceManager::GetFontData(const std::string& file, uint8_t size)
+std::shared_ptr<dae::Font> dae::ResourceManager::GetFontData(const std::string& file, uint8_t size)
 {
 	const auto fullPath = m_dataPath/file;
 	const auto filename = fs::path(fullPath).filename().string();
 	const auto key = std::pair<std::string, uint8_t>(filename, size);
 	if(m_FontData_To_Font.find(key) == m_FontData_To_Font.end())
-		m_FontData_To_Font.insert(std::pair(key,std::make_shared<FontData>(fullPath.string(), size)));
+		m_FontData_To_Font.insert(std::pair(key,std::make_shared<Font>(fullPath.string(), size)));
 	return m_FontData_To_Font.at(key);
 }
 
