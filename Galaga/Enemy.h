@@ -10,11 +10,13 @@ namespace dae {
 
 	class Enemy;
 
+	using MovementActionSequenceHandle = std::shared_ptr<MovementActionSequence>;
+
 	class EnemyBehaviour {
 
 	public:
 		virtual ~EnemyBehaviour() = default;
-		virtual MovementActionSequence CreateInstance(Enemy& enemy) = 0;
+		virtual MovementActionSequenceHandle CreateInstance(Enemy& enemy) = 0;
 	};
 
 	struct EnemyType {
@@ -52,8 +54,8 @@ namespace dae {
 
 		EnemyInstanceData m_EnemyInstanceData;
 		EnemyType m_EnemyType;
-		MovementActionSequence m_StartFormationSequence;
-		std::vector<MovementActionSequence> m_EnemyActingSequences;
+		std::shared_ptr<MovementActionSequence> m_StartFormationSequence;
+		std::vector<std::shared_ptr<MovementActionSequence>> m_EnemyActingSequences;
 		int m_CurrentEnemyActingSequence{0};
 
 		Event<GameObject&> m_OnEndAction;

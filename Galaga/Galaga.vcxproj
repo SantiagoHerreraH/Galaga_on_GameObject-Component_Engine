@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="EnemyFormation.cpp" />
+    <ClCompile Include="PlayerVsScene.cpp" />
     <ClCompile Include="ScoreSaver.cpp" />
     <ClCompile Include="GalagaPlayer.cpp" />
     <ClCompile Include="Gun.cpp" />
@@ -39,6 +40,8 @@
     <ClInclude Include="Behaviour_UDive.h" />
     <ClInclude Include="Behaviour_ZigZagDive.h" />
     <ClInclude Include="Bullet.h" />
+    <ClInclude Include="PlayerVsScene.h" />
+    <ClInclude Include="StartSequenceCommand.h" />
     <ClInclude Include="CollisionLayers.h" />
     <ClInclude Include="DefineData_EnemyGridData.h" />
     <ClInclude Include="DefineData_EnemyType.h" />
@@ -58,6 +61,7 @@
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="PlayerLife.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="ShootCommand.h" />
     <ClInclude Include="StatDisplayer.h" />
     <ClInclude Include="GalagaStats.h" />
     <ClInclude Include="RoundManager.h" />

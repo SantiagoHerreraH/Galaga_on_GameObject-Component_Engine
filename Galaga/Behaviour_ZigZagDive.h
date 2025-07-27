@@ -6,7 +6,7 @@
 #include "Enemy.h"
 #include "MovementActionSequence.h"
 #include "Scene.h"
-#include "Swirls.h"
+#include "SwirlData.h"
 #include "WaveMovement.h"
 #include "GameTime.h"
 #include "Settings.h"
@@ -19,7 +19,7 @@ namespace dae {
 
 	public:
 
-		virtual MovementActionSequence CreateInstance(Enemy& enemyCreator) override
+		virtual MovementActionSequenceHandle CreateInstance(Enemy& enemyCreator) override
 		{
 
 			GameObjectHandle enemy{ enemyCreator.GetGameObjectHandle() };
@@ -43,7 +43,7 @@ namespace dae {
 				enemy->Transform().SetLocalPosition(relativePos);
 				};
 
-			MovementActionSequence zigZagDiveBehavior{ scene, enemy, "ZigZagDive" };
+			MovementActionSequence zigZagDiveBehavior{ "ZigZagDive" };
 
 			const int xBoundsOffsetFromWindowWidth{ 10 };
 			const int yBoundsOffsetFromWindowHeight{ 10 };
@@ -156,7 +156,7 @@ namespace dae {
 			zigZagDiveBehavior.AddEndSubAction(reParent);
 
 
-			return zigZagDiveBehavior;
+			return enemy->AddComponent(zigZagDiveBehavior);
 		}
 
 	};

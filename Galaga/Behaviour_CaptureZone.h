@@ -6,7 +6,7 @@
 #include "Enemy.h"
 #include "MovementActionSequence.h"
 #include "Scene.h"
-#include "Swirls.h"
+#include "SwirlData.h"
 #include "WaveMovement.h"
 #include "GameTime.h"
 #include "Animation.h"
@@ -18,7 +18,7 @@
 
 namespace dae {
 
-	GameObjectHandle CreatePlayerDummy(GameObjectHandle parent, dae::Scene& scene, const glm::vec3& relativePos, TimerKey& outMovementSequenceKey)
+	GameObjectHandle CreatePlayerDummy(GameObjectHandle parent, dae::Scene& scene, const glm::vec3& relativePos)
 	{
 		//-----
 
@@ -38,7 +38,7 @@ namespace dae {
 		dummy->Transform().OverrideWorldScaleWithLocalScale(true);
 		dummy->AddComponent(currentTexture);
 
-		MovementActionSequence actionSequence{ scene, dummy , "Player Dummy Movement Sequence" };
+		MovementActionSequence actionSequence{ "Player Dummy Movement Sequence" };
 
 		float acceptableRadius = 10;
 		float targetDistanceFromParentY = -35;
@@ -83,11 +83,12 @@ namespace dae {
 			dummy->Transform().SetLocalRotationZ(180.0f);
 			});
 
-		outMovementSequenceKey = actionSequence.GetFirstActionTimerKey();
+		dummy->AddComponent(actionSequence);
 
 		return dummy;
 	}
 
+	//Make this a componente -> Damage zone component and make a function to activate and deactivate
 	GameObjectHandle CreateCaptureZone(GameObjectHandle& parent, GameObjectHandle player, dae::Scene& scene, const glm::vec3& relativePos, GameObjectHandle& outPlayerDummny, std::shared_ptr<bool>& outCapturedEnemy)
 	{
 		TimerSystem* TIMERSYSTEM{ &TimerSystem::GetFromScene(&scene) };
@@ -123,8 +124,7 @@ namespace dae {
 		captureZone->SetActive(false);
 
 
-		TimerKey playerDummyStartActionKey{};
-		GameObjectHandle playerDummy = CreatePlayerDummy(parent, scene, glm::vec3{}, playerDummyStartActionKey);
+		GameObjectHandle playerDummy = CreatePlayerDummy(parent, scene, glm::vec3{});
 		playerDummy->SetActive(false);
 
 		int captureZoneDamage = -1;
@@ -144,7 +144,7 @@ namespace dae {
 			});
 		TimerKey offsetStatAfterTime_TimerKey = TIMERSYSTEM->AddTimer(timer);
 
-		auto onCaptureZoneCollision = [TIMERSYSTEM, player, playerDummy, playerDummyStartActionKey, offsetStatAfterTime_TimerKey]() mutable {
+		auto onCaptureZoneCollision = [TIMERSYSTEM, player, playerDummy, offsetStatAfterTime_TimerKey]() mutable {
 
 			player->SetActive(false);//depending on how you code it, this might not work since it will be activated later thanks to the offset stat revival
 
@@ -152,7 +152,7 @@ namespace dae {
 			playerDummy->Transform().SetLocalPosition(player->Transform().GetWorldTransform().Position);
 			playerDummy->SetActive(true);
 
-			TIMERSYSTEM->RestartTimer(playerDummyStartActionKey);
+			playerDummy->GetComponent<MovementActionSequence>()->StartSequence();
 			TIMERSYSTEM->RestartTimer(offsetStatAfterTime_TimerKey);
 
 			};
@@ -181,9 +181,8 @@ namespace dae {
 
 	public:
 
-		MovementActionSequence CreateInstance(Enemy& enemyCreator) override
+		MovementActionSequenceHandle CreateInstance(Enemy& enemyCreator) override
 		{
-
 			GameObjectHandle enemy{ enemyCreator.GetGameObjectHandle() };
 			GameObjectHandle player{ enemyCreator.GetEnemyInstanceData().Player };
 			GameObjectHandle grid{ enemyCreator.GetEnemyInstanceData().Grid };
@@ -215,7 +214,7 @@ namespace dae {
 				};
 
 
-			MovementActionSequence captureZoneBehavior{ scene, enemy, "CaptureZoneBehavior" };
+			MovementActionSequence captureZoneBehavior{  "CaptureZoneBehavior" };
 
 			captureZoneBehavior.AddConditionToStartSequence([playerDummy]() {
 
@@ -363,8 +362,7 @@ namespace dae {
 
 					});
 
-
-				return captureZoneBehavior;
+				return enemy->AddComponent(captureZoneBehavior);
 		}
 
 	};

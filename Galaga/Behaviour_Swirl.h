@@ -5,7 +5,7 @@
 #include "Enemy.h"
 #include "MovementActionSequence.h"
 #include "Scene.h"
-#include "Swirls.h"
+#include "SwirlData.h"
 #include "WaveMovement.h"
 #include "GameTime.h"
 
@@ -18,7 +18,7 @@ namespace dae {
 		SwirlBehaviour(SwirlData swirlData) :
 			m_SwirlData(swirlData) {}
 
-		MovementActionSequence CreateInstance(Enemy& enemyCreator) override
+		MovementActionSequenceHandle CreateInstance(Enemy& enemyCreator) override
 		{
 			SwirlData swirlData = m_SwirlData;
 			glm::vec3 endRelativePos{};
@@ -47,7 +47,7 @@ namespace dae {
 				};
 
 
-			MovementActionSequence swirlBehaviour{ scene,  enemy, "SwirlBehaviour" };
+			MovementActionSequence swirlBehaviour{ "SwirlBehaviour" };
 
 			//-------SPAWN PLAYER--------
 
@@ -179,7 +179,7 @@ namespace dae {
 
 			swirlBehaviour.AddEndSubAction(reParent);
 
-			return swirlBehaviour;
+			return enemy->AddComponent(swirlBehaviour);
 		}
 
 	private:

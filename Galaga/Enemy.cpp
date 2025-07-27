@@ -161,7 +161,7 @@ void dae::Enemy::SetStartingFormationBehaviour(EnemyBehaviour& enemyBehaviour)
 
 void dae::Enemy::AddActingBehaviour(EnemyBehaviour& enemyBehaviour)
 {
-	MovementActionSequence sequence{ enemyBehaviour.CreateInstance(*this) };
+	MovementActionSequenceHandle sequence{ enemyBehaviour.CreateInstance(*this) };
 
 	GameObjectHandle self = m_Self;
 
@@ -169,7 +169,7 @@ void dae::Enemy::AddActingBehaviour(EnemyBehaviour& enemyBehaviour)
 
 	CEnemyFormation* enemyManager = m_EnemyInstanceData.EnemyManager;
 
-	sequence.AddEndSubAction([self, pointsInFormation, enemyManager]() mutable 
+	sequence->AddEndSubAction([self, pointsInFormation, enemyManager]() mutable 
 		{
 
 			self->GetComponent<CStatController>()->CreateStat(StatType::Points, pointsInFormation);
@@ -182,34 +182,34 @@ void dae::Enemy::AddActingBehaviour(EnemyBehaviour& enemyBehaviour)
 
 bool dae::Enemy::StartFormation()
 {
-	return m_StartFormationSequence.RestartSequence();
+	return m_StartFormationSequence->RestartSequence();
 }
 
 const dae::MovementActionSequence& dae::Enemy::Act()
 {
 	int chosenIndex = Random::GetRandomBetweenRange(0, (int)m_EnemyActingSequences.size() - 1);
 
-	if (!m_EnemyActingSequences[chosenIndex].RestartSequence())
+	if (!m_EnemyActingSequences[chosenIndex]->RestartSequence())
 	{
 		chosenIndex = 0;
-		m_EnemyActingSequences[chosenIndex].RestartSequence();
+		m_EnemyActingSequences[chosenIndex]->RestartSequence();
 	}
 
 	m_Self->GetComponent<CStatController>()->CreateStat(StatType::Points, m_PointsWhileDiving);
 
 	m_CurrentEnemyActingSequence = chosenIndex;
 
-	return m_EnemyActingSequences[chosenIndex];
+	return *m_EnemyActingSequences[chosenIndex];
 }
 
 bool dae::Enemy::IsActing()const {
 
-	return m_EnemyActingSequences[m_CurrentEnemyActingSequence].IsActing();
+	return m_EnemyActingSequences[m_CurrentEnemyActingSequence]->IsActing();
 }
 
 void dae::Enemy::StopActing()
 {
-	m_EnemyActingSequences[m_CurrentEnemyActingSequence].StopSequence();
+	m_EnemyActingSequences[m_CurrentEnemyActingSequence]->StopSequence();
 }
 
 const dae::EnemyInstanceData& dae::Enemy::GetEnemyInstanceData() const

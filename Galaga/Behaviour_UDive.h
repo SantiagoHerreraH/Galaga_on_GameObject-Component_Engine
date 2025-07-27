@@ -5,7 +5,7 @@
 #include "Enemy.h"
 #include "MovementActionSequence.h"
 #include "Scene.h"
-#include "Swirls.h"
+#include "SwirlData.h"
 #include "WaveMovement.h"
 #include "GameTime.h"
 
@@ -15,7 +15,7 @@ namespace dae {
 
 	public:
 
-		MovementActionSequence CreateInstance(Enemy& enemyCreator) override
+		MovementActionSequenceHandle CreateInstance(Enemy& enemyCreator) override
 		{
 
 
@@ -41,7 +41,7 @@ namespace dae {
 				};
 
 
-			MovementActionSequence uDiveBehavior{ scene, enemy, "UDiveBehavior" };
+			MovementActionSequence uDiveBehavior{ "UDiveBehavior" };
 
 			//-------GO BEHIND THE PLAYER--------
 
@@ -139,7 +139,7 @@ namespace dae {
 
 				uDiveBehavior.AddEndSubAction(reParent);
 
-				return uDiveBehavior;
+				return enemy->AddComponent(uDiveBehavior);
 		}
 
 	};

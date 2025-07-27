@@ -3,6 +3,7 @@
 #include "EnemyFormation.h"
 #include "Player.h"
 
+
 namespace dae {
 
 
@@ -22,11 +23,13 @@ namespace dae {
 	struct RoundManagerType {
 
 		std::vector<RoundType> GameRounds;
+		int PlayerCount = 1;
 	};
 
 	void from_json(const nlohmann::json& j, RoundManagerType& roundManagerType) {
 
 		j.at("GameRounds").get_to(roundManagerType.GameRounds);
+		j.at("PlayerCount").get_to(roundManagerType.PlayerCount);
 	}
 
 	class RoundManager
@@ -38,7 +41,7 @@ namespace dae {
 		bool LoadRoundManagerType(const std::string& fileName);
 		void CreateRounds();
 		void CreateHighscoreScene();
-		void CreatePlayer();
+		void CreatePlayers();
 		void CreateParticleSystem();
 
 		struct RoundManagerData {
@@ -60,9 +63,14 @@ namespace dae {
 				return CurrentRoundIdx < (RoundManagerType.GameRounds.size() - 1);
 			}
 
+			GalagaPlayer& GetRandomPlayer() {
+				return Players[Random::GetRandomBetweenRange(0, (int)Players.size())];
+			}
+
 			RoundManagerType RoundManagerType;
 			size_t CurrentRoundIdx{ 0 };
-			GalagaPlayer Player;
+			std::vector<GalagaPlayer> Players;
+			int PlayerDeaths;
 			std::vector<std::string> SceneNames;
 			std::string HighscoreSceneName;
 			GameObjectHandle ParticleSystemGameObj;

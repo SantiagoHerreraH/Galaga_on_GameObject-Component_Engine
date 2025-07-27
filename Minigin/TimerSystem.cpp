@@ -1,5 +1,6 @@
 #include "TimerSystem.h"
 #include "GameTime.h"
+#include "MovementActionSequence.h"
 
 dae::Timer::Timer()
 {
@@ -51,6 +52,7 @@ float dae::Timer::GetDuration() const
 {
 	return m_Duration;
 }
+
 
 void dae::Timer::SetDuration(float durationInSeconds)
 {

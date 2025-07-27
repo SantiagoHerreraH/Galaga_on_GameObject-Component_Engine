@@ -4,10 +4,16 @@
 #include <limits>
 
 #include "Scene.h"
+#include "Command.h"
 
 
 
 namespace dae {
+
+	struct PlayerType {
+		std::string Texture;
+		std::shared_ptr<ICommand> CommandOnShoot;
+	};
 
 	class GalagaPlayer 
 	{

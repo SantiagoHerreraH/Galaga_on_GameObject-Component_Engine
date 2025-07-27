@@ -132,10 +132,10 @@ dae::GalagaPlayer::GalagaPlayer(const glm::vec2& startPos, float zRotation)
 	//----- ACTIONS -----
 
 	// - Movement Action
-	auto moveLeft = [](GameObject& gameObj) mutable {gameObj.GetComponent<CMovement2D>()->AddSingleFrameMovementInput(glm::vec2{ -1,  0 }); };
-	auto moveRight = [](GameObject& gameObj) mutable {gameObj.GetComponent<CMovement2D>()->AddSingleFrameMovementInput(glm::vec2{ 1,  0 }); };
-	auto moveUp = [](GameObject& gameObj) mutable {gameObj.GetComponent<CMovement2D>()->AddSingleFrameMovementInput(glm::vec2{ 0, -1 }); };
-	auto moveDown = [](GameObject& gameObj) mutable {gameObj.GetComponent<CMovement2D>()->AddSingleFrameMovementInput(glm::vec2{ 0,  1 }); };
+	auto moveLeft	= [](GameObject& gameObj) mutable {gameObj.GetComponent<CMovement2D>()->AddSingleFrameMovementInput(glm::vec2{ -1,  0 }); };
+	auto moveRight	= [](GameObject& gameObj) mutable {gameObj.GetComponent<CMovement2D>()->AddSingleFrameMovementInput(glm::vec2{ 1,  0 }); };
+	auto moveUp		= [](GameObject& gameObj) mutable {gameObj.GetComponent<CMovement2D>()->AddSingleFrameMovementInput(glm::vec2{ 0, -1 }); };
+	auto moveDown	= [](GameObject& gameObj) mutable {gameObj.GetComponent<CMovement2D>()->AddSingleFrameMovementInput(glm::vec2{ 0,  1 }); };
 
 
 	// - Shooting Action
