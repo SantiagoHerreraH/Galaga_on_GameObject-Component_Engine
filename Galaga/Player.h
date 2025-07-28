@@ -10,17 +10,19 @@
 
 namespace dae {
 
+	//finish this and do the main scene set up
 	struct PlayerType {
-		std::string Texture;
-		std::shared_ptr<ICommand> CommandOnShoot;
+		std::string TextureName;
+		std::shared_ptr<WeaponType> WeaponType;
 	};
 
 	class GalagaPlayer 
 	{
 	public:
 		GalagaPlayer() {}
-		GalagaPlayer(const glm::vec2& startPos, float zRotation);
+		GalagaPlayer(const glm::vec2& startPos, float zRotation, const PlayerType& PlayerType);
 
+		GameObject& GetGameObject() { return *m_CurrentPlayer; }
 		GameObjectHandle GetGameObjectHandle();
 
 		void AddScene(Scene& scene);

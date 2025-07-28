@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <memory>
 #include "Component.h"
+#include "GameObject.h"
 
 namespace dae {
 
@@ -18,9 +19,11 @@ namespace dae {
 		virtual void End(GameObject& actor) = 0;
 	};
 
-	using StateCondition = std::function<bool()>;
+	class CStateMachine;
 
-	class StateMachine final : public Component {
+	using StateCondition = std::function<bool(const CStateMachine& self, const GameObject& selfGameObject)>;
+
+	class CStateMachine final : public Component {
 
 	public:
 		void Start() override;
@@ -31,22 +34,27 @@ namespace dae {
 		bool AddConnection(const std::string& from, const std::string& to, const StateCondition& condition);
 		bool SetState(const std::string& stateName);
 
+		void AddTrigger(const std::string& triggerName);
+		void Trigger(const std::string& triggerName);//triggers are active for one tick
+		bool HasTrigger(const std::string& triggerName);
+		bool IsTriggerActive(const std::string& triggerName)const;
+
 	private:
-		
+
 		struct StateConnection;
 		struct StateData {
 			std::string StateName;
 			std::shared_ptr<IState> State;
-			std::vector<StateCondition> GateConditions;
+			std::vector<dae::StateCondition> GateConditions;
 			std::vector<StateConnection> ConnectedStates;
 
-			bool GateConditionsAllow() const;
+			bool GateConditionsAllow(const CStateMachine& self, const GameObject& selfGameObject) const;
 		};
 		struct StateConnection {
 			std::shared_ptr<StateData> StateData;
-			std::vector<StateCondition> ConditionsToTransitionToState;
+			std::vector<dae::StateCondition> ConditionsToTransitionToState;
 
-			bool TransitionAllowed()const;
+			bool TransitionAllowed(const CStateMachine& self, const GameObject& selfGameObject)const;
 		};
 		
 
@@ -54,6 +62,17 @@ namespace dae {
 		std::unordered_map<std::string, std::shared_ptr<StateData>> m_StateName_To_StateData;
 
 		std::shared_ptr<StateData> m_CurrentStateData{nullptr};
+
+		struct TriggerData {
+			std::string Name;
+			bool State;
+		};
+
+		std::vector<TriggerData> m_Triggers;
+
+
+		TriggerData* GetTrigger(const std::string& triggerName);
+		const TriggerData* GetTrigger(const std::string& triggerName)const;
 	};
 
 }

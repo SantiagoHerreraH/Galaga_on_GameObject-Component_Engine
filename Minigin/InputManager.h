@@ -10,6 +10,7 @@
 #include <SDL.h>
 #include <Windows.h>
 #include <Xinput.h>
+#include <unordered_set>
 
 namespace dae
 {
@@ -94,7 +95,8 @@ namespace dae
 		void SetData(const InputControllerData& data);
 		bool GetNextAvailableControllerInstance(ControllerInstance& out); //return false if no available controller instance
 		void ProcessInput();
-
+		void EnableInput(PlayerId playerId);
+		void DisableInput(PlayerId playerId);
 
 		void ClearKeys();
 		void BindKey(const GamepadKeyData& gamepadKeyData);
@@ -141,6 +143,7 @@ namespace dae
 			size_t m_ControllerIndex;
 		};
 
+		std::unordered_set<PlayerId> m_DisabledPlayerIds;
 		std::vector<bool> m_KeyboardKeyStates;
 		std::vector<GamepadInputManager> m_GamepadInputManagers;
 		InputControllerData m_Data;

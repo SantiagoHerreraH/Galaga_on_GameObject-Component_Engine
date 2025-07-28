@@ -19,8 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Behaviour_CaptureZone.cpp" />
+    <ClCompile Include="CaptureZoneWeaponType.cpp" />
+    <ClCompile Include="CCaptureZone.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="EnemyFormation.cpp" />
+    <ClCompile Include="HighscoreScene.cpp" />
     <ClCompile Include="PlayerVsScene.cpp" />
     <ClCompile Include="ScoreSaver.cpp" />
     <ClCompile Include="GalagaPlayer.cpp" />
@@ -40,7 +44,12 @@
     <ClInclude Include="Behaviour_UDive.h" />
     <ClInclude Include="Behaviour_ZigZagDive.h" />
     <ClInclude Include="Bullet.h" />
+    <ClInclude Include="CaptureZoneWeaponType.h" />
+    <ClInclude Include="CCaptureZone.h" />
+    <ClInclude Include="CreateParticleSystem.h" />
+    <ClInclude Include="HighscoreScene.h" />
     <ClInclude Include="PlayerVsScene.h" />
+    <ClInclude Include="WeaponType.h" />
     <ClInclude Include="StartSequenceCommand.h" />
     <ClInclude Include="CollisionLayers.h" />
     <ClInclude Include="DefineData_EnemyGridData.h" />

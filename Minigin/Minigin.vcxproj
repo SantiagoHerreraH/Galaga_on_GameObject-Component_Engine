@@ -112,7 +112,7 @@
     <ClInclude Include="Font.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameObjectPool.h" />
-    <ClInclude Include="Header.h" />
+    <ClInclude Include="ICreate.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="ISystem.h" />
     <ClInclude Include="MathTools.h" />

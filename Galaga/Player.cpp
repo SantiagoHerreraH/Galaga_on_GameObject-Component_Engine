@@ -16,7 +16,7 @@
 #include "Bullet.h"
 #include "Gun.h"
 
-dae::GalagaPlayer::GalagaPlayer(const glm::vec2& startPos, float zRotation)
+dae::GalagaPlayer::GalagaPlayer(const glm::vec2& startPos, float zRotation, const PlayerType& playerType)
 {
 
 	//------- PLAYER
@@ -30,14 +30,9 @@ dae::GalagaPlayer::GalagaPlayer(const glm::vec2& startPos, float zRotation)
 	shootingPivot->Transform().SetLocalPositionY(-10);
 	shootingPivot->Transform().SetParent(*currentPlayer, dae::ETransformReparentType::KeepLocalTransform);
 
-	GunData gunData{};
-	gunData.BulletAmount = 10;
-	gunData.BulletLifeTime = 1.5;
-	gunData.Shooter = currentPlayer;
-	gunData.TimeBetweenShots = 0.3f;
-	CGun gun{ gunData };
-	shootingPivot->AddComponent(gun);
+	auto weaponType = playerType.WeaponType;
 
+	weaponType->Create(shootingPivot);
 
 	//----- COMPONENTS -----
 
@@ -65,7 +60,7 @@ dae::GalagaPlayer::GalagaPlayer(const glm::vec2& startPos, float zRotation)
 
 	TransformData textureTransform{};
 	textureTransform.Scale = { 0.5f, 0.5f , 0.5f };
-	dae::CTextureHandle currentTexture{ "galaga.png" };
+	dae::CTextureHandle currentTexture{ playerType.TextureName };// { "galaga.png" };
 	currentTexture.SetTextureTransform(textureTransform);
 	currentTexture.Center();
 
@@ -140,7 +135,7 @@ dae::GalagaPlayer::GalagaPlayer(const glm::vec2& startPos, float zRotation)
 
 	// - Shooting Action
 
-	auto shootAction = [shootingPivot](GameObject&) mutable { shootingPivot->GetComponent<CGun>()->Shoot(); };
+	auto shootAction = [shootingPivot, weaponType](GameObject&) mutable { weaponType->Execute(*shootingPivot); };
 
 	//Events
 

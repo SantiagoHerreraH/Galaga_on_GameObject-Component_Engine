@@ -63,7 +63,17 @@ dae::Enemy::Enemy(const EnemyInstanceData& enemyInstanceData, const EnemyType& e
 
 	//------ CREATE GAMEOBJECT
 
-	GameObjectHandle enemy{ enemyInstanceData.Scene->CreateGameObject() }; //, transformData, animation, rectTrigger, statController
+	GameObjectHandle enemy{};
+
+	if (enemyInstanceData.Enemy == nullptr)
+	{
+		enemy = enemyInstanceData.Scene->CreateGameObject();
+	}
+	else
+	{
+		enemy = enemyInstanceData.Enemy;
+	}
+
 	m_Self = enemy;
 	enemy->Transform().SetLocalTransform(transformData);
 	enemy->AddComponent(animation);

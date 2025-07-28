@@ -42,3 +42,18 @@ void dae::CGun::Shoot()
 	}
 }
 
+void dae::GunWeaponType::Create(const GameObjectHandle& gameObject)
+{
+	GunData gunData{};
+	gunData.BulletAmount = 10;
+	gunData.BulletLifeTime = 1.5;
+	gunData.Shooter = gameObject;
+	gunData.TimeBetweenShots = 0.3f;
+	CGun gun{ gunData };
+	gameObject->AddComponent(gun);
+}
+
+void dae::GunWeaponType::Execute(GameObject& obj)
+{
+	obj.GetComponent<CGun>()->Shoot();
+}

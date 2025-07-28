@@ -42,7 +42,6 @@ namespace dae {
 		void CreateRounds();
 		void CreateHighscoreScene();
 		void CreatePlayers();
-		void CreateParticleSystem();
 
 		struct RoundManagerData {
 

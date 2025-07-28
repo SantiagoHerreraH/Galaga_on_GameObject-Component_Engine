@@ -24,6 +24,7 @@ namespace dae {
 		CPlayerController();
 		
 		void Start()override;
+		void SetActive(bool isActive)override;
 
 		bool IsValid()const;
 		PlayerId GetPlayerId();

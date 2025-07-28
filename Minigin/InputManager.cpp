@@ -128,6 +128,16 @@ void dae::InputManager::ProcessInput()
 	}
 }
 
+void dae::InputManager::EnableInput(PlayerId playerId)
+{
+	m_DisabledPlayerIds.erase(playerId);
+}
+
+void dae::InputManager::DisableInput(PlayerId playerId)
+{
+	m_DisabledPlayerIds.insert(playerId);
+}
+
 void dae::InputManager::UpdateGamepadController()
 {
 	for (size_t i = 0; i < m_GamepadInputManagers.size(); i++)
@@ -144,6 +154,12 @@ void dae::InputManager::ProcessControllerInputs()
 	for (size_t i = 0; i < m_GamepadEvents.size(); i++)
 	{
 		auto& gamepadEvent = m_GamepadEvents[i];
+
+		if (m_DisabledPlayerIds.contains(gamepadEvent.PlayerId))
+		{
+			continue;
+		}
+
 		currentId = gamepadEvent.PlayerId + idOffset;
 
 		switch (gamepadEvent.ButtonState)
@@ -168,6 +184,11 @@ void dae::InputManager::ProcessControllerInputs()
 
 void dae::InputManager::ProcessKeyboardInputs()
 {
+	if (m_DisabledPlayerIds.contains(0))
+	{
+		return;
+	}
+
 	SDL_PumpEvents();
 	const Uint8* keyboardState = SDL_GetKeyboardState(nullptr);
 
@@ -175,6 +196,8 @@ void dae::InputManager::ProcessKeyboardInputs()
 	{
 		auto& keyboardEvent = m_KeyboardEvents[i];
 		bool triggered = false;
+
+		
 
 		if (!m_KeyboardKeyStates[keyboardEvent.Key] && keyboardState[keyboardEvent.Key])
 		{

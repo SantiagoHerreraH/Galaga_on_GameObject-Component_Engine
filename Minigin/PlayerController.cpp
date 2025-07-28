@@ -35,6 +35,20 @@ void dae::CPlayerController::Start()
 	}
 }
 
+void dae::CPlayerController::SetActive(bool isActive)
+{
+	Component::SetActive(isActive);
+
+	if (isActive)
+	{
+		InputManager::GetInstance().EnableInput(m_ControllerInstance.PlayerId);
+	}
+	else
+	{
+		InputManager::GetInstance().DisableInput(m_ControllerInstance.PlayerId);
+	}
+}
+
 bool dae::CPlayerController::IsValid() const
 {
 	return m_IsValid;

@@ -8,7 +8,7 @@ namespace dae {
 
 	public:
 		virtual ~ICreate() = default;
-		virtual void Create(GameObject& gameObject) = 0;
+		virtual void Create(const GameObjectHandle& gameObject) = 0;
 	};
 
 }

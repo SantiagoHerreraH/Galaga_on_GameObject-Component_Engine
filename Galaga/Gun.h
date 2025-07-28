@@ -2,6 +2,7 @@
 
 #include "Component.h"
 #include "TimerSystem.h"
+#include "WeaponType.h"
 
 namespace dae {
 
@@ -27,6 +28,15 @@ namespace dae {
 		TimerKey m_TimeBetweenShotsTimerKey;
 
 		std::vector<GameObjectHandle> m_Bullets;
+	};
+
+
+	class GunWeaponType : public WeaponType {
+
+	public:
+		void Create(const GameObjectHandle& gameObject) override;
+		void Execute(GameObject& obj) override;
+
 	};
 
 }

@@ -5,13 +5,15 @@
 #include "RoundUI.h"
 #include "ParticleSystem.h"
 #include "ScoreSaver.h"
+#include "Gun.h"
+#include "CreateParticleSystem.h"
 
 dae::RoundManager::RoundManager(const std::string& fileName) : 
     m_RoundManagerData(std::make_shared<RoundManagerData>())
 {
     if (LoadRoundManagerType(fileName))
     {
-        CreateParticleSystem();
+        m_RoundManagerData->ParticleSystemGameObj = CreateParticleSystem();
         CreateHighscoreScene();
         CreatePlayers();
         CreateRounds();
@@ -26,11 +28,15 @@ void dae::RoundManager::CreatePlayers()
 
     auto data = m_RoundManagerData;
 
+    PlayerType playerType{};
+    playerType.TextureName = "galaga.png";
+    playerType.WeaponType = std::make_shared<GunWeaponType>();
+
     for (size_t i = 0; i < m_RoundManagerData->RoundManagerType.PlayerCount; i++)
     {
         currentPlayerPos.x = int((g_WindowWidth/ (m_RoundManagerData->RoundManagerType.PlayerCount + 1)) * (i + 1) );
 
-        m_RoundManagerData->Players.push_back(GalagaPlayer{ currentPlayerPos, 180 });
+        m_RoundManagerData->Players.push_back(GalagaPlayer{ currentPlayerPos, 180 , playerType });
         m_RoundManagerData->Players.back().SubscribeOnPlayerDie([data]()
             {
                 ++(data->PlayerDeaths);
@@ -44,23 +50,6 @@ void dae::RoundManager::CreatePlayers()
     }
 
    
-}
-
-void dae::RoundManager::CreateParticleSystem()
-{
-    m_RoundManagerData->ParticleSystemGameObj = std::make_shared<GameObject>();
-
-    CParticleSystem particleSystem{};
-    
-    particleSystem.SetNumber(50);
-    particleSystem.SetColorRange({0,0,0}, {255, 255, 255 });
-    particleSystem.SetMovementDirectionRange({0,1}, { 0,1 });
-    particleSystem.SetPositionRange({0,0}, {g_WindowWidth, g_WindowHeight});
-    particleSystem.SetMovementSpeedRange(50, 300);
-    particleSystem.SetBounds(true, Rect{0, 0, g_WindowWidth , g_WindowHeight });
-
-    m_RoundManagerData->ParticleSystemGameObj->AddComponent(particleSystem);
-
 }
 
 bool dae::RoundManager::LoadRoundManagerType(const std::string& fileName)

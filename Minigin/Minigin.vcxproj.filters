@@ -141,7 +141,7 @@
     <ClInclude Include="CButtonGrid.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Header.h">
+    <ClInclude Include="ICreate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

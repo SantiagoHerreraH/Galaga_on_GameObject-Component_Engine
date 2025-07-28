@@ -1,7 +1,7 @@
 #include "StateMachine.h"
 
 namespace dae {
-	void StateMachine::Start()
+	void CStateMachine::Start()
 	{
 		if (!m_CurrentStateData)
 		{
@@ -10,13 +10,13 @@ namespace dae {
 
 		m_CurrentStateData->State->Start(Owner());
 	}
-	void StateMachine::Update()
+	void CStateMachine::Update()
 	{
 		m_CurrentStateData->State->Update(Owner());
 
 		for (size_t i = 0; i < m_CurrentStateData->ConnectedStates.size(); i++)
 		{
-			if (m_CurrentStateData->ConnectedStates[i].TransitionAllowed())
+			if (m_CurrentStateData->ConnectedStates[i].TransitionAllowed(*this, OwnerConst()))
 			{
 				m_CurrentStateData->State->End(Owner());
 				m_CurrentStateData = m_CurrentStateData->ConnectedStates[i].StateData;
@@ -24,9 +24,14 @@ namespace dae {
 				break;
 			}
 		}
+
+		for (size_t i = 0; i < m_Triggers.size(); i++)
+		{
+			m_Triggers[i].State = false;
+		}
 	}
 
-	void dae::StateMachine::AddState(const std::shared_ptr<IState>& state, const std::string& stateName)
+	void dae::CStateMachine::AddState(const std::shared_ptr<IState>& state, const std::string& stateName)
 	{
 		if (m_StateName_To_StateData.contains(stateName))
 		{
@@ -41,7 +46,7 @@ namespace dae {
 		}
 	}
 
-	bool dae::StateMachine::AddGateCondition(const std::string& stateName, const StateCondition& condition)
+	bool dae::CStateMachine::AddGateCondition(const std::string& stateName, const StateCondition& condition)
 	{
 		if (m_StateName_To_StateData.contains(stateName))
 		{
@@ -53,7 +58,7 @@ namespace dae {
 		return false;
 	}
 
-	bool dae::StateMachine::AddConnection(const std::string& from, const std::string& to, const StateCondition& condition)
+	bool dae::CStateMachine::AddConnection(const std::string& from, const std::string& to, const StateCondition& condition)
 	{
 		if (m_StateName_To_StateData.contains(from) && m_StateName_To_StateData.contains(to))
 		{
@@ -67,7 +72,7 @@ namespace dae {
 		return false;
 	}
 
-	bool dae::StateMachine::SetState(const std::string& stateName)
+	bool dae::CStateMachine::SetState(const std::string& stateName)
 	{
 		if (m_StateName_To_StateData.contains(stateName))
 		{
@@ -79,7 +84,7 @@ namespace dae {
 		return false;
 	}
 
-	StateMachine::StateConnection& StateMachine::GetStateConnection(StateData& from, const std::string& to)
+	CStateMachine::StateConnection& CStateMachine::GetStateConnection(StateData& from, const std::string& to)
 	{
 		for (size_t i = 0; i < from.ConnectedStates.size(); i++)
 		{
@@ -96,15 +101,41 @@ namespace dae {
 		return from.ConnectedStates.back();
 	}
 
-	bool dae::StateMachine::StateConnection::TransitionAllowed() const
+	dae::CStateMachine::TriggerData* CStateMachine::GetTrigger(const std::string& triggerName)
 	{
-		if (!StateData->GateConditionsAllow())
+		for (size_t i = 0; i < m_Triggers.size(); i++)
+		{
+			if (m_Triggers[i].Name == triggerName)
+			{
+
+				return &m_Triggers[i];
+			}
+		}
+		return nullptr;
+	}
+
+	const dae::CStateMachine::TriggerData* CStateMachine::GetTrigger(const std::string& triggerName) const
+	{
+		for (size_t i = 0; i < m_Triggers.size(); i++)
+		{
+			if (m_Triggers[i].Name == triggerName)
+			{
+
+				return &m_Triggers[i];
+			}
+		}
+		return nullptr;
+	}
+
+	bool dae::CStateMachine::StateConnection::TransitionAllowed(const CStateMachine& self, const GameObject& selfGameObject) const
+	{
+		if (!StateData->GateConditionsAllow(self, selfGameObject))
 		{
 			return false;
 		}
 		for (size_t i = 0; i < ConditionsToTransitionToState.size(); i++)
 		{
-			if (!ConditionsToTransitionToState[i]())
+			if (!ConditionsToTransitionToState[i](self, selfGameObject))
 			{
 				return false;
 			}
@@ -113,11 +144,11 @@ namespace dae {
 		return true;
 	}
 
-	bool dae::StateMachine::StateData::GateConditionsAllow() const
+	bool dae::CStateMachine::StateData::GateConditionsAllow(const CStateMachine& self, const GameObject& selfGameObject) const
 	{
 		for (size_t i = 0; i < GateConditions.size(); i++)
 		{
-			if (!GateConditions[i]())
+			if (!GateConditions[i](self, selfGameObject))
 			{
 				return false;
 			}
@@ -127,5 +158,42 @@ namespace dae {
 	}
 
 
+	void dae::CStateMachine::AddTrigger(const std::string& triggerName) {
+
+		if (!HasTrigger(triggerName))
+		{
+			m_Triggers.push_back(TriggerData{ triggerName, false });
+		}
+	}
+	void dae::CStateMachine::Trigger(const std::string& triggerName) {
+
+		TriggerData* data = GetTrigger(triggerName);
+		if (data)
+		{
+			data->State = true;
+		}
+	}
+	bool CStateMachine::HasTrigger(const std::string& triggerName)
+	{
+		for (size_t i = 0; i < m_Triggers.size(); i++)
+		{
+			if (m_Triggers[i].Name == triggerName)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	bool dae::CStateMachine::IsTriggerActive(const std::string& triggerName)const {
+		
+		const TriggerData* data = GetTrigger(triggerName);
+
+		if (data)
+		{
+			return data->State;
+		}
+
+		return false;
+	}
 }
 

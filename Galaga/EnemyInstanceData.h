@@ -10,6 +10,7 @@ namespace dae {
 		GameObjectHandle Grid;
 		glm::vec2 RelativePos;
 		GameObjectHandle Player;
+		GameObjectHandle Enemy{nullptr}; //if nullptr, create, else use
 		bool MoveTowardsLeft;
 	};
 }

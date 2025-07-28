@@ -1,0 +1,88 @@
+#include "CaptureZoneWeaponType.h"
+#include "StateMachine.h"
+#include "Movement.h"
+#include "CCaptureZone.h"
+#include <memory>
+
+dae::CaptureZoneWeaponType::CaptureZoneWeaponType(const GameObjectHandle& target, const std::string& triggerName) : 
+	m_Target(target),
+	m_TriggerName(triggerName)
+{
+}
+
+void dae::CaptureZoneWeaponType::Create(const GameObjectHandle& gameObject)
+{
+	auto target = m_Target;
+	CCaptureZone captureZone{ m_Target , glm::vec3{ 0,50,0 } };
+
+	gameObject->AddComponent(captureZone);
+
+	//---------
+	std::string triggerName{ m_TriggerName };
+
+	std::shared_ptr<CStateMachine> stateMachine{ gameObject->AddComponent(CStateMachine{})};
+	stateMachine->AddTrigger(triggerName);
+	stateMachine->AddState(std::make_shared<IdleState>(), IdleState::Name());
+	stateMachine->AddState(std::make_shared<FollowState	>(m_Target), FollowState::Name());
+	stateMachine->AddState(std::make_shared<AscendState	>(), AscendState::Name());
+	stateMachine->AddState(std::make_shared<CaptureState	>(), CaptureState::Name());
+
+
+	stateMachine->AddConnection(IdleState::Name(), FollowState::Name(), [triggerName](const CStateMachine& stateMachine, const GameObject& gameObj) {
+
+		return stateMachine.IsTriggerActive(triggerName);
+		});
+	stateMachine->AddConnection(FollowState::Name(), CaptureState::Name(), [target](const CStateMachine& stateMachine, const GameObject& gameObj) {
+
+		glm::vec2 delta = target->Transform().GetWorldTransform().Position - gameObj.TransformConst().GetWorldTransform().Position;
+		return glm::length(delta) < 10;
+		});
+	stateMachine->AddConnection(CaptureState::Name(), AscendState::Name(), [triggerName](const CStateMachine& stateMachine, const GameObject& gameObj) {
+
+		return stateMachine.IsTriggerActive(triggerName);
+		});
+	stateMachine->AddConnection(AscendState::Name(), IdleState::Name(), [](const CStateMachine& stateMachine, const GameObject& gameObj) {
+
+		return gameObj.TransformConst().GetWorldTransform().Position.y < 50;
+		});
+}
+
+void dae::CaptureZoneWeaponType::Execute(GameObject& obj)
+{
+	obj.GetComponent<CStateMachine>()->Trigger(m_TriggerName);
+}
+
+void dae::IdleState::Start(GameObject& actor)
+{
+	actor.GetComponent<CMovement2D>()->SetMaxSpeed(80);
+}
+
+
+void dae::FollowState::Start(GameObject& actor) {
+	actor.GetComponent<CMovement2D>()->SetMaxSpeed(100);
+}
+void dae::FollowState::Update(GameObject& actor) 
+{
+	glm::vec2 delta = m_Target->Transform().GetWorldTransform().Position - actor.Transform().GetWorldTransform().Position;
+	actor.GetComponent<CMovement2D>()->AddSingleFrameMovementInput(delta);
+}
+
+void dae::AscendState::Start(GameObject& actor) {
+	actor.GetComponent<CMovement2D>()->SetMaxSpeed(100);
+}
+void dae::AscendState::Update(GameObject& actor) {
+	actor.GetComponent<CMovement2D>()->AddSingleFrameMovementInput(glm::vec2{ 0,-1 });
+}
+
+//CaptureState
+
+void dae::CaptureState::Start(GameObject& actor) {
+	actor.GetComponent<CCaptureZone>()->SetActiveCaptureZone(true);
+	actor.GetComponent<CMovement2D>()->SetMaxSpeed(0);
+}
+
+
+void dae::CaptureState::End(GameObject& actor) {
+
+	actor.GetComponent<CCaptureZone>()->SetActiveCaptureZone(false);
+}
