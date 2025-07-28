@@ -33,7 +33,7 @@ void dae::GameObject::SetActive(bool active, bool affectChildren)
 
 	for (size_t i = 0; i < m_Components.size(); i++)
 	{
-		m_Components[i]->SetActive(active);
+		m_Components[i].ComponentHandle->SetActive(active);
 	}
 
 	if (affectChildren)
@@ -52,9 +52,9 @@ void dae::GameObject::Start()
 
 	for (size_t i = 0; i < m_Components.size(); i++)
 	{
-		if (m_Components[i]->IsActive())
+		if (m_Components[i].ComponentHandle->IsActive())
 		{
-			m_Components[i]->Start();
+			m_Components[i].ComponentHandle->Start();
 		}
 	}
 }
@@ -63,9 +63,9 @@ void dae::GameObject::Update()
 {
 	for (size_t i = 0; i < m_Components.size(); i++)
 	{
-		if (m_Components[i]->IsActive())
+		if (m_Components[i].ComponentHandle->IsActive())
 		{
-			m_Components[i]->Update();
+			m_Components[i].ComponentHandle->Update();
 		}
 	}
 }
@@ -74,9 +74,9 @@ void dae::GameObject::FixedUpdate()
 {
 	for (size_t i = 0; i < m_Components.size(); i++)
 	{
-		if (m_Components[i]->IsActive())
+		if (m_Components[i].ComponentHandle->IsActive())
 		{
-			m_Components[i]->FixedUpdate();
+			m_Components[i].ComponentHandle->FixedUpdate();
 		}
 	}
 }
@@ -85,9 +85,9 @@ void dae::GameObject::Render() const
 {
 	for (size_t i = 0; i < m_Components.size(); i++)
 	{
-		if (m_Components[i]->IsActive())
+		if (m_Components[i].ComponentHandle->IsActive())
 		{
-			m_Components[i]->Render();
+			m_Components[i].ComponentHandle->Render();
 		}
 	}
 }

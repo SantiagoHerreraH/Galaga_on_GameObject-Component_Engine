@@ -87,8 +87,8 @@ dae::HighscoreScene::HighscoreScene(std::vector<Player> players, const std::stri
             scene.AddGameObjectHandle(player.GetGameObjectHandle());
             CPlayerController& playerController = *player.GetGameObject().GetComponent<CPlayerController>();
 
-            playerController.BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_SPACE,	    std::make_unique<EventTriggerCommand>(backToMainMenuEvent) });
-            playerController.BindKey(dae::PlayerGamepadKeyData{ ButtonState::BUTTON_PRESSED, GamepadButton::ButtonX,	 std::make_unique<EventTriggerCommand>(backToMainMenuEvent) });
+            playerController.BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_SPACE,	     std::make_shared<EventTriggerCommand>(backToMainMenuEvent) });
+            playerController.BindKey(dae::PlayerGamepadKeyData{ ButtonState::BUTTON_PRESSED, GamepadButton::ButtonX,	 std::make_shared<EventTriggerCommand>(backToMainMenuEvent) });
 
 
             ++count;

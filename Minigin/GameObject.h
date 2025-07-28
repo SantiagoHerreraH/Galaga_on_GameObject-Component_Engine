@@ -53,7 +53,13 @@ namespace dae
 
 		dae::Transform m_Transform;
 		bool m_IsActive{ true };
-		std::vector<ComponentHandle> m_Components;
+
+		struct ComponentData {
+			ComponentHandle ComponentHandle;
+			std::type_index Type;
+		};
+
+		std::vector<ComponentData> m_Components;
 
 	};
 
@@ -63,10 +69,10 @@ namespace dae
 	template<DerivedFromComponent ComponentType>
 	inline std::shared_ptr<ComponentType> GameObject::AddComponent(const ComponentType& component)
 	{
-		m_Components.push_back(std::make_shared<Component>(component));
-		m_Components.back()->SetOwner(*this);
+		m_Components.push_back(ComponentData{ std::make_shared<ComponentType>(component) , typeid(ComponentType)});
+		m_Components.back().ComponentHandle->SetOwner(*this);
 
-		return std::dynamic_pointer_cast<ComponentType>(m_Components.back());
+		return std::dynamic_pointer_cast<ComponentType>(m_Components.back().ComponentHandle);
 	}
 
 	template<DerivedFromComponent ComponentType>
@@ -76,7 +82,7 @@ namespace dae
 
 		for (size_t i = 0; i < m_Components.size(); i++)
 		{
-			if (m_Components[i]->GetType() == typeIndex)
+			if (m_Components[i].Type == typeIndex)
 			{
 				return true;
 			}
@@ -92,9 +98,11 @@ namespace dae
 
 		for (size_t i = 0; i < m_Components.size(); i++)
 		{
-			if (m_Components[i]->GetType() == typeIndex)
+			if (m_Components[i].Type == typeIndex)
 			{
-				return std::dynamic_pointer_cast<ComponentType>(m_Components[i]).get();
+				auto casted = std::dynamic_pointer_cast<ComponentType>(m_Components[i].ComponentHandle);
+
+				return casted.get();
 			}
 		}
 
@@ -108,9 +116,9 @@ namespace dae
 
 		for (size_t i = 0; i < m_Components.size(); i++)
 		{
-			if (m_Components[i]->GetType() == typeInfo)
+			if (m_Components[i].Type == typeInfo)
 			{
-				return std::dynamic_pointer_cast<ComponentType>(m_Components[i]).get();
+				return std::dynamic_pointer_cast<ComponentType>(m_Components[i].ComponentHandle).get();
 			}
 		}
 
@@ -123,9 +131,9 @@ namespace dae
 
 		for (size_t i = 0; i < m_Components.size(); i++)
 		{
-			if (m_Components[i]->GetType() == typeIndex)
+			if (m_Components[i].Type == typeIndex)
 			{
-				return std::dynamic_pointer_cast<ComponentType>(m_Components[i]);
+				return std::dynamic_pointer_cast<ComponentType>(m_Components[i].ComponentHandle);
 			}
 		}
 
@@ -139,9 +147,9 @@ namespace dae
 
 		for (size_t i = 0; i < m_Components.size(); i++)
 		{
-			if (m_Components[i]->GetType() == typeIndex)
+			if (m_Components[i].Type == typeIndex)
 			{
-				handles.push_back(std::dynamic_pointer_cast<ComponentType>(m_Components[i]));
+				handles.push_back(std::dynamic_pointer_cast<ComponentType>(m_Components[i].ComponentHandle));
 			}
 		}
 

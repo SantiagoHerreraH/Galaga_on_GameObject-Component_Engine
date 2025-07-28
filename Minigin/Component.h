@@ -23,8 +23,6 @@ namespace dae {
 		virtual bool IsActive()const;
 		virtual void SetActive(bool active);
 
-		std::type_index GetType();
-
 	private:
 		 
 		void SetOwner(GameObject& owner);

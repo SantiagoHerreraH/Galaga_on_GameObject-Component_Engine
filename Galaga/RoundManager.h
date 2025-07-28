@@ -15,9 +15,9 @@ namespace dae {
 
 	inline void from_json(const nlohmann::json& j, RoundType& roundType) {
 
-		j.at("FirstFormation ").get_to(roundType.FirstEnemyFormation);
+		j.at("FirstFormation").get_to(roundType.FirstEnemyFormation);
 		j.at("SecondFormation").get_to(roundType.SecondEnemyFormation);
-		j.at("ThirdFormation ").get_to(roundType.ThirdEnemyFormation);
+		j.at("ThirdFormation").get_to(roundType.ThirdEnemyFormation);
 	}
 
 	struct RoundManagerType {
@@ -42,7 +42,7 @@ namespace dae {
 	{
 	public:
 		RoundManager(const std::string& fileName);
-		const std::string& GetFirstRoundName()const;
+		std::string GetFirstRoundName()const;
 		const std::string& GetFileName()const;
 
 	private:

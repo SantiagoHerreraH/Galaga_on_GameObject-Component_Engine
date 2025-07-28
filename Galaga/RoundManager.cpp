@@ -24,7 +24,7 @@ dae::RoundManager::RoundManager(const std::string& fileName) :
 
 }
 
-const std::string& dae::RoundManager::GetFirstRoundName() const
+std::string dae::RoundManager::GetFirstRoundName() const
 {
     return m_FileName + " Round " + std::to_string(1);
 }
@@ -68,13 +68,12 @@ void dae::RoundManager::CreatePlayers()
 bool dae::RoundManager::LoadRoundManagerType(const std::string& fileName)
 {
     const auto fullPath = ResourceManager::GetInstance().GetDataPath() / fileName;
-    const auto completeFilename = std::filesystem::path(fullPath).filename().string();
 
-    std::ifstream file(completeFilename);
+    std::ifstream file(fullPath.string());
 
-    if (!file)
+    if (!file.is_open())
     {
-        std::cout << "\nRoundManager couldn't find file " + fileName;
+        std::cout << "\nRoundManager couldn't find file " + fullPath.string();
         return false;
     }
 

@@ -10,12 +10,12 @@ namespace dae {
 	struct PlayerGamepadKeyData {
 		ButtonState ButtonState;
 		GamepadButton GamepadButton;
-		std::unique_ptr<ICommand> OnTriggered;
+		std::shared_ptr<ICommand> OnTriggered;
 	};
 	struct PlayerKeyboardKeyData {
 		ButtonState ButtonState;
 		SDL_Scancode Key;
-		std::unique_ptr<ICommand> OnTriggered;
+		std::shared_ptr<ICommand> OnTriggered;
 	};
 
 	class CPlayerController final : public Component
