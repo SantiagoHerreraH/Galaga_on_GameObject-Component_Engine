@@ -4,7 +4,7 @@
 #include <limits>
 
 #include "Scene.h"
-#include "Command.h"
+#include "WeaponType.h"
 
 
 

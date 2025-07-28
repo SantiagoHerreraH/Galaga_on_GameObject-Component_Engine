@@ -2,6 +2,10 @@
 #include "StatDisplayer.h"
 #include "ScoreSaver.h"
 #include "CreateParticleSystem.h"
+#include "TextCreator.h"
+#include "PlayerController.h"
+#include "EventTriggerCommand.h"
+#include "MainMenu.h"
 
 dae::HighscoreScene::HighscoreScene(std::vector<GalagaPlayer> players, const std::string& sceneName) : m_SceneName(sceneName)
 {
@@ -15,6 +19,10 @@ dae::HighscoreScene::HighscoreScene(std::vector<GalagaPlayer> players, const std
 
         ScoreSaver scoreSaver{ scene.Name() + ".txt"};
         ScoreData scoreData{};
+
+        auto backToMainMenu = [](GameObject&) {SceneManager::GetInstance().ChangeCurrentScene(MainMenu::Name()); };
+        Event<GameObject&> backToMainMenuEvent{};
+        backToMainMenuEvent.Subscribe(backToMainMenu);
 
         for (auto& player : players)
         {
@@ -74,9 +82,20 @@ dae::HighscoreScene::HighscoreScene(std::vector<GalagaPlayer> players, const std
 
             statDisplayerGameObj->AddComponent(hitNumDisplayer);
 
+
+
+            scene.AddGameObjectHandle(player.GetGameObjectHandle());
+            CPlayerController& playerController = *player.GetGameObject().GetComponent<CPlayerController>();
+
+            playerController.BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_SPACE,	    std::make_unique<EventTriggerCommand>(backToMainMenu) });
+            playerController.BindKey(dae::PlayerGamepadKeyData{ ButtonState::BUTTON_PRESSED, GamepadButton::ButtonX,	 std::make_unique<EventTriggerCommand>(backToMainMenu) });
+
+
             ++count;
         }
 
+        TextCreator message("PRESS SPACE OR X TO EXIT", { int(g_WindowWidth / 2.f),   int(g_WindowHeight * 5.5 / 6.f) }, 13, SDL_Color{ 255, 255 , 255 });
+        scene.AddGameObjectHandle(message.GetGameObjectHandle());
 
         };
 

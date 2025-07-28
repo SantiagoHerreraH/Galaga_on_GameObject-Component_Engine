@@ -4,56 +4,71 @@
 #include "CaptureZoneWeaponType.h"
 #include "Settings.h"
 #include "PlayerController.h"
+#include "HighscoreScene.h"
 
 dae::PlayerVsScene::PlayerVsScene()
 {
-	//
-	auto sceneCreationFunction = [](Scene& scene) {
-		
-		int xPos = g_WindowWidth/2.f;
-		int yOffset = 50;
+	int xPos = g_WindowWidth / 2.f;
+	int yOffset = 50;
+	const std::string highscoreSceneName = "PlayerVsHighscoreScene";
 
-		PlayerType playerType{};
-		playerType.TextureName = "galaga.png";
-		playerType.WeaponType = std::make_shared<GunWeaponType>();
+	//---Player One
+	PlayerType playerType{};
+	playerType.TextureName = "galaga.png";
+	playerType.WeaponType = std::make_shared<GunWeaponType>();
 
-		glm::vec2 initPosOne{ xPos, g_WindowHeight - yOffset };
-		GalagaPlayer playerOne{ initPosOne, 180, playerType };
+	glm::vec2 initPosOne{ xPos, g_WindowHeight - yOffset };
+	GalagaPlayer playerOne{ initPosOne, 180, playerType };
 
-		playerType.TextureName = "boss.png";
-		playerType.WeaponType = std::make_shared<CaptureZoneWeaponType>(playerOne.GetGameObjectHandle());
+	//---Player Two
+	playerType.TextureName = "boss.png";
+	playerType.WeaponType = std::make_shared<CaptureZoneWeaponType>(playerOne.GetGameObjectHandle());
 
+	glm::vec2 initPosTwo{ xPos, yOffset };
+	GalagaPlayer playerTwo{ initPosTwo, 0, playerType };
 
-		glm::vec2 initPosTwo{ xPos, yOffset };
-		GalagaPlayer playerTwo{ initPosTwo, 0, playerType };
+	//---Functions
+	auto disableInputAndReset = [playerOne, playerTwo, initPosOne, initPosTwo]() mutable
+		{
+			playerOne.GetGameObject().GetComponent<CPlayerController>()->SetActive(false);
+			playerTwo.GetGameObject().GetComponent<CPlayerController>()->SetActive(false);
 
-		playerOne.AddScene(scene);
-		playerTwo.AddScene(scene);
+			playerOne.GetGameObject().Transform().SetLocalPositionX(initPosOne.x);
+			playerOne.GetGameObject().Transform().SetLocalPositionY(initPosOne.y);
 
-		auto disableInputAndReset = [playerOne, playerTwo, initPosOne, initPosTwo]() mutable
-			{
-				playerOne.GetGameObject().GetComponent<CPlayerController>()->SetActive(false);
-				playerTwo.GetGameObject().GetComponent<CPlayerController>()->SetActive(false);
+			playerTwo.GetGameObject().Transform().SetLocalPositionX(initPosTwo.x);
+			playerTwo.GetGameObject().Transform().SetLocalPositionY(initPosTwo.y);
+		};
 
-				playerOne.GetGameObject().Transform().SetLocalPositionX(initPosOne.x);
-				playerOne.GetGameObject().Transform().SetLocalPositionY(initPosOne.y);
+	auto enableInput = [playerOne, playerTwo, initPosOne, initPosTwo]() mutable
+		{
+			playerOne.GetGameObject().GetComponent<CPlayerController>()->SetActive(true);
+			playerTwo.GetGameObject().GetComponent<CPlayerController>()->SetActive(true);
+		};
 
-				playerTwo.GetGameObject().Transform().SetLocalPositionX(initPosTwo.x);
-				playerTwo.GetGameObject().Transform().SetLocalPositionY(initPosTwo.y);
-			};
+	auto changeToHighscoreScene = [highscoreSceneName]() {SceneManager::GetInstance().ChangeCurrentScene(highscoreSceneName); };
 
-		auto enableInput = [playerOne, playerTwo, initPosOne, initPosTwo]() mutable
-			{
-				playerOne.GetGameObject().GetComponent<CPlayerController>()->SetActive(true);
-				playerTwo.GetGameObject().GetComponent<CPlayerController>()->SetActive(true);
-			};
+	//---Set Up
+	playerOne.SubscribeOnPlayerDespawnFromDamage(disableInputAndReset);//disable input and reset pos
+	playerOne.SubscribeOnPlayerRespawnFromDamage(enableInput);//enable input and reset pos
 
-		playerOne.SubscribeOnPlayerDespawnFromDamage(disableInputAndReset);//disable input and reset pos
-		playerOne.SubscribeOnPlayerRespawnFromDamage(enableInput);//enable input and reset pos
+	playerTwo.SubscribeOnPlayerDespawnFromDamage(disableInputAndReset);//disable input and reset pos
+	playerTwo.SubscribeOnPlayerRespawnFromDamage(enableInput);//enable input and reset pos
 
-		playerOne.SubscribeOnPlayerDie();//go to highscore scene
+	playerOne.SubscribeOnPlayerDie(changeToHighscoreScene);
+	playerOne.SubscribeOnPlayerDie(changeToHighscoreScene);
 
+	//---HighscoreScene
+	std::vector<GalagaPlayer> players{ playerOne , playerTwo};
 
+	HighscoreScene highscoreScene{ players,  highscoreSceneName };
+	
+	auto sceneCreationFunction = [players](Scene& scene) mutable{
+
+		for (size_t i = 0; i < players.size(); i++)
+		{
+			players[i].AddScene(scene);
+		}
 		
 		};
 

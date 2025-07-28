@@ -32,10 +32,10 @@ dae::MainMenu::MainMenu() : m_MainMenuCreator{ std::make_shared<MainMenuCreator>
 	
 }
 
-void dae::MainMenu::AddSceneChangeButton(const std::string& sceneName)
+void dae::MainMenu::AddSceneChangeButton(const std::string& sceneName, const std::string& buttonName)
 {
-	
-	m_MainMenuCreator->CreateButton(*SceneManager::GetInstance().GetScene(sceneName));
+	const std::string* buttonNamePtr = buttonName.empty() ? &sceneName : &buttonName;
+	m_MainMenuCreator->CreateButton(*SceneManager::GetInstance().GetScene(sceneName), *buttonNamePtr);
 }
 
 #pragma region Main Menu Creator
@@ -142,9 +142,9 @@ void dae::MainMenu::MainMenuCreator::CreateTitleAndSubTitle(dae::Scene& scene, c
 
 }
 
-void dae::MainMenu::MainMenuCreator::CreateButton(dae::Scene& scene)
+void dae::MainMenu::MainMenuCreator::CreateButton(dae::Scene& scene, const std::string& buttonName)
 {
-	std::string name = scene.Name();
+	std::string name = buttonName;
 	ButtonData data{};
 	data.FontData.FontFullPath = "Emulogic-zrEw.ttf";
 	data.FontData.FontSize = 13;

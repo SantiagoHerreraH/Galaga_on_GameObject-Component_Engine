@@ -36,6 +36,8 @@ namespace dae {
 	{
 	public:
 		RoundManager(const std::string& fileName);
+		const std::string& GetFirstRoundName()const;
+		const std::string& GetFileName()const;
 
 	private:
 		bool LoadRoundManagerType(const std::string& fileName);
@@ -75,6 +77,7 @@ namespace dae {
 			GameObjectHandle ParticleSystemGameObj;
 		};
 
+		std::string m_FileName;
 		std::shared_ptr<RoundManagerData> m_RoundManagerData;
 
 	};

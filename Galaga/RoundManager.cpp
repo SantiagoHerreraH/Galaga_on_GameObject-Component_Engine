@@ -7,9 +7,12 @@
 #include "ScoreSaver.h"
 #include "Gun.h"
 #include "CreateParticleSystem.h"
+#include "HighscoreScene.h"
+#include "ResourceManager.h"
 
 dae::RoundManager::RoundManager(const std::string& fileName) : 
-    m_RoundManagerData(std::make_shared<RoundManagerData>())
+    m_RoundManagerData(std::make_shared<RoundManagerData>()),
+    m_FileName(fileName)
 {
     if (LoadRoundManagerType(fileName))
     {
@@ -19,6 +22,16 @@ dae::RoundManager::RoundManager(const std::string& fileName) :
         CreateRounds();
     }
 
+}
+
+const std::string& dae::RoundManager::GetFirstRoundName() const
+{
+    return m_FileName + " Round " + std::to_string(1);
+}
+
+const std::string& dae::RoundManager::GetFileName() const
+{
+    return m_FileName;
 }
 
 void dae::RoundManager::CreatePlayers()
@@ -54,7 +67,10 @@ void dae::RoundManager::CreatePlayers()
 
 bool dae::RoundManager::LoadRoundManagerType(const std::string& fileName)
 {
-    std::ifstream file(fileName);
+    const auto fullPath = ResourceManager::GetInstance().GetDataPath() / fileName;
+    const auto completeFilename = std::filesystem::path(fullPath).filename().string();
+
+    std::ifstream file(completeFilename);
 
     if (!file)
     {
@@ -143,7 +159,7 @@ void dae::RoundManager::CreateRounds()
 
     for (size_t i = 0; i < m_RoundManagerData->RoundManagerType.GameRounds.size(); i++)
     {
-        m_RoundManagerData->SceneNames.push_back("Round " + std::to_string(i));
+        m_RoundManagerData->SceneNames.push_back(m_FileName + " Round " + std::to_string(i + 1));
 
         SceneManager::GetInstance().AddScene(m_RoundManagerData->SceneNames.back(), sceneCreationFunction);
     }
@@ -151,80 +167,6 @@ void dae::RoundManager::CreateRounds()
 
 void dae::RoundManager::CreateHighscoreScene()
 {
-    auto data = m_RoundManagerData;
-    auto highscoreSceneCreation = [data](Scene& scene) {
-
-        scene.AddGameObjectHandle(data->ParticleSystemGameObj);
-
-        float vertOffsetBetweenDisplayers = 60;
-        int count{ 0 };
-
-        ScoreSaver scoreSaver{ "Highscore.txt" };
-        ScoreData scoreData{};
-
-        for(auto& player : data->Players)
-        {
-            float xWhere = (g_WindowWidth/ (data->Players.size() + 1)) * (count + 1);
-
-            GameObjectHandle statDisplayerGameObj = scene.CreateGameObject();
-
-            StatDisplayData pointsDisplayData{};
-            pointsDisplayData.StatNameTextData.FontData.FontFullPath = "Emulogic-zrEw.ttf";
-            pointsDisplayData.StatNameTextData.FontData.FontSize = 13;
-            pointsDisplayData.StatNameTextData.Color = { 255, 0, 0 };
-            pointsDisplayData.StatNameTextData.Text = "POINTS :";
-            pointsDisplayData.StatTypeToDisplay = StatType::Points;
-            pointsDisplayData.StatValueColor = { 255, 255, 255 };
-            pointsDisplayData.StatValueOffsetFromStatName = { 0,5 };
-            pointsDisplayData.Where = { xWhere, (g_WindowHeight/2.f) - vertOffsetBetweenDisplayers };
-            pointsDisplayData.FromWho = player.GetGameObjectHandle();
-
-            CStatDisplayer pointsDisplayer{ pointsDisplayData };
-
-            statDisplayerGameObj->AddComponent(pointsDisplayer);
-
-            scoreData.Name = "New Player " + std::to_string(count);
-            scoreData.Score = pointsDisplayData.FromWho->GetComponent<CStatController>()->GetStat(StatType::Points, StatCategory::CurrentStat);
-            scoreSaver.AddScore(scoreData);
-            //------------
-
-            StatDisplayData shotsFiredDisplayData{};
-            shotsFiredDisplayData.StatNameTextData.FontData.FontFullPath = "Emulogic-zrEw.ttf";
-            shotsFiredDisplayData.StatNameTextData.FontData.FontSize = 13;
-            shotsFiredDisplayData.StatNameTextData.Color = { 255, 0, 0 };
-            shotsFiredDisplayData.StatNameTextData.Text = "SHOTS FIRED :";
-            shotsFiredDisplayData.StatTypeToDisplay = StatType::ShotsFired;
-            shotsFiredDisplayData.StatValueColor = { 255, 255, 255 };
-            shotsFiredDisplayData.StatValueOffsetFromStatName = { 0,5 };
-            shotsFiredDisplayData.Where = { xWhere , (g_WindowHeight / 2.f)};
-            shotsFiredDisplayData.FromWho = player.GetGameObjectHandle();
-
-            CStatDisplayer shotsFiredDisplayer{ shotsFiredDisplayData };
-
-            statDisplayerGameObj->AddComponent(shotsFiredDisplayer);
-
-            //------------
-
-            StatDisplayData hitNumDisplayData{};
-            hitNumDisplayData.StatNameTextData.FontData.FontFullPath = "Emulogic-zrEw.ttf";
-            hitNumDisplayData.StatNameTextData.FontData.FontSize = 13;
-            hitNumDisplayData.StatNameTextData.Color = { 255, 0, 0 };
-            hitNumDisplayData.StatNameTextData.Text = "HIT NUM :";
-            hitNumDisplayData.StatTypeToDisplay = StatType::NumberOfHits;
-            hitNumDisplayData.StatValueColor = { 255, 255, 255 };
-            hitNumDisplayData.StatValueOffsetFromStatName = { 0,5 };
-            hitNumDisplayData.Where = { xWhere, (g_WindowHeight / 2.f) + vertOffsetBetweenDisplayers };
-            hitNumDisplayData.FromWho = player.GetGameObjectHandle();
-
-            CStatDisplayer hitNumDisplayer{ hitNumDisplayData };
-
-            statDisplayerGameObj->AddComponent(hitNumDisplayer);
-
-            ++count;
-        }
-
-
-        };
-
-    m_RoundManagerData->HighscoreSceneName = SceneManager::GetInstance().AddScene("HighScore", highscoreSceneCreation).Name();
+    HighscoreScene highscoreScene{ m_RoundManagerData->Players, "HighscoreScene"};
+    m_RoundManagerData->HighscoreSceneName = highscoreScene.GetName();
 }

@@ -18,7 +18,7 @@ namespace dae {
 			return name;
 		}
 
-		void AddSceneChangeButton(const std::string& sceneName);
+		void AddSceneChangeButton(const std::string& sceneName, const std::string& buttonName = {});
 	private:
 
 		class MainMenuCreator {
@@ -29,7 +29,7 @@ namespace dae {
 			void CreateHighscore(dae::Scene& scene, const std::string& titleName, const glm::vec2& pos);
 			void CreateTitleAndSubTitle(dae::Scene& scene, const std::string& title, const std::string& subTitle, const glm::vec2& pos);
 
-			void CreateButton(dae::Scene& scene);
+			void CreateButton(dae::Scene& scene, const std::string& buttonName);
 			void AddGridToScene(dae::Scene& scene);
 
 		private:
