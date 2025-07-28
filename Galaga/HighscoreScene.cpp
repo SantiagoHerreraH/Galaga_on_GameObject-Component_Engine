@@ -7,7 +7,7 @@
 #include "EventTriggerCommand.h"
 #include "MainMenu.h"
 
-dae::HighscoreScene::HighscoreScene(std::vector<GalagaPlayer> players, const std::string& sceneName) : m_SceneName(sceneName)
+dae::HighscoreScene::HighscoreScene(std::vector<Player> players, const std::string& sceneName) : m_SceneName(sceneName)
 {
     auto highscoreSceneCreation = [players](Scene& scene) mutable{
 
@@ -87,8 +87,8 @@ dae::HighscoreScene::HighscoreScene(std::vector<GalagaPlayer> players, const std
             scene.AddGameObjectHandle(player.GetGameObjectHandle());
             CPlayerController& playerController = *player.GetGameObject().GetComponent<CPlayerController>();
 
-            playerController.BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_SPACE,	    std::make_unique<EventTriggerCommand>(backToMainMenu) });
-            playerController.BindKey(dae::PlayerGamepadKeyData{ ButtonState::BUTTON_PRESSED, GamepadButton::ButtonX,	 std::make_unique<EventTriggerCommand>(backToMainMenu) });
+            playerController.BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_SPACE,	    std::make_unique<EventTriggerCommand>(backToMainMenuEvent) });
+            playerController.BindKey(dae::PlayerGamepadKeyData{ ButtonState::BUTTON_PRESSED, GamepadButton::ButtonX,	 std::make_unique<EventTriggerCommand>(backToMainMenuEvent) });
 
 
             ++count;

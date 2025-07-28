@@ -14,8 +14,8 @@
 #include "GameTime.h"
 #include "ConsoleAudio.h"
 #include "ServiceLocator.h"
+#include "Settings.h"
 #include <memory>
-//#include "FileManager.h"
 
 SDL_Window* g_window{};
 

@@ -64,7 +64,8 @@ dae::GameObjectHandle dae::CCaptureZone::CreateCaptureZone(GameObjectHandle targ
 	rect.Height = (int)spriteSheet.GetScaledCellHeight();
 	rect.Width = (int)spriteSheet.GetScaledCellWidth();
 
-	CCollider collider{ rect, (int)GalagaCollisionLayers::Bullets };
+	CCollider collider{ rect, (int)GalagaCollisionLayers::EnemyBullets };
+	collider.AddCollisionTagToCollideWith((int)GalagaCollisionLayers::Player);
 	collider.CenterRect();
 
 	//------ CREATE GAMEOBJECT

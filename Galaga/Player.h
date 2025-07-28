@@ -16,11 +16,11 @@ namespace dae {
 		std::shared_ptr<WeaponType> WeaponType;
 	};
 
-	class GalagaPlayer 
+	class Player 
 	{
 	public:
-		GalagaPlayer() {}
-		GalagaPlayer(const glm::vec2& startPos, float zRotation, const PlayerType& PlayerType);
+		Player() {}
+		Player(const glm::vec2& startPos, float zRotation, const PlayerType& PlayerType);
 
 		GameObject& GetGameObject() { return *m_CurrentPlayer; }
 		GameObjectHandle GetGameObjectHandle();

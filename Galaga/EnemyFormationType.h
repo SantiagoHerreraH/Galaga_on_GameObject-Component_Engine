@@ -18,7 +18,7 @@ namespace dae {
 		EnemyType EnemyType; //name : Bee, Bird, Butterfly
 	};
 
-	void from_json(const nlohmann::json& j, EnemyFormationType& managerType) {
+	inline void from_json(const nlohmann::json& j, EnemyFormationType& managerType) {
 
 		std::string gridType = j.at("GridType");
 		std::string enemyType = j.at("EnemyType");

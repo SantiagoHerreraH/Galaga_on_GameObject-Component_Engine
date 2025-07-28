@@ -27,7 +27,6 @@
     <ClCompile Include="HighscoreScene.cpp" />
     <ClCompile Include="PlayerVsScene.cpp" />
     <ClCompile Include="ScoreSaver.cpp" />
-    <ClCompile Include="GalagaPlayer.cpp" />
     <ClCompile Include="Gun.cpp" />
     <ClCompile Include="Lifetime.cpp" />
     <ClCompile Include="MainMenu.cpp" />
@@ -75,7 +74,6 @@
     <ClInclude Include="GalagaStats.h" />
     <ClInclude Include="RoundManager.h" />
     <ClInclude Include="RoundUI.h" />
-    <ClInclude Include="Settings.h" />
     <ClInclude Include="StringToDataModifier.h" />
     <ClInclude Include="SwirlData.h" />
     <ClInclude Include="DefineData_SwirlData.h" />

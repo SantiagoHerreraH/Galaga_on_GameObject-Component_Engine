@@ -13,11 +13,11 @@ namespace dae {
 		EnemyFormationType ThirdEnemyFormation;
 	};
 
-	void from_json(const nlohmann::json& j, RoundType& roundType) {
+	inline void from_json(const nlohmann::json& j, RoundType& roundType) {
 
-		j.at("FirstFormation").get_to(roundType.FirstEnemyFormation);
+		j.at("FirstFormation ").get_to(roundType.FirstEnemyFormation);
 		j.at("SecondFormation").get_to(roundType.SecondEnemyFormation);
-		j.at("ThirdFormation").get_to(roundType.ThirdEnemyFormation);
+		j.at("ThirdFormation ").get_to(roundType.ThirdEnemyFormation);
 	}
 
 	struct RoundManagerType {
@@ -26,7 +26,13 @@ namespace dae {
 		int PlayerCount = 1;
 	};
 
-	void from_json(const nlohmann::json& j, RoundManagerType& roundManagerType) {
+	/*
+	
+	
+	
+	*/
+
+	inline void from_json(const nlohmann::json& j, RoundManagerType& roundManagerType) {
 
 		j.at("GameRounds").get_to(roundManagerType.GameRounds);
 		j.at("PlayerCount").get_to(roundManagerType.PlayerCount);
@@ -64,13 +70,13 @@ namespace dae {
 				return CurrentRoundIdx < (RoundManagerType.GameRounds.size() - 1);
 			}
 
-			GalagaPlayer& GetRandomPlayer() {
+			Player& GetRandomPlayer() {
 				return Players[Random::GetRandomBetweenRange(0, (int)Players.size())];
 			}
 
 			RoundManagerType RoundManagerType;
 			size_t CurrentRoundIdx{ 0 };
-			std::vector<GalagaPlayer> Players;
+			std::vector<Player> Players;
 			int PlayerDeaths;
 			std::vector<std::string> SceneNames;
 			std::string HighscoreSceneName;

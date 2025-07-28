@@ -5,7 +5,7 @@
 
 namespace dae {
 
-    GameObjectHandle CreateParticleSystem() {
+    inline GameObjectHandle CreateParticleSystem() {
         GameObjectHandle particleSystemObj = std::make_shared<GameObject>();
 
         CParticleSystem particleSystem{};

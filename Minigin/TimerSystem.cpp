@@ -155,7 +155,7 @@ bool dae::TimerSystem::RemoveTimer(TimerKey key)
 
 void dae::TimerSystem::ClearTimerEvents(TimerKey key)
 {
-	m_Timers.ValueAt(key).
+	m_Timers.ValueAt(key).ClearEvents();
 }
 
 dae::Timer& dae::TimerSystem::TimerAt(TimerKey key)

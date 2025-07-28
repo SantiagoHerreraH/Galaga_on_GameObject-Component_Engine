@@ -18,7 +18,7 @@ namespace dae {
 		CEnemyFormation(
 			const glm::vec2& position,
 			float secondsBetweenSpawning,
-			const GalagaPlayer& player,
+			const Player& player,
 			const EnemyFormationType& enemyFormationType);
 
 		virtual void Start() override;
@@ -48,7 +48,7 @@ namespace dae {
 		EnemyUnitSwirlData m_EnemyUnitSwirlData;
 		EnemyGridData m_EnemyGridData;
 		GameObjectHandle m_Grid;
-		GalagaPlayer m_Player;
+		Player m_Player;
 		EnemyType m_EnemyType;
 
 		Event<> m_OnFormationDeath;

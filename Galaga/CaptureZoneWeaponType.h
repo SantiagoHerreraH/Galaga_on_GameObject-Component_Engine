@@ -42,8 +42,8 @@ namespace dae {
 	public:
 		static std::string Name() { return "AscendState"; }
 		virtual void Start(GameObject& actor);
-		virtual void Update(GameObject& actor) = 0;
-		virtual void End(GameObject& actor) = 0;
+		virtual void Update(GameObject& actor);
+		virtual void End(GameObject& actor){}
 	};
 
 

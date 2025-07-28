@@ -94,7 +94,7 @@ namespace dae
 		{
 			if (m_Components[i]->GetType() == typeIndex)
 			{
-				return m_Components[i].get();
+				return std::dynamic_pointer_cast<ComponentType>(m_Components[i]).get();
 			}
 		}
 
@@ -110,7 +110,7 @@ namespace dae
 		{
 			if (m_Components[i]->GetType() == typeInfo)
 			{
-				return m_Components[i].get();
+				return std::dynamic_pointer_cast<ComponentType>(m_Components[i]).get();
 			}
 		}
 
@@ -150,16 +150,12 @@ namespace dae
 	template<DerivedFromComponent ComponentType>
 	inline bool GameObject::SetComponent(const ComponentType& component) const
 	{
-		std::type_index typeIndex{ typeid(ComponentType) };
+		ComponentType *comp = GetComponent<ComponentType>();
 
-		for (size_t i = 0; i < m_Components.size(); i++)
+		if (comp)
 		{
-			if (m_Components[i]->GetType() == typeIndex)
-			{
-				*m_Components[i].get() = component;
-
-				return true;
-			}
+			*comp = component;
+			return true;
 		}
 
 		return false;

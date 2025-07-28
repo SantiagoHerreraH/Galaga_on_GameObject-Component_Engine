@@ -1,9 +1,10 @@
 #include "PlayerLife.h"
 #include "GameObject.h"
-#include "PlayerScore.h"
+#include "Settings.h"
 #include "GameInput.h"
 #include "PlayerController.h"
 #include "TimerSystem.h"
+#include "Text.h"
 
 void dae::CPlayerLife::Start()
 {

@@ -9,7 +9,7 @@ dae::CGun::CGun(const GunData& gunData) : m_GunData(gunData)
 {
 	for (size_t i = 0; i < m_GunData.BulletAmount; i++)
 	{
-		m_Bullets.push_back(CreateBullet(m_GunData.Shooter));
+		m_Bullets.push_back(CreateBullet(m_GunData.Shooter, m_GunData.BulletCollisionLayer, m_GunData.BulletCollisionLayerToCollideAgainst));
 	}
 }
 
@@ -49,6 +49,8 @@ void dae::GunWeaponType::Create(const GameObjectHandle& gameObject)
 	gunData.BulletLifeTime = 1.5;
 	gunData.Shooter = gameObject;
 	gunData.TimeBetweenShots = 0.3f;
+	gunData.BulletCollisionLayer = GalagaCollisionLayers::PlayerBullets;
+	gunData.BulletCollisionLayerToCollideAgainst = GalagaCollisionLayers::Enemies;
 	CGun gun{ gunData };
 	gameObject->AddComponent(gun);
 }

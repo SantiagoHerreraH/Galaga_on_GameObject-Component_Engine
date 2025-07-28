@@ -8,8 +8,6 @@ dae::CButtonGrid::CButtonGrid(const ButtonGridData& buttonGridData) :
 	m_ButtonGridData(buttonGridData),
 	m_ButtonGridInternalData(std::make_shared<ButtonGridInternalData>())
 {
-	int currentRowIdx{ 0 };
-	int currentColIdx{ 0 };
 	const int colNum = m_ButtonGridData.ColumnNumber;
 
 	auto data = m_ButtonGridInternalData;
@@ -17,7 +15,7 @@ dae::CButtonGrid::CButtonGrid(const ButtonGridData& buttonGridData) :
 
 	std::shared_ptr<int> currentIdx{ std::make_shared<int>(0) };
 
-	m_ButtonGridEvents.OnMoveUp.Subscribe([data, currentIdx, colNum]() mutable
+	m_ButtonGridEvents.OnMoveUp.Subscribe([data, currentIdx, colNum](GameObject&) mutable
 		{
 
 			data->Buttons[(*currentIdx)]->Unselect();
@@ -37,7 +35,7 @@ dae::CButtonGrid::CButtonGrid(const ButtonGridData& buttonGridData) :
 		});
 
 
-	m_ButtonGridEvents.OnMoveDown.Subscribe([data, currentIdx, colNum]() mutable {
+	m_ButtonGridEvents.OnMoveDown.Subscribe([data, currentIdx, colNum](GameObject&) mutable {
 
 		data->Buttons[(*currentIdx)]->Unselect();
 		int row = (*currentIdx) / colNum;
@@ -54,7 +52,7 @@ dae::CButtonGrid::CButtonGrid(const ButtonGridData& buttonGridData) :
 		data->Buttons[(*currentIdx)]->Select();
 		});
 
-	m_ButtonGridEvents.OnMoveLeft.Subscribe([data, currentIdx, colNum]() mutable {
+	m_ButtonGridEvents.OnMoveLeft.Subscribe([data, currentIdx, colNum](GameObject&) mutable {
 
 		data->Buttons[(*currentIdx)]->Unselect();
 		int row = (*currentIdx) / colNum;
@@ -73,7 +71,7 @@ dae::CButtonGrid::CButtonGrid(const ButtonGridData& buttonGridData) :
 		data->Buttons[(*currentIdx)]->Select();
 		});
 
-	m_ButtonGridEvents.OnMoveRight.Subscribe([data, currentIdx, colNum]() mutable {
+	m_ButtonGridEvents.OnMoveRight.Subscribe([data, currentIdx, colNum](GameObject&) mutable {
 
 
 		data->Buttons[(*currentIdx)]->Unselect();
@@ -90,7 +88,7 @@ dae::CButtonGrid::CButtonGrid(const ButtonGridData& buttonGridData) :
 
 		});
 
-	m_ButtonGridEvents.OnPress.Subscribe([data, currentIdx]() mutable {
+	m_ButtonGridEvents.OnPress.Subscribe([data, currentIdx](GameObject&) mutable {
 		data->Buttons[*currentIdx]->Press();
 		});
 

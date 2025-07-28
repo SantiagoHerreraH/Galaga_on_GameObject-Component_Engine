@@ -11,5 +11,5 @@ namespace dae {
 		const std::string GetSceneName() { return "VERSUS"; }
 		Scene& GetScene() { return *SceneManager::GetInstance().GetScene(GetSceneName()); }
 
-	}
+	};
 }

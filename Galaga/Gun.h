@@ -3,12 +3,15 @@
 #include "Component.h"
 #include "TimerSystem.h"
 #include "WeaponType.h"
+#include "CollisionLayers.h"
 
 namespace dae {
 
 	struct GunData {
 		int BulletAmount{ 10 };
 		float BulletLifeTime{};
+		GalagaCollisionLayers BulletCollisionLayer;
+		GalagaCollisionLayers BulletCollisionLayerToCollideAgainst;
 		float TimeBetweenShots{ 0.3f };
 		GameObjectHandle Shooter;
 	};

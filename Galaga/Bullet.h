@@ -12,7 +12,7 @@
 
 namespace dae {
 
-	dae::GameObjectHandle CreateBullet(GameObjectHandle owner) {
+	inline dae::GameObjectHandle CreateBullet(GameObjectHandle owner, GalagaCollisionLayers collisionLayer, GalagaCollisionLayers collisionLayerToCollideAgainst) {
 
 		//----- COMPONENTS
 
@@ -22,7 +22,8 @@ namespace dae {
 		rect.Height = 20;
 		rect.Width = 10;
 
-		CCollider collider{ rect, int(GalagaCollisionLayers::Bullets)};
+		CCollider collider{ rect, int(collisionLayer)};
+		collider.AddCollisionTagToCollideWith((int)collisionLayerToCollideAgainst);
 
 		int damage = -1;
 		auto damageCollided = [damage, owner](GameObject& self, GameObject& other) mutable

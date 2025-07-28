@@ -16,7 +16,7 @@
 #include "Bullet.h"
 #include "Gun.h"
 
-dae::GalagaPlayer::GalagaPlayer(const glm::vec2& startPos, float zRotation, const PlayerType& playerType)
+dae::Player::Player(const glm::vec2& startPos, float zRotation, const PlayerType& playerType)
 {
 
 	//------- PLAYER
@@ -41,6 +41,7 @@ dae::GalagaPlayer::GalagaPlayer(const glm::vec2& startPos, float zRotation, cons
 	rect.Width = 32;
 
 	dae::CCollider collider{ rect, (int)GalagaCollisionLayers::Player };
+	collider.AddCollisionTagToCollideWith((int)GalagaCollisionLayers::Enemies);
 	collider.CenterRect();
 
 	currentPlayer->AddComponent(collider);
@@ -172,26 +173,26 @@ dae::GalagaPlayer::GalagaPlayer(const glm::vec2& startPos, float zRotation, cons
 	m_CurrentPlayer = currentPlayer;
 }
 
-dae::GameObjectHandle dae::GalagaPlayer::GetGameObjectHandle()
+dae::GameObjectHandle dae::Player::GetGameObjectHandle()
 {
 	return m_CurrentPlayer;
 }
 
-void dae::GalagaPlayer::AddScene(Scene& scene)
+void dae::Player::AddScene(Scene& scene)
 {
 	scene.AddGameObjectHandle(m_CurrentPlayer);
 	scene.AddGameObjectHandle(m_ShootingPivot);
 }
 
-void dae::GalagaPlayer::SubscribeOnPlayerDie(const std::function<void()>& func) {
+void dae::Player::SubscribeOnPlayerDie(const std::function<void()>& func) {
 
 	m_CurrentPlayer->GetComponent<CPlayerLife>()->SubscribeOnPlayerDie(func);
 }
-void dae::GalagaPlayer::SubscribeOnPlayerDespawnFromDamage(const std::function<void()>& func) {
+void dae::Player::SubscribeOnPlayerDespawnFromDamage(const std::function<void()>& func) {
 
 	m_CurrentPlayer->GetComponent<CPlayerLife>()->SubscribeOnPlayerDespawnFromDamage(func);
 }
-void dae::GalagaPlayer::SubscribeOnPlayerRespawnFromDamage(const std::function<void()>& func) {
+void dae::Player::SubscribeOnPlayerRespawnFromDamage(const std::function<void()>& func) {
 
 	m_CurrentPlayer->GetComponent<CPlayerLife>()->SubscribeOnPlayerRespawnFromDamage(func);
 }

@@ -1,0 +1,102 @@
+{
+	"GameRounds" : [
+		{
+			"FirstFormation"  : 
+				{
+					"GridType" : "SmallGrid",
+					"EnemyType" : "Bird",
+					"SwirlFormations" : ["CircularUp", "CircularDown"]
+				
+				},
+			"SecondFormation" : 
+				{
+					"GridType" : "MediumGrid",
+					"EnemyType" : "Butterfly",
+					"SwirlFormations" : ["CircularUp", "CircularDown"]
+				
+				},
+			"ThirdFormation"  : 
+				{
+					"GridType" : "LargeGrid",
+					"EnemyType" : "Bee",
+					"SwirlFormations" : ["CircularUp", "CircularDown"]
+				
+				}
+		},
+		{
+			"FirstFormation"  :
+				{
+					"GridType" : "SmallGrid",
+					"EnemyType" : "Bird",
+					"SwirlFormations" : ["DownUTurn", "CircularDown"]
+
+				},
+			"SecondFormation" :
+				{
+					"GridType" : "LargeGrid",
+					"EnemyType" : "Butterfly",
+					"SwirlFormations" : ["DownUTurn", "CircularDown"]
+
+				},
+			"ThirdFormation"  :
+				{
+					"GridType" : "LargeGrid",
+					"EnemyType" : "Bee",
+					"SwirlFormations" : ["DownUTurn", "CircularDown"]
+
+				}
+		},
+		{
+			"FirstFormation"  :
+				{
+					"GridType" : "MediumGrid",
+					"EnemyType" : "Bird",
+					"SwirlFormations" : ["ElipticalDown", "DownUTurn"]
+
+				},
+			"SecondFormation" :
+				{
+					"GridType" : "MediumGrid",
+					"EnemyType" : "Bird",
+					"SwirlFormations" : ["ElipticalDown", "DownUTurn"]
+
+				},
+			"ThirdFormation"  :
+				{
+					"GridType" : "LargeGrid",
+					"EnemyType" : "Butterfly",
+					"SwirlFormations" : ["ElipticalDown", "DownUTurn"]
+
+				}
+		},
+		{
+			"FirstFormation"  :
+				{
+					"GridType" : "SmallGrid",
+					"EnemyType" : "Bird",
+					"SwirlFormations" : ["CircularUp", "CircularDown"]
+
+				},
+			"SecondFormation" :
+				{
+					"GridType" : "MediumGrid",
+					"EnemyType" : "Bird",
+					"SwirlFormations" : ["ElipticalDown", "DownUTurn"]
+
+				},
+			"ThirdFormation"  :
+				{
+					"GridType" : "LargeGrid",
+					"EnemyType" : "Bird",
+					"SwirlFormations" : ["CircularUp", "CircularDown"]
+
+				}
+		},
+
+	
+	
+	],
+	"PlayerCount" : 1
+
+
+}

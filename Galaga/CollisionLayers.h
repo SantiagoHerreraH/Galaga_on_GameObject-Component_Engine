@@ -3,7 +3,8 @@
 namespace dae {
 
 	enum class GalagaCollisionLayers {
-		Bullets,
+		PlayerBullets, 
+		EnemyBullets,
 		Player,
 		Enemies
 	};

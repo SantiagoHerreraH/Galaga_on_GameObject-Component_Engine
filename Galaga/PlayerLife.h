@@ -4,6 +4,7 @@
 #include "Component.h"
 #include "EventSystem.h"
 #include "GalagaStats.h"
+#include "InputManager.h"
 
 namespace dae {
 

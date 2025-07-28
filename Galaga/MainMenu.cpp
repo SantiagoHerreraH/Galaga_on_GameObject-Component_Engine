@@ -61,7 +61,7 @@ void dae::MainMenu::MainMenuCreator::CreateParticles(dae::Scene& scene)
 	gameObj->AddComponent(particleSystem);
 }
 
-void  dae::MainMenu::MainMenuCreator::CreateTexture(dae::Scene& scene, const std::string& fileName, const glm::vec2& pos, const glm::vec2& scale = { 1,1 }) {
+void  dae::MainMenu::MainMenuCreator::CreateTexture(dae::Scene& scene, const std::string& fileName, const glm::vec2& pos, const glm::vec2& scale) {
 
 	TransformData currentTransformData{};
 	currentTransformData.Position.x = pos.x;

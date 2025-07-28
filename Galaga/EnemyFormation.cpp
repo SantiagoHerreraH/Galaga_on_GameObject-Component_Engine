@@ -4,7 +4,7 @@
 dae::CEnemyFormation::CEnemyFormation(
 	const glm::vec2& position,
 	float secondsBetweenSpawning,
-	const GalagaPlayer& player,
+	const Player& player,
 	const EnemyFormationType& enemyManagerType) :
 	m_StartPosition(position),
 	m_SecondsBetweenSpawning(secondsBetweenSpawning),

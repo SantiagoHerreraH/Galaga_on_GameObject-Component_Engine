@@ -49,7 +49,7 @@ void dae::RoundManager::CreatePlayers()
     {
         currentPlayerPos.x = int((g_WindowWidth/ (m_RoundManagerData->RoundManagerType.PlayerCount + 1)) * (i + 1) );
 
-        m_RoundManagerData->Players.push_back(GalagaPlayer{ currentPlayerPos, 180 , playerType });
+        m_RoundManagerData->Players.push_back(Player{ currentPlayerPos, 180 , playerType });
         m_RoundManagerData->Players.back().SubscribeOnPlayerDie([data]()
             {
                 ++(data->PlayerDeaths);
@@ -137,7 +137,7 @@ void dae::RoundManager::CreateRounds()
                 });
 
 
-            RoundUI roundUI{ scene, data->CurrentRoundIdx };
+            RoundUI roundUI{ scene, (int)data->CurrentRoundIdx };
             roundUI.SubscribeOnRoundTextEnd([enemyFormationThree](){
                 
                 enemyFormationThree->GetComponent<CEnemyFormation>()->StartEnemySwirlBehaviour(false);

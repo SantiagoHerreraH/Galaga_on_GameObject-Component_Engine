@@ -54,6 +54,10 @@ namespace dae {
 		SceneSingleton& operator=(SceneSingleton&& other) = delete;
 
 	};
+
+	template<typename Child>
+	std::unordered_map<dae::Scene*, std::shared_ptr<Child>> SceneSingleton<Child>::m_ScenePtr_To_Child;
+
 }
 
 

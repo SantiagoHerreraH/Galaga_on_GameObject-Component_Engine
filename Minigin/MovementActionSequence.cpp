@@ -9,7 +9,6 @@ dae::MovementActionSequence::MovementActionSequence(const std::string& sequenceN
 void dae::MovementActionSequence::Start()
 {
 	m_Scene = &SceneManager::GetInstance().GetCurrentScene();
-	Scene* scenePtr = m_Scene;
 
 	for (size_t i = 0; i < m_MovementActions.size(); i++)
 	{
@@ -286,7 +285,7 @@ void dae::MovementActionSequence::MovementAction::SetDuration(float duration) {
 	}
 }
 
-void dae::MovementActionSequence::MovementAction::SetActionDependsOnDuration(bool dependsOnTime, float time = 0) {
+void dae::MovementActionSequence::MovementAction::SetActionDependsOnDuration(bool dependsOnTime, float time) {
 
 	m_DependsOnTime = dependsOnTime;
 	time = dependsOnTime ? time : -1; //-1 == duration is infinite

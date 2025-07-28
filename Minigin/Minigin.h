@@ -5,10 +5,6 @@
 namespace dae
 {
 
-	//temp variables
-	inline int g_WindowWidth{ 640 };
-	inline int g_WindowHeight{ 480 };
-
 	class Minigin
 	{
 	public:

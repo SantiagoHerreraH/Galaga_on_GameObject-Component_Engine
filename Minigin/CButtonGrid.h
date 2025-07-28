@@ -37,11 +37,11 @@ namespace dae {
 		};
 
 		struct ButtonGridEvents {
-			dae::Event<> OnMoveUp;
-			dae::Event<> OnMoveDown;
-			dae::Event<> OnMoveLeft;
-			dae::Event<> OnMoveRight;
-			dae::Event<> OnPress;
+			dae::Event<GameObject&> OnMoveUp;
+			dae::Event<GameObject&> OnMoveDown;
+			dae::Event<GameObject&> OnMoveLeft;
+			dae::Event<GameObject&> OnMoveRight;
+			dae::Event<GameObject&> OnPress;
 		};
 
 
