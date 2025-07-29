@@ -97,21 +97,32 @@ dae::CButtonGrid::CButtonGrid(const ButtonGridData& buttonGridData) :
 void dae::CButtonGrid::Start()
 {
 	MapButtonSelectionToKeys();
+
+	for (size_t i = 0; i < m_ButtonGridInternalData->ButtonGameObjs.size(); i++)
+	{
+		SceneManager::GetInstance().GetCurrentScene().AddGameObjectHandle(m_ButtonGridInternalData->ButtonGameObjs[i]);
+	}
 }
 
-bool dae::CButtonGrid::AddButton(CButton& button)
+bool dae::CButtonGrid::AddButton(GameObjectHandle button)
 {
-
-	if (button.HasOwner())
+	CButton* buttonComp = button->GetComponent<CButton>();
+	if (buttonComp)
 	{
 		glm::vec2 pos{
-			m_ButtonGridData.StartPos.x + (m_ButtonGridData.OffsetBetweenCols * m_CurrentColIdx),
-			m_ButtonGridData.StartPos.y + (m_ButtonGridData.OffsetBetweenRows * m_CurrentRowIdx) };
+			   m_ButtonGridData.StartPos.x + (m_ButtonGridData.OffsetBetweenCols * m_CurrentColIdx),
+			   m_ButtonGridData.StartPos.y + (m_ButtonGridData.OffsetBetweenRows * m_CurrentRowIdx) };
 
-		button.Owner().Transform().SetLocalPositionX(pos.x);
-		button.Owner().Transform().SetLocalPositionY(pos.y);
+		button->Transform().SetLocalPositionX(pos.x);
+		button->Transform().SetLocalPositionY(pos.y);
 
-		m_ButtonGridInternalData->Buttons.push_back(&button);
+		if (m_ButtonGridInternalData->Buttons.empty())
+		{
+			buttonComp->Select();
+		}
+
+		m_ButtonGridInternalData->ButtonGameObjs.push_back(button);
+		m_ButtonGridInternalData->Buttons.push_back(buttonComp);
 
 		++m_CurrentColIdx;
 
@@ -126,16 +137,6 @@ bool dae::CButtonGrid::AddButton(CButton& button)
 		return true;
 	}
 
-	return false;
-}
-
-bool dae::CButtonGrid::AddButton(GameObject& button)
-{
-	CButton* buttonComp = button.GetComponent<CButton>();
-	if (buttonComp)
-	{
-		return AddButton(*buttonComp);
-	}
 	return false;
 }
 

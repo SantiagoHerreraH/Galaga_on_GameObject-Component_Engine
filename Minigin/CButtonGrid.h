@@ -24,8 +24,7 @@ namespace dae {
 
 		void Start()override;
 
-		bool AddButton(CButton& button);
-		bool AddButton(GameObject& button);
+		bool AddButton(GameObjectHandle button);
 
 	private:
 		CPlayerController* GetPlayerController();
@@ -33,6 +32,7 @@ namespace dae {
 
 
 		struct ButtonGridInternalData {
+			std::vector<GameObjectHandle> ButtonGameObjs;
 			std::vector<CButton*> Buttons;
 		};
 

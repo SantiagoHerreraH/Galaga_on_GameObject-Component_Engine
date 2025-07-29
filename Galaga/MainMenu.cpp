@@ -35,7 +35,7 @@ dae::MainMenu::MainMenu() : m_MainMenuCreator{ std::make_shared<MainMenuCreator>
 void dae::MainMenu::AddSceneChangeButton(const std::string& sceneName, const std::string& buttonName)
 {
 	const std::string* buttonNamePtr = buttonName.empty() ? &sceneName : &buttonName;
-	m_MainMenuCreator->CreateButton(*SceneManager::GetInstance().GetScene(sceneName), *buttonNamePtr);
+	m_MainMenuCreator->CreateButton( *buttonNamePtr, sceneName);
 }
 
 #pragma region Main Menu Creator
@@ -142,22 +142,25 @@ void dae::MainMenu::MainMenuCreator::CreateTitleAndSubTitle(dae::Scene& scene, c
 
 }
 
-void dae::MainMenu::MainMenuCreator::CreateButton(dae::Scene& scene, const std::string& buttonName)
+void dae::MainMenu::MainMenuCreator::CreateButton(const std::string& buttonName, std::string sceneNameToTransition)
 {
 	std::string name = buttonName;
 	ButtonData data{};
 	data.FontData.FontFullPath = "Emulogic-zrEw.ttf";
 	data.FontData.FontSize = 13;
 	data.Name = name;
-	data.OnPress.Subscribe([name]() { SceneManager::GetInstance().ChangeCurrentScene(name); });
+	data.OnPress.Subscribe([sceneNameToTransition]() 
+		{ 
+			SceneManager::GetInstance().ChangeCurrentScene(sceneNameToTransition); 
+		});
 	data.SelectedColor = {255, 0, 0};
 	data.UnselectedColor = { 255, 255, 255 };
 
 	CButton button{ data };
-	auto gameObj = scene.CreateGameObject();
+	auto gameObj = std::make_shared<GameObject>();
 	gameObj->AddComponent(button);
 
-	GetGrid()->AddButton(*gameObj);
+	GetGrid()->AddButton(gameObj);
 }
 
 void dae::MainMenu::MainMenuCreator::AddGridToScene(dae::Scene& scene)
@@ -170,10 +173,10 @@ void dae::MainMenu::MainMenuCreator::CreateGrid() {
 	m_ButtonGrid = std::make_shared<GameObject>();
 	
 	ButtonGridData buttonGridData{ };
-	buttonGridData.ColumnNumber;
-	buttonGridData.OffsetBetweenCols;
-	buttonGridData.OffsetBetweenRows;
-	buttonGridData.StartPos;
+	buttonGridData.ColumnNumber = 1;
+	buttonGridData.OffsetBetweenCols = 0;
+	buttonGridData.OffsetBetweenRows = 50;
+	buttonGridData.StartPos = {int(g_WindowWidth/2.f), int(g_WindowHeight/2.f) - 30 };
 	CButtonGrid buttonGrid{ buttonGridData };
 
 	m_ButtonGrid->AddComponent(buttonGrid);

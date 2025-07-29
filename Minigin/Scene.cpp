@@ -64,55 +64,54 @@ void dae::Scene::Start()
 	DestroyAllGameObjects();
 	m_SceneCreationFunction(*this);
 
-	for (auto& handles : m_HandlesVec)
+	for (size_t i = 0; i < m_HandlesVec.size(); i++)
 	{
-		handles->Start();
+		m_HandlesVec[i]->Start();
 	}
 }
 
 void dae::Scene::End()
 {
-	for (auto& systems : m_Systems)
+	for (size_t i = 0; i < m_Systems.size(); i++)
 	{
-		systems->Reset();
+		m_Systems[i]->Reset();
 	}
 }
 
 void dae::Scene::FixedUpdate()
 {
-	for (auto& handles : m_HandlesVec)
+	for (size_t i = 0; i < m_HandlesVec.size(); i++)
 	{
-		if (handles->IsActive())
+		if (m_HandlesVec[i]->IsActive())
 		{
-			handles->FixedUpdate();
+			m_HandlesVec[i]->FixedUpdate();
 		}
-
 	}
 }
 
 void Scene::Update()
 {
-	for (auto& systems : m_Systems)
+	for (size_t i = 0; i < m_Systems.size(); i++)
 	{
-		systems->Update();
+		m_Systems[i]->Update();
 	}
 
-	for (auto& handles : m_HandlesVec)
+	for (size_t i = 0; i < m_HandlesVec.size(); i++)
 	{
-		if (handles->IsActive())
+		if (m_HandlesVec[i]->IsActive())
 		{
-			handles->Update();
+			m_HandlesVec[i]->Update();
 		}
 	}
 }
 
 void Scene::Render() const
 {
-	for (auto& handles : m_HandlesVec)
+	for (size_t i = 0; i < m_HandlesVec.size(); i++)
 	{
-		if (handles->IsActive())
+		if (m_HandlesVec[i]->IsActive())
 		{
-			handles->Render();
+			m_HandlesVec[i]->Render();
 		}
 	}
 }

@@ -24,12 +24,14 @@ namespace dae {
 	public:
 		CButton(const ButtonData& buttonData);
 		void Start()override;
+		bool IsSelected()const { return m_IsSelected; }
 		void Select();
 		void Unselect();
 		void Press();
 		void SubscribeOnPress(const std::function<void()>& func);
 	private:
 
+		bool m_IsSelected{ false };
 		std::shared_ptr<CText> m_CText;
 		ButtonData m_ButtonData;
 	};

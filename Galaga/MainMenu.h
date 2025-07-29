@@ -29,7 +29,7 @@ namespace dae {
 			void CreateHighscore(dae::Scene& scene, const std::string& titleName, const glm::vec2& pos);
 			void CreateTitleAndSubTitle(dae::Scene& scene, const std::string& title, const std::string& subTitle, const glm::vec2& pos);
 
-			void CreateButton(dae::Scene& scene, const std::string& buttonName);
+			void CreateButton(const std::string& buttonName, std::string sceneNameToTransition);
 			void AddGridToScene(dae::Scene& scene);
 
 		private:

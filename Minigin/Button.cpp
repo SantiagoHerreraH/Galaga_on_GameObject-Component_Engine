@@ -14,16 +14,34 @@ void dae::CButton::Start()
 	currentText.Center();
 
 	m_CText = Owner().AddComponent(currentText);
+	if (m_IsSelected)
+	{
+		Select();
+	}
+	else
+	{
+		Unselect();
+	}
 }
 
 
 void dae::CButton::Select()
 {
+	m_IsSelected = true;
+	if (!m_CText)
+	{
+		return;
+	}
 	m_CText->SetColor(m_ButtonData.SelectedColor);
 }
 
 void dae::CButton::Unselect()
 {
+	m_IsSelected = false;
+	if (!m_CText)
+	{
+		return;
+	}
 	m_CText->SetColor(m_ButtonData.UnselectedColor);
 }
 
