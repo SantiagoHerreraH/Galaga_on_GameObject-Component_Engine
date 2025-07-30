@@ -182,7 +182,7 @@
     <ClInclude Include="HighscoreScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CreateParticleSystem.h">
+    <ClInclude Include="Misc_CreationFunctions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

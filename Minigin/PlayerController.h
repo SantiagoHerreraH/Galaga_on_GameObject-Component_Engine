@@ -27,7 +27,6 @@ namespace dae {
 		void SetActive(bool isActive)override;
 
 		bool IsValid()const;
-		PlayerId GetPlayerId();
 		ControllerType GetControllerType();
 		bool BindKey(PlayerGamepadKeyData playerGamepadKeyData);
 		bool BindKey(PlayerKeyboardKeyData playerKeyboardKeyData);

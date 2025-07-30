@@ -18,14 +18,14 @@ dae::PlayerVsScene::PlayerVsScene()
 	playerType.WeaponType = std::make_shared<GunWeaponType>();
 
 	glm::vec2 initPosOne{ xPos, g_WindowHeight - yOffset };
-	Player playerOne{ initPosOne, 180, playerType };
+	Player playerOne{ initPosOne, 180, 0, playerType };
 
 	//---Player Two
 	playerType.TextureName = "boss.png";
 	playerType.WeaponType = std::make_shared<CaptureZoneWeaponType>(playerOne.GetGameObjectHandle());
 
 	glm::vec2 initPosTwo{ xPos, yOffset };
-	Player playerTwo{ initPosTwo, 0, playerType };
+	Player playerTwo{ initPosTwo, 0, 1, playerType };
 
 	//---Functions
 	auto disableInputAndReset = [playerOne, playerTwo, initPosOne, initPosTwo]() mutable
@@ -61,7 +61,7 @@ dae::PlayerVsScene::PlayerVsScene()
 	//---HighscoreScene
 	std::vector<Player> players{ playerOne , playerTwo};
 
-	HighscoreScene highscoreScene{ players,  highscoreSceneName };
+	HighscoreScene highscoreScene{ players,  highscoreSceneName, "VERSUS"};
 	
 	auto sceneCreationFunction = [players](Scene& scene) mutable{
 

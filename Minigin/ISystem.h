@@ -6,7 +6,7 @@ namespace dae {
 
 	public:
 
-		virtual void Update() {}
-		virtual void Reset() {}
+		virtual void Update() = 0;
+		virtual void Reset() = 0;
 	};
 }

@@ -1,0 +1,7 @@
+[
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "New Player 0",
+        "Score": 600
+    }
+]

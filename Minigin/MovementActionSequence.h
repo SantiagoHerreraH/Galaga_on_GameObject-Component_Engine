@@ -13,11 +13,11 @@ namespace dae {
 		glm::vec2 BeginningPosition;
 	};
 
-	class MovementActionSequence final : public Component 
+	class CMovementActionSequence final : public Component 
 	{
 		
 	public:
-		MovementActionSequence(const std::string& sequenceName = "NoSequenceName");
+		CMovementActionSequence(const std::string& sequenceName = "NoSequenceName");
 
 		void Start() override;
 
@@ -62,8 +62,8 @@ namespace dae {
 		class MovementAction {
 
 		public:
-
-			void Initialize(MovementActionSequence* movementActionSequence);
+			MovementAction();
+			void Initialize(CMovementActionSequence* movementActionSequence);
 			bool WasInitilized()const;
 
 			void RestartAction();
@@ -99,7 +99,7 @@ namespace dae {
 			bool CanStartOrRestartAction()const;
 			bool CanStopAction()const;
 
-			MovementActionSequence* m_MovementActionSequence{ nullptr };
+			CMovementActionSequence* m_MovementActionSequence{ nullptr };
 			std::string m_ActionName{ "NoActionName" };
 			dae::Scene* m_Scene{ nullptr };
 

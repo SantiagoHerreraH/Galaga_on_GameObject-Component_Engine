@@ -4,10 +4,12 @@
 dae::CEnemyFormation::CEnemyFormation(
 	const glm::vec2& position,
 	float secondsBetweenSpawning,
+	float secondsBetweenUnitSpawning,
 	const Player& player,
 	const EnemyFormationType& enemyManagerType) :
 	m_StartPosition(position),
 	m_SecondsBetweenSpawning(secondsBetweenSpawning),
+	m_SecondsBetweenUnitSpawning(secondsBetweenUnitSpawning),
 	m_Player(player)
 	
 {	
@@ -41,7 +43,7 @@ void dae::CEnemyFormation::StartSendingTroops()
 	SendNextTroops(nullptr);
 }
 
-void dae::CEnemyFormation::StartEnemySwirlBehaviour(bool startActingBehaviourAfterEndSwirls)
+void dae::CEnemyFormation::StartEnemySwirlBehaviour()
 {
 	if (!m_CreatedFormationTimer)
 	{
@@ -52,30 +54,33 @@ void dae::CEnemyFormation::StartEnemySwirlBehaviour(bool startActingBehaviourAft
 	Scene& scene = SceneManager::GetInstance().GetCurrentScene();
 	TimerSystem* TIMERSYSTEM = &TimerSystem::GetFromScene(&scene);
 	CEnemyFormation* self{ this };
-	bool startActingAfterFormation = startActingBehaviourAfterEndSwirls;
 
 	int currentSpawningIndex = 0;
 	TimerKey timerKey = m_FormationTimerKey;
 
 	TIMERSYSTEM->ClearTimerEvents(timerKey);
 
-	TIMERSYSTEM->TimerAt(timerKey).GetOnRestartEvent().Subscribe([currentSpawningIndex, self, TIMERSYSTEM, timerKey, startActingAfterFormation]() mutable
+	TIMERSYSTEM->TimerAt(timerKey).GetOnEndEvent().Subscribe([currentSpawningIndex, self, TIMERSYSTEM, timerKey]() mutable
 		{
+
 			self->m_Enemies[currentSpawningIndex].StartFormation();
 
 			if (currentSpawningIndex < (self->m_Enemies.size() - 1))
 			{
 				++currentSpawningIndex;
-				TIMERSYSTEM->RestartTimer(timerKey);
-			}
-			else
-			{
-				if (startActingAfterFormation)
-				{
-					self->SendNextTroops(&self->m_Enemies[currentSpawningIndex].GetGameObject());
-				}
 
-				self->m_OnEndSwirlFormation.Invoke();
+				bool nextUnitDuration{ (currentSpawningIndex % self->m_EnemyUnitSwirlData.EnemiesInAUnit) == 0};
+
+				if (nextUnitDuration)
+				{
+					TIMERSYSTEM->SetTimerDuration(timerKey, self->m_SecondsBetweenUnitSpawning, false);
+				}
+				else
+				{
+					TIMERSYSTEM->SetTimerDuration(timerKey, self->m_SecondsBetweenSpawning, false);
+				}
+				
+				TIMERSYSTEM->RestartTimer(timerKey);
 			}
 
 		});
@@ -109,7 +114,7 @@ bool dae::CEnemyFormation::SendNextTroops(GameObject* incomingTroop)
 
 	if (!permittedIndices.empty())
 	{
-		int indexOfArray = Random::GetRandomBetweenRange(0, (int)permittedIndices.size());
+		int indexOfArray = Random::GetRandomBetweenRange(0, int(permittedIndices.size() - 1));
 		int chosenIndex = permittedIndices[indexOfArray];
 
 		m_Enemies[chosenIndex].Act();
@@ -151,69 +156,61 @@ void dae::CEnemyFormation::CreateFormationTimer()
 
 void dae::CEnemyFormation::CreateGrid()
 {
+	float startGridX = m_StartPosition.x;
 	Scene& scene = SceneManager::GetInstance().GetCurrentScene();
 	TimerSystem* TIMERSYSTEM = &TimerSystem::GetFromScene(&scene);
 	GameObjectHandle grid = scene.CreateGameObject();
 	m_Grid = grid;
+
+	m_Grid->Transform().SetLocalPositionX(m_StartPosition.x);
+	m_Grid->Transform().SetLocalPositionY(m_StartPosition.y);
 
 	// ----- GRID MOVEMENT -----
 
 	float movementSpeed{ 2 };
 	float movementRange{ 1 };
 	float currentTime{ };
-	float maxTime{ 100.f };
 
-	auto moveHorizontal = [grid, movementSpeed, movementRange, currentTime, maxTime]()mutable
+	auto moveHorizontal = [grid, movementSpeed, movementRange, currentTime, startGridX]()mutable
 		{
 			currentTime += movementSpeed * Time::GetInstance().GetElapsedSeconds();
 
-			if (currentTime > (maxTime * movementSpeed))
+			if (currentTime > M_PI)
 			{
-				currentTime -= maxTime;
+				currentTime -= M_PI;
 			}
 
 			float value = std::sin(currentTime) * movementRange;
 
-
-			grid->Transform().MoveLocalPositionX(value);
+			grid->Transform().SetLocalPositionX(startGridX + value);
 		};
 
 	float scaleSpeed{ 2 };
 	float scaleRange{ 0.1f };
 	float scaleMidPoint{ 1 };
 
-	auto scale = [grid, scaleSpeed, scaleRange, scaleMidPoint, currentTime, maxTime]()mutable
+	auto scale = [grid, scaleSpeed, scaleRange, scaleMidPoint, currentTime]()mutable
 		{
 			currentTime += scaleSpeed * Time::GetInstance().GetElapsedSeconds();
 
-			if (currentTime > (maxTime * scaleSpeed))
+			if (currentTime > M_PI)
 			{
-				currentTime -= maxTime;
+				currentTime -= M_PI;
 			}
 
 			float value = std::sin(currentTime) * scaleRange;
 
-
 			grid->Transform().SetLocalScaleX(scaleMidPoint + value);
 		};
 
-	size_t movementTimerKey = TIMERSYSTEM->AddTimer(Timer{ maxTime,false, "GridMovement" });
+	TimerKey movementTimerKey = TIMERSYSTEM->AddTimer(Timer{ -1,false, "GridMovement" });
 	Timer& movementTimer = TIMERSYSTEM->TimerAt(movementTimerKey);
-
-	auto restartMovementTimer = [TIMERSYSTEM, movementTimerKey]
-		{
-			TIMERSYSTEM->RestartTimer(movementTimerKey);
-		};
 
 	Event<> movementTimerUpdate{};
 	movementTimerUpdate.Subscribe(moveHorizontal);
 	movementTimerUpdate.Subscribe(scale);
 
-	Event<> movementTimerEnd{};
-	movementTimerEnd.Subscribe(restartMovementTimer);
-
 	movementTimer.SetOnUpdateEvent(movementTimerUpdate);
-	movementTimer.SetOnEndEvent(movementTimerEnd);
 }
 
 dae::CButtonGrid* dae::MainMenu::MainMenuCreator::GetGrid()
@@ -224,11 +221,15 @@ dae::CButtonGrid* dae::MainMenu::MainMenuCreator::GetGrid()
 void dae::CEnemyFormation::CreateEnemies()
 {
 	Scene& scene = SceneManager::GetInstance().GetCurrentScene();
-	m_Grid->Transform().SetLocalPositionX(m_StartPosition.x);
-	m_Grid->Transform().SetLocalPositionY(m_StartPosition.y);
 
 	const float spaceBetweenEnemies{ m_EnemyGridData.SpaceBetweenEnemies };
 	const float spaceBetweenRows{ m_EnemyGridData.SpaceBetweenRows };
+
+
+	glm::vec2 startOffsetFromPos{};
+	startOffsetFromPos.x = (m_EnemyGridData.NumberOfEnemiesPerRow * spaceBetweenEnemies)/2.f;
+	startOffsetFromPos.y = (m_EnemyGridData.NumberOfEnemyRows * spaceBetweenRows)/2.f;
+
 
 	glm::vec3 currentRelativePos{};
 	const int totalEnemyAmount{ m_EnemyGridData.NumberOfEnemyRows * m_EnemyGridData.NumberOfEnemiesPerRow };
@@ -238,7 +239,6 @@ void dae::CEnemyFormation::CreateEnemies()
 	const int maxEnemiesPerSwirlType{ m_EnemyUnitSwirlData.EnemiesInAUnit };
 	int currentEnemyCountPerSwirlType{ 0 };
 	int currentEnemyUnit{ 0 };
-
 
 	//--------- CREATE ENEMIES
 
@@ -257,8 +257,8 @@ void dae::CEnemyFormation::CreateEnemies()
 	{
 		for (int colIdx = 0; colIdx < m_EnemyGridData.NumberOfEnemiesPerRow; colIdx++)
 		{
-			currentRelativePos.y = spaceBetweenRows * rowIdx;
-			currentRelativePos.x = spaceBetweenEnemies * colIdx;
+			currentRelativePos.y = (spaceBetweenRows * rowIdx) - startOffsetFromPos.y;
+			currentRelativePos.x = (spaceBetweenEnemies * colIdx) - startOffsetFromPos.x;
 
 			currentEnemyInstanceData.RelativePos = currentRelativePos;
 			currentEnemyInstanceData.MoveTowardsLeft = colIdx > (m_EnemyGridData.NumberOfEnemiesPerRow / 2);
@@ -283,6 +283,9 @@ void dae::CEnemyFormation::CreateEnemies()
 			++currentEnemyIndex;
 		}
 	}
+
+	m_Enemies.back().SubscribeOnEndStartingFormationBehaviour([self](GameObject&){self->m_OnEndSwirlFormation.Invoke(); });
+	
 }
 
 void dae::CEnemyFormation::CheckEnemyDeaths()

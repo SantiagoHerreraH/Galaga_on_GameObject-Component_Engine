@@ -22,7 +22,7 @@ namespace dae {
 		Event<>& onAct, 
 		std::shared_ptr<Event<GameObject&>> onEndAction,
 		std::shared_ptr<Event<GameObject&>>  onDie,
-		std::shared_ptr<MovementActionSequence> chosenMovementAction,
+		std::shared_ptr<CMovementActionSequence> chosenMovementAction,
 		bool goTowardsLeft) 
 	{
 
@@ -137,7 +137,7 @@ namespace dae {
 		enemy->GetComponent<CStatController>()->CreateStat(StatType::Points, pointsInFormation);
 
 		//------ Behaviours
-		std::vector<MovementActionSequence> behaviours{};
+		std::vector<CMovementActionSequence> behaviours{};
 		behaviours.push_back(AddZigZagDiveBehavior(scene, enemy, grid, player, relativePos, onEndAction, goTowardsLeft));
 		behaviours.push_back(AddUDiveBehavior(scene, enemy, grid, player, relativePos, onEndAction, goTowardsLeft));
 		behaviours.push_back(AddCaptureZoneBehavior(enemy, grid, player, scene, relativePos, onEndAction, onDie));

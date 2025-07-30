@@ -9,6 +9,8 @@
 #include "WaveMovement.h"
 #include "GameTime.h"
 
+#include <iostream>
+
 
 namespace dae {
 
@@ -47,7 +49,7 @@ namespace dae {
 				};
 
 
-			MovementActionSequence swirlBehaviour{ "SwirlBehaviour" };
+			CMovementActionSequence swirlBehaviour{ "SwirlBehaviour" };
 
 			//-------SPAWN PLAYER--------
 
@@ -61,7 +63,7 @@ namespace dae {
 
 					enemy->Transform().SetLocalPositionX((float)swirlData.StartWorldPos.x);
 					enemy->Transform().SetLocalPositionY((float)swirlData.StartWorldPos.y);
-					enemy->SetActive(true);
+					enemy->SetActive(true, false);
 
 					return true;
 				});
@@ -84,6 +86,7 @@ namespace dae {
 
 					if (glm::length(currentDelta) >= swirlData.PreSwirlGoalDistance)
 					{
+						std::cout << "\nStopped Moving Forward in Swirl with length " + std::to_string(glm::length(currentDelta));
 						return true;
 					}
 

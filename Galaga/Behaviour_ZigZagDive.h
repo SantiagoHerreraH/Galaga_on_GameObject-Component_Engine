@@ -43,7 +43,7 @@ namespace dae {
 				enemy->Transform().SetLocalPosition(relativePos);
 				};
 
-			MovementActionSequence zigZagDiveBehavior{ "ZigZagDive" };
+			CMovementActionSequence zigZagDiveBehavior{ "ZigZagDive" };
 
 			const int xBoundsOffsetFromWindowWidth{ 10 };
 			const int yBoundsOffsetFromWindowHeight{ 10 };

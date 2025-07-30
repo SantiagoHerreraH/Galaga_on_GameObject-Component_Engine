@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <string>
 #include "Transform.h"
 #include "Component.h"
 
@@ -14,12 +15,15 @@ namespace dae
 	{
 
 	public:
-		GameObject();
+		GameObject(const std::string& name = "");
 		virtual ~GameObject();
 		GameObject(const GameObject& other) = delete;
 		GameObject(GameObject&& other) = delete;
 		GameObject& operator=(const GameObject& other) = delete;
 		GameObject& operator=(GameObject&& other) = delete;
+
+		void SetName(const std::string& name) { m_Name = name; }
+		const std::string& GetName()const { return m_Name; }
 
 		void Start();
 		void Update();
@@ -31,6 +35,7 @@ namespace dae
 
 		const dae::Transform& TransformConst()const;
 		dae::Transform& Transform();
+		void RenderTransform(bool render) { m_RenderTransform = render; }
 
 		template <DerivedFromComponent ComponentType>
 		std::shared_ptr<ComponentType> AddComponent(const ComponentType& component);
@@ -50,7 +55,8 @@ namespace dae
 		bool SetComponent(const ComponentType& component)const;
 
 	private:
-
+		bool m_RenderTransform{ true };
+		std::string m_Name;
 		dae::Transform m_Transform;
 		bool m_IsActive{ true };
 

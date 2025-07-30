@@ -1,16 +1,14 @@
 #include "ScoreSaver.h"
 #include "ResourceManager.h"
-#include "nlohmann/json.hpp"
 
 namespace dae {
     
     ScoreSaver::ScoreSaver(const std::string& filename)
     {
         const auto fullPath = ResourceManager::GetInstance().GetDataPath() / filename;
-        m_CompleteFilename = std::filesystem::path(fullPath).filename().string();
-
-        m_HighScore.Name = "None";
-        m_HighScore.Score = -1;
+        m_CompleteFilename = fullPath.string();
+        m_HighScore.PlayerName = "None";
+        m_HighScore.Score = 0;
 
         std::ifstream in_file(m_CompleteFilename);
         if (!in_file.is_open()) {
@@ -18,17 +16,20 @@ namespace dae {
             return;
         }
 
+        if (in_file.peek() == std::ifstream::traits_type::eof()) return;
+
         nlohmann::json j_read;
         in_file >> j_read;
 
-        m_Scores = j_read.get<std::unordered_map<std::string, int>>();
+        m_Scores = j_read.get<std::vector<ScoreData>>();
 
         for (auto& score : m_Scores)
         {
-            if (m_HighScore.Score < score.second)
+            m_GameModeNameToLastScore[score.GameModeName] = score.Score;
+
+            if (m_HighScore.Score < score.Score)
             {
-                m_HighScore.Score = score.second;
-                m_HighScore.Name = score.first;
+                m_HighScore = score;
             }
         }
     }
@@ -41,27 +42,30 @@ namespace dae {
     void ScoreSaver::AddScore(const ScoreData& score)
     {
         m_WasModified = true;
-        m_Scores[score.Name] = score.Score;
+        m_Scores.push_back(score);
 
         if (m_HighScore.Score < score.Score)
         {
             m_HighScore.Score = score.Score;
-            m_HighScore.Name = score.Name;
+            m_HighScore.PlayerName = score.PlayerName;
         }
-    }
 
-    int ScoreSaver::GetScore(const std::string& name)
-    {
-        if (m_Scores.contains(name))
-        {
-            return m_Scores[name];
-        }
-        return -1;
+        m_GameModeNameToLastScore[score.GameModeName] = score.Score;
     }
 
     ScoreData ScoreSaver::GetHighscore()
     {
         return m_HighScore;
+    }
+
+    int ScoreSaver::GetLastScore(const std::string& gameModeName)
+    {
+        if (m_GameModeNameToLastScore.contains(gameModeName))
+        {
+            return m_GameModeNameToLastScore[gameModeName];
+        }
+
+        return 0;
     }
 
     void ScoreSaver::Save()

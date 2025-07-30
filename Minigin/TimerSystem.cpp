@@ -12,6 +12,7 @@ dae::Timer::Timer(float durationInSeconds, bool startPaused, const std::string& 
 	m_IsPaused(startPaused),
 	m_Name(name)
 {
+	SetDuration(m_Duration);
 }
 
 
@@ -163,6 +164,11 @@ dae::Timer& dae::TimerSystem::TimerAt(TimerKey key)
 	return m_Timers.ValueAt(key);
 }
 
+bool dae::TimerSystem::HasTimer(TimerKey key) const
+{
+	return m_Timers.Contains(key);
+}
+
 bool dae::TimerSystem::IsTimerActive(TimerKey key) const
 {
 	return m_Timers.IsActivated(key);
@@ -268,12 +274,7 @@ dae::TimerKey dae::TimerSystem::StartEndFunctionWithDuration(const std::function
 	return key;
 }
 
-size_t dae::TimerSystem::GetActivatedTimersSize() const
-{
-	return m_Timers.ActivatedSize();
-}
-
-void dae::TimerSystem::UpdateTimers()
+void dae::TimerSystem::Update()
 {
 	for (size_t i = 0; i < m_Timers.ActivatedSize(); )
 	{
@@ -287,4 +288,15 @@ void dae::TimerSystem::UpdateTimers()
 			++i;
 		}
 	}
+}
+
+void dae::TimerSystem::Reset()
+{
+	m_Timers.Clear();
+	m_LastKey = 0;
+}
+
+size_t dae::TimerSystem::GetActivatedTimersSize() const
+{
+	return m_Timers.ActivatedSize();
 }

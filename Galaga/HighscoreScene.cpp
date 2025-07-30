@@ -1,15 +1,15 @@
 #include "HighscoreScene.h"
 #include "StatDisplayer.h"
 #include "ScoreSaver.h"
-#include "CreateParticleSystem.h"
+#include "Misc_CreationFunctions.h"
 #include "TextCreator.h"
 #include "PlayerController.h"
 #include "EventTriggerCommand.h"
 #include "MainMenu.h"
 
-dae::HighscoreScene::HighscoreScene(std::vector<Player> players, const std::string& sceneName) : m_SceneName(sceneName)
+dae::HighscoreScene::HighscoreScene(std::vector<Player> players, const std::string& sceneName, std::string gameModeName) : m_SceneName(sceneName)
 {
-    auto highscoreSceneCreation = [players](Scene& scene) mutable{
+    auto highscoreSceneCreation = [players, gameModeName](Scene& scene) mutable{
 
         auto particleSystemObj = CreateParticleSystem();
         scene.AddGameObjectHandle(particleSystemObj);
@@ -17,8 +17,9 @@ dae::HighscoreScene::HighscoreScene(std::vector<Player> players, const std::stri
         float vertOffsetBetweenDisplayers = 60;
         int count{ 0 };
 
-        ScoreSaver scoreSaver{ scene.Name() + ".txt"};
+        ScoreSaver scoreSaver{};
         ScoreData scoreData{};
+        scoreData.GameModeName = gameModeName;
 
         auto backToMainMenu = [](GameObject&) {SceneManager::GetInstance().ChangeCurrentScene(MainMenu::Name()); };
         Event<GameObject&> backToMainMenuEvent{};
@@ -37,7 +38,9 @@ dae::HighscoreScene::HighscoreScene(std::vector<Player> players, const std::stri
             pointsDisplayData.StatNameTextData.Text = "POINTS :";
             pointsDisplayData.StatTypeToDisplay = StatType::Points;
             pointsDisplayData.StatValueColor = { 255, 255, 255 };
-            pointsDisplayData.StatValueOffsetFromStatName = { 0,5 };
+            pointsDisplayData.StatValueOffsetFromStatName = { 0, 5 };
+            pointsDisplayData.StatValueBaseOffsetMultiplierX = 0;
+            pointsDisplayData.StatValueBaseOffsetMultiplierY = 1;
             pointsDisplayData.Where = { xWhere, (g_WindowHeight / 2.f) - vertOffsetBetweenDisplayers };
             pointsDisplayData.FromWho = player.GetGameObjectHandle();
 
@@ -45,7 +48,7 @@ dae::HighscoreScene::HighscoreScene(std::vector<Player> players, const std::stri
 
             statDisplayerGameObj->AddComponent(pointsDisplayer);
 
-            scoreData.Name = "New Player " + std::to_string(count);
+            scoreData.PlayerName = "New Player " + std::to_string(count);
             scoreData.Score = pointsDisplayData.FromWho->GetComponent<CStatController>()->GetStat(StatType::Points, StatCategory::CurrentStat);
             scoreSaver.AddScore(scoreData);
             //------------
@@ -58,6 +61,8 @@ dae::HighscoreScene::HighscoreScene(std::vector<Player> players, const std::stri
             shotsFiredDisplayData.StatTypeToDisplay = StatType::ShotsFired;
             shotsFiredDisplayData.StatValueColor = { 255, 255, 255 };
             shotsFiredDisplayData.StatValueOffsetFromStatName = { 0,5 };
+            shotsFiredDisplayData.StatValueBaseOffsetMultiplierX = 0;
+            shotsFiredDisplayData.StatValueBaseOffsetMultiplierY = 1;
             shotsFiredDisplayData.Where = { xWhere , (g_WindowHeight / 2.f) };
             shotsFiredDisplayData.FromWho = player.GetGameObjectHandle();
 
@@ -75,6 +80,8 @@ dae::HighscoreScene::HighscoreScene(std::vector<Player> players, const std::stri
             hitNumDisplayData.StatTypeToDisplay = StatType::NumberOfHits;
             hitNumDisplayData.StatValueColor = { 255, 255, 255 };
             hitNumDisplayData.StatValueOffsetFromStatName = { 0,5 };
+            hitNumDisplayData.StatValueBaseOffsetMultiplierX = 0;
+            hitNumDisplayData.StatValueBaseOffsetMultiplierY = 1;
             hitNumDisplayData.Where = { xWhere, (g_WindowHeight / 2.f) + vertOffsetBetweenDisplayers };
             hitNumDisplayData.FromWho = player.GetGameObjectHandle();
 

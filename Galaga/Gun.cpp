@@ -29,7 +29,10 @@ void dae::CGun::Start()
 
 void dae::CGun::Shoot()
 {
-	if (m_GunData.Shooter->IsActive() && m_CurrentTimerSystem->TimerAt(m_TimeBetweenShotsTimerKey).IsFinished())
+	if (m_CurrentTimerSystem &&
+		m_CurrentTimerSystem->HasTimer(m_TimeBetweenShotsTimerKey) &&
+		m_GunData.Shooter->IsActive() && 
+		m_CurrentTimerSystem->TimerAt(m_TimeBetweenShotsTimerKey).IsFinished())
 	{
 		m_GunData.Shooter->GetComponent<CStatController>()->OffsetStat(StatType::ShotsFired, 1);
 

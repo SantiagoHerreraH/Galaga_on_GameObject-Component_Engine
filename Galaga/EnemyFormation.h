@@ -18,12 +18,13 @@ namespace dae {
 		CEnemyFormation(
 			const glm::vec2& position,
 			float secondsBetweenSpawning,
+			float secondsBetweenUnitSpawning,
 			const Player& player,
 			const EnemyFormationType& enemyFormationType);
 
 		virtual void Start() override;
 
-		void StartEnemySwirlBehaviour(bool startActingBehaviourAfterEndSwirls = true);
+		void StartEnemySwirlBehaviour();
 
 		void StopSendingTroops();
 		void StartSendingTroops();
@@ -41,9 +42,10 @@ namespace dae {
 		void CheckEnemyDeaths();
 		std::vector<Enemy> m_Enemies;
 
-		bool m_CanSendTroops{true};
+		bool m_CanSendTroops{false};
 
 		float m_SecondsBetweenSpawning{ 1.f };
+		float m_SecondsBetweenUnitSpawning{ 1.f };
 		glm::vec2 m_StartPosition;
 		EnemyUnitSwirlData m_EnemyUnitSwirlData;
 		EnemyGridData m_EnemyGridData;

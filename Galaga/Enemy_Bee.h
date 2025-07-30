@@ -15,7 +15,7 @@
 
 namespace dae {
 
-	GameObjectHandle CreateBeeEnemy(GameObjectHandle grid, dae::Scene& scene, const glm::vec3& relativePos, GameObjectHandle player, Event<>& onAct, std::shared_ptr<Event<GameObject&>> onEndAction, std::shared_ptr<Event<GameObject&>> onDie, std::shared_ptr<MovementActionSequence>chosenMovementAction, bool goTowardsLeft) 
+	GameObjectHandle CreateBeeEnemy(GameObjectHandle grid, dae::Scene& scene, const glm::vec3& relativePos, GameObjectHandle player, Event<>& onAct, std::shared_ptr<Event<GameObject&>> onEndAction, std::shared_ptr<Event<GameObject&>> onDie, std::shared_ptr<CMovementActionSequence>chosenMovementAction, bool goTowardsLeft) 
 	{
 		//------
 
@@ -122,7 +122,7 @@ namespace dae {
 		enemy->GetComponent<CStatController>()->CreateStat(StatType::Points, pointsInFormation);
 
 		//------ Behaviours
-		std::vector<MovementActionSequence> behaviours{};
+		std::vector<CMovementActionSequence> behaviours{};
 		behaviours.push_back(AddUDiveBehavior(scene, enemy, grid, player, relativePos, onEndAction, goTowardsLeft));
 
 		onDie->Subscribe([](GameObject& self) {

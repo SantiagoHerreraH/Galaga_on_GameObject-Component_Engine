@@ -12,7 +12,6 @@ void dae::InputManager::ClearKeys()
 {
 	m_GamepadEvents.clear();
 	m_KeyboardEvents.clear();
-	m_Cleared = true;
 }
 
 void dae::InputManager::BindKey(const GamepadKeyData& gamepadKeyData)
@@ -56,12 +55,33 @@ bool dae::InputManager::IsUpThisFrame(GamepadButton button, PlayerId id) const
 	return  m_GamepadInputManagers[id].IsUpThisFrame(static_cast<unsigned int>(button));
 }
 
+void dae::InputManager::Update()
+{
+	if (m_Data.MaxControllers > 0)
+	{
+		UpdateGamepadController();
+		ProcessControllerInputs();
+	}
+
+	if (m_Data.AllowKeyboard)
+	{
+		ProcessKeyboardInputs();
+	}
+}
+
+void dae::InputManager::Reset()
+{
+	m_GamepadEvents.clear();
+	m_KeyboardEvents.clear();
+	m_DisabledPlayerIds.clear();
+	m_CurrentPlayerId = 0;
+}
+
 void dae::InputManager::SetData(const InputControllerData& data)
 {
 	m_Data = data;
 
 	m_Data.MaxControllers = m_Data.MaxControllers > XUSER_MAX_COUNT ? XUSER_MAX_COUNT : m_Data.MaxControllers;
-	
 
 	if (m_Data.MaxControllers > m_GamepadInputManagers.size())
 	{
@@ -84,20 +104,9 @@ bool dae::InputManager::GetNextAvailableControllerInstance(ControllerInstance& o
 {
 	if (m_CurrentPlayerId == 0 && m_Data.AllowKeyboard)
 	{
-		switch (m_Data.HowToTreatKeyboardController)
-		{
-		case HowToTreatKeyboardController::KeyboardIsAnotherController:
-			out.ControllerType = ControllerType::Keyboard;
-			out.PlayerId = -1; //because it is not necessary
-			break;
-		case HowToTreatKeyboardController::KeyboardIsTheSameAsFirstGamepadController:
-			out.ControllerType = ControllerType::Both;
-			out.PlayerId = m_CurrentPlayerId;
-			++m_CurrentPlayerId;
-			break;
-		default:
-			break;
-		}
+		out.ControllerType = ControllerType::Both;
+		out.PlayerId = m_CurrentPlayerId;
+		++m_CurrentPlayerId;
 		
 		return true;
 	}
@@ -111,21 +120,6 @@ bool dae::InputManager::GetNextAvailableControllerInstance(ControllerInstance& o
 	}
 
 	return false;
-}
-
-void dae::InputManager::ProcessInput()
-{
-
-	if (m_Data.MaxControllers > 0)
-	{
-		UpdateGamepadController();
-		ProcessControllerInputs();
-	}
-
-	if (m_Data.AllowKeyboard)
-	{
-		ProcessKeyboardInputs();
-	}
 }
 
 void dae::InputManager::EnableInput(PlayerId playerId)
@@ -148,7 +142,6 @@ void dae::InputManager::UpdateGamepadController()
 
 void dae::InputManager::ProcessControllerInputs()
 {
-	int idOffset = m_Data.AllowKeyboard ? -1 : 0; // if you allow keyboard player 1 is controller 0
 	int currentId = 0;
 
 	for (size_t i = 0; i < m_GamepadEvents.size(); i++)
@@ -160,7 +153,7 @@ void dae::InputManager::ProcessControllerInputs()
 			continue;
 		}
 
-		currentId = gamepadEvent.PlayerId + idOffset;
+		currentId = gamepadEvent.PlayerId;
 
 		switch (gamepadEvent.ButtonState)
 		{
@@ -196,8 +189,6 @@ void dae::InputManager::ProcessKeyboardInputs()
 	{
 		auto& keyboardEvent = m_KeyboardEvents[i];
 		bool triggered = false;
-
-		
 
 		if (!m_KeyboardKeyStates[keyboardEvent.Key] && keyboardState[keyboardEvent.Key])
 		{

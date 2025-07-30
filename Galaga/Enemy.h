@@ -10,7 +10,7 @@ namespace dae {
 
 	class Enemy;
 
-	using MovementActionSequenceHandle = std::shared_ptr<MovementActionSequence>;
+	using MovementActionSequenceHandle = std::shared_ptr<CMovementActionSequence>;
 
 	class EnemyBehaviour {
 
@@ -34,12 +34,14 @@ namespace dae {
 
 		GameObject& GetGameObject();
 		GameObjectHandle GetGameObjectHandle()const;
-
+		
 		void SetStartingFormationBehaviour(EnemyBehaviour& enemyBehaviour);
+		void SubscribeOnEndStartingFormationBehaviour(const std::function<void(GameObject&)>& func);
+
 		void AddActingBehaviour(EnemyBehaviour& enemyBehaviour);
 
 		bool StartFormation();
-		const MovementActionSequence& Act();
+		const CMovementActionSequence& Act();
 		bool IsActing()const;
 		void StopActing();
 
@@ -54,11 +56,11 @@ namespace dae {
 
 		EnemyInstanceData m_EnemyInstanceData;
 		EnemyType m_EnemyType;
-		std::shared_ptr<MovementActionSequence> m_StartFormationSequence;
-		std::vector<std::shared_ptr<MovementActionSequence>> m_EnemyActingSequences;
+		std::shared_ptr<CMovementActionSequence> m_StartFormationSequence;
+		std::vector<std::shared_ptr<CMovementActionSequence>> m_EnemyActingSequences;
 		int m_CurrentEnemyActingSequence{0};
 
-		Event<GameObject&> m_OnEndAction;
+		std::shared_ptr<Event<GameObject&>> m_OnEndStartingFormationSequence;
 
 		IntStat m_PointsWhileDiving;
 		IntStat m_PointsInFormation;

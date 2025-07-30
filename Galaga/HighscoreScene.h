@@ -9,7 +9,7 @@ namespace dae {
 
 	public:
 
-		HighscoreScene(std::vector<Player> players, const std::string& sceneName);
+		HighscoreScene(std::vector<Player> players, const std::string& sceneName, std::string gameModeName);
 		const std::string& GetName()const { return m_SceneName; }
 
 	private:

@@ -26,7 +26,6 @@ namespace dae {
 			MainMenuCreator();
 			void CreateParticles(dae::Scene& scene);
 			void CreateTexture(dae::Scene& scene, const std::string& fileName, const glm::vec2& pos, const glm::vec2& scale = { 1,1 });
-			void CreateHighscore(dae::Scene& scene, const std::string& titleName, const glm::vec2& pos);
 			void CreateTitleAndSubTitle(dae::Scene& scene, const std::string& title, const std::string& subTitle, const glm::vec2& pos);
 
 			void CreateButton(const std::string& buttonName, std::string sceneNameToTransition);

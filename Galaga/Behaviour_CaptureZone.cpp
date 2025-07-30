@@ -29,7 +29,7 @@ dae::MovementActionSequenceHandle dae::CaptureZoneBehaviour::CreateInstance(Enem
 		};
 
 
-	MovementActionSequence captureZoneBehavior{ "CaptureZoneBehavior" };
+	CMovementActionSequence captureZoneBehavior{ "CaptureZoneBehavior" };
 
 	captureZoneBehavior.AddConditionToStartSequence([captureZone]() {
 

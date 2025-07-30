@@ -20,7 +20,7 @@ namespace dae {
 	{
 	public:
 		Player() {}
-		Player(const glm::vec2& startPos, float zRotation, const PlayerType& PlayerType);
+		Player(const glm::vec2& startPos, float zRotation, int playerNum, const PlayerType& PlayerType);
 
 		GameObject& GetGameObject() { return *m_CurrentPlayer; }
 		GameObjectHandle GetGameObjectHandle();

@@ -20,7 +20,7 @@ void dae::CLifeTime::Start()
 	Event<> onTimerEndEvent{};
 	onTimerEndEvent.Subscribe(deactiveAction);
 
-	Timer lifetime{ m_Lifetime, m_StartDeactivated };
+	Timer lifetime{ m_Lifetime, m_StartDeactivated, "LifeTime of " + Owner().GetName()};
 	lifetime.SetOnEndEvent(onTimerEndEvent);
 	m_CurrentLifetimeTimerKey = m_CurrentTimerSystem->AddTimer(lifetime);
 

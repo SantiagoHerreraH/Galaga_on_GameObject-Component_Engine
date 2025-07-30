@@ -18,6 +18,8 @@ namespace dae {
 
 		glm::vec2 Where;
 		glm::vec2 StatValueOffsetFromStatName;
+		float StatValueBaseOffsetMultiplierX{1}; // 1 == exaclty to the right
+		float StatValueBaseOffsetMultiplierY{1}; // 1 == exaclty below
 
 		GameObjectHandle FromWho;
 	};

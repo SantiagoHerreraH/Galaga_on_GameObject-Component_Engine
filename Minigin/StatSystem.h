@@ -33,7 +33,7 @@ namespace dae {
 		void ResetCurrentStat(const StatKey& statKey);
 
 		bool HasStat(const StatKey& statKey)const;
-		const Stat<StatValueType>& GetStat(const StatKey& statKey)const;
+		const Stat<StatValueType>& GetStatStruct(const StatKey& statKey)const;
 		const StatValueType& GetStat(const StatKey& statKey, StatCategory statType = StatCategory::CurrentStat)const;
 		void SetStat(const StatKey& statKey, const StatValueType& value, StatCategory statType = StatCategory::CurrentStat);
 		void OffsetStat(const StatKey& statKey, const StatValueType& offset, StatCategory statType = StatCategory::CurrentStat);
@@ -87,7 +87,7 @@ namespace dae {
 	}
 
 	template<typename StatKey, typename StatValueType>
-	inline const Stat<StatValueType>& StatController<StatKey, StatValueType>::GetStat(const StatKey& statKey) const
+	inline const Stat<StatValueType>& StatController<StatKey, StatValueType>::GetStatStruct(const StatKey& statKey) const
 	{
 		return m_Stats.at(statKey);
 	}

@@ -5,18 +5,22 @@
 #include "TextCreator.h"
 #include "ParticleSystem.h"
 #include "ScoreSaver.h"
+#include "Misc_CreationFunctions.h"
 
 dae::MainMenu::MainMenu() : m_MainMenuCreator{ std::make_shared<MainMenuCreator>() }
 {
 	auto creator = m_MainMenuCreator;
 
 	auto createSceneFunc = [creator](Scene& scene)
-		{
+		{			
+			CreateHighscore(scene, "HI-SCORE",{ int(g_WindowWidth / 2.f),   int(g_WindowHeight * 0.5 / 6.f) });
 			creator->CreateParticles(scene);
 			creator->CreateTexture(scene, "galagaLogo.png", { int(g_WindowWidth / 2.f),   int(g_WindowHeight / 2.f) - 100 }, { 0.5f, 0.5f });
-			creator->CreateHighscore(scene, "HI-SCORE", { int(g_WindowWidth / 2.f),   int(g_WindowHeight * 0.5 / 6.f) });
-			creator->CreateTitleAndSubTitle(scene, "1_UP", "00", { int(g_WindowWidth * 1 / 4.f),      int(g_WindowHeight * 0.5 / 6.f) });
-			creator->CreateTitleAndSubTitle(scene, "2_UP", "00", { int(g_WindowWidth * 3 / 4.f),      int(g_WindowHeight * 0.5 / 6.f) });
+
+			CreateLastScore(scene, "1_UP", "GameModes/OnePlayerVsEnemies.txt",{ int(g_WindowWidth * 1 / 4.f),      int(g_WindowHeight * 0.5 / 6.f) });
+			CreateLastScore(scene, "2_UP", "GameModes/TwoPlayersVsEnemies.txt",{ int(g_WindowWidth * 3 / 4.f),      int(g_WindowHeight * 0.5 / 6.f) });
+			//creator->CreateTitleAndSubTitle(scene, "1_UP", "00", { int(g_WindowWidth * 1 / 4.f),      int(g_WindowHeight * 0.5 / 6.f) });
+			//creator->CreateTitleAndSubTitle(scene, "2_UP", "00", { int(g_WindowWidth * 3 / 4.f),      int(g_WindowHeight * 0.5 / 6.f) });
 			
 			TextCreator textCreatorOne("TM AND © 1981 1988 NAMCO LTD.", { int(g_WindowWidth / 2.f),   int(g_WindowHeight * 4.5 / 6.f) }, 13, SDL_Color{ 255, 255 , 255 });
 			TextCreator textCreatorTwo("BANDAI CO. LTD. IS LICENSED", { int(g_WindowWidth / 2.f),   int(g_WindowHeight * 5.0 / 6.f) }, 13, SDL_Color{ 255, 255 , 255 });
@@ -82,38 +86,7 @@ void  dae::MainMenu::MainMenuCreator::CreateTexture(dae::Scene& scene, const std
 
 }
 
-void dae::MainMenu::MainMenuCreator::CreateHighscore(dae::Scene& scene, const std::string& titleName, const glm::vec2& pos) {
 
-	TransformData currentTransformData{};
-	currentTransformData.Position.x = pos.x;
-	currentTransformData.Position.y = pos.y;
-
-	CText currentText{ "Emulogic-zrEw.ttf", 13 };
-	currentText.SetText(titleName);
-	currentText.SetColor(SDL_Color{ 255,0,0 });
-	currentText.Center();
-
-
-	dae::GameObjectHandle highScoreText{scene.CreateGameObject()};
-	highScoreText->Transform().SetLocalTransform(currentTransformData);
-	highScoreText->AddComponent(currentText);
-
-	currentTransformData.Position.y += currentText.Data()->GetPixelSize().y + 5;
-
-	ScoreSaver scoreSaver{ "Highscore.txt" };
-	ScoreData scoreData = scoreSaver.GetHighscore();
-
-	currentText.SetText(std::to_string(scoreData.Score));
-	currentText.SetColor(SDL_Color{ 255,255,255 });
-	currentText.Center();
-
-	dae::GameObjectHandle highScore { scene.CreateGameObject() };
-	highScore->Transform().SetLocalTransform(currentTransformData);
-	highScore->AddComponent(currentText);
-
-
-
-}
 void dae::MainMenu::MainMenuCreator::CreateTitleAndSubTitle(dae::Scene& scene, const std::string& titleText, const std::string& subTitleText, const glm::vec2& pos)
 {
 

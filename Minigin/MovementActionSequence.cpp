@@ -1,12 +1,12 @@
 #include "MovementActionSequence.h"
 #include "MathTools.h"
 
-dae::MovementActionSequence::MovementActionSequence(const std::string& sequenceName) :
+dae::CMovementActionSequence::CMovementActionSequence(const std::string& sequenceName) :
 	m_SequenceName(sequenceName)
 {
 }
 
-void dae::MovementActionSequence::Start()
+void dae::CMovementActionSequence::Start()
 {
 	m_Scene = &SceneManager::GetInstance().GetCurrentScene();
 
@@ -49,7 +49,7 @@ void dae::MovementActionSequence::Start()
 	}
 }
 
-bool dae::MovementActionSequence::StartSequence()
+bool dae::CMovementActionSequence::StartSequence()
 {
 
 	if (CanStartSequence())
@@ -67,7 +67,7 @@ bool dae::MovementActionSequence::StartSequence()
 	return false;
 }
 
-bool dae::MovementActionSequence::RestartSequence()
+bool dae::CMovementActionSequence::RestartSequence()
 {
 	if (!CanStartSequence())
 	{
@@ -90,7 +90,7 @@ bool dae::MovementActionSequence::RestartSequence()
 	return true;
 }
 
-void dae::MovementActionSequence::StopSequence()
+void dae::CMovementActionSequence::StopSequence()
 {
 	if (!m_Scene)
 	{
@@ -105,7 +105,7 @@ void dae::MovementActionSequence::StopSequence()
 }
 
 
-bool dae::MovementActionSequence::IsActing()const 
+bool dae::CMovementActionSequence::IsActing()const 
 {
 	if (!m_Scene)
 	{
@@ -123,7 +123,7 @@ bool dae::MovementActionSequence::IsActing()const
 	return false;
 }
 
-bool dae::MovementActionSequence::CanStartSequence() const
+bool dae::CMovementActionSequence::CanStartSequence() const
 {
 
 	for (size_t i = 0; i < m_ConditionsToStartSequence.size(); i++)
@@ -136,37 +136,37 @@ bool dae::MovementActionSequence::CanStartSequence() const
 	return true;
 }
 
-void dae::MovementActionSequence::AddConditionToStartSequence(const std::function<bool()>& condition)
+void dae::CMovementActionSequence::AddConditionToStartSequence(const std::function<bool()>& condition)
 {
 	m_ConditionsToStartSequence.push_back(condition);
 }
 
-void dae::MovementActionSequence::AddAction(const std::string& actionName)
+void dae::CMovementActionSequence::AddAction(const std::string& actionName)
 {
 	std::shared_ptr<MovementAction> movementAction{ std::make_shared<MovementAction>() };
 	movementAction->SetName(actionName);
 	m_MovementActions.emplace_back(movementAction);
 }
 
-void dae::MovementActionSequence::AddConditionToStartOrRestartAction(const std::function<bool()>& condition)
+void dae::CMovementActionSequence::AddConditionToStartOrRestartAction(const std::function<bool()>& condition)
 {
 
 	m_MovementActions.back()->AddConditionToStartOrRestartAction(condition);
 
 }
 
-void dae::MovementActionSequence::SetActionDependsOnDuration(bool dependsOnTime, float time)
+void dae::CMovementActionSequence::SetActionDependsOnDuration(bool dependsOnTime, float time)
 {
 	m_MovementActions.back()->SetActionDependsOnDuration(dependsOnTime, time);
 
 }
 
-void dae::MovementActionSequence::SetActionDuration(float time)
+void dae::CMovementActionSequence::SetActionDuration(float time)
 {
 	m_MovementActions.back()->SetDuration(time);
 }
 
-void dae::MovementActionSequence::AddConditionToStopAction(const std::function<bool()>& condition)
+void dae::CMovementActionSequence::AddConditionToStopAction(const std::function<bool()>& condition)
 {
 	m_MovementActions.back()->AddConditionToStopAction(condition);
 
@@ -184,7 +184,7 @@ void dae::MovementActionSequence::AddConditionToStopAction(const std::function<b
 	//TimerSystem::GetFromScene(m_Scene).TimerAt(m_MovementActions.back().TimerKey).GetOnUpdateEvent().Subscribe(conditionFunction);
 }
 
-void dae::MovementActionSequence::SetMovementPathDecidingFunction(std::function<glm::vec2()> functionThatReturnsVectorWithMovementDirectionAndMagnitude)
+void dae::CMovementActionSequence::SetMovementPathDecidingFunction(std::function<glm::vec2()> functionThatReturnsVectorWithMovementDirectionAndMagnitude)
 {
 	m_MovementActions.back()->SetMovementPathDecidingFunction(functionThatReturnsVectorWithMovementDirectionAndMagnitude);
 
@@ -200,7 +200,7 @@ void dae::MovementActionSequence::SetMovementPathDecidingFunction(std::function<
 	TimerSystem::GetFromScene(m_Scene).TimerAt(m_MovementActions.back().TimerKey).GetOnStartEvent().Subscribe(function);*/
 }
 
-void dae::MovementActionSequence::AddActionFunction(std::function<bool(float timeSinceActionStarted, const MovementData&)> movementFuncThatReturnsWhenItIsDone)
+void dae::CMovementActionSequence::AddActionFunction(std::function<bool(float timeSinceActionStarted, const MovementData&)> movementFuncThatReturnsWhenItIsDone)
 {
 	m_MovementActions.back()->AddActionFunction(movementFuncThatReturnsWhenItIsDone);
 
@@ -224,21 +224,21 @@ void dae::MovementActionSequence::AddActionFunction(std::function<bool(float tim
 	TimerSystem::GetFromScene(m_Scene).TimerAt(m_MovementActions.back().TimerKey).GetOnUpdateEvent().Subscribe(function);*/
 }
 
-void dae::MovementActionSequence::AddStartSubAction(const std::function<void()>& subAction)
+void dae::CMovementActionSequence::AddStartSubAction(const std::function<void()>& subAction)
 {
 	m_MovementActions.back()->AddStartSubAction(subAction);
 
 	/*TimerSystem::GetFromScene(m_Scene).TimerAt(m_MovementActions.back().TimerKey).GetOnStartEvent().Subscribe(subAction);*/
 }
 
-void dae::MovementActionSequence::AddUpdateSubAction(const std::function<void()>& subAction)
+void dae::CMovementActionSequence::AddUpdateSubAction(const std::function<void()>& subAction)
 {
 	m_MovementActions.back()->AddPostActionUpdateSubAction(subAction);
 
 	/*TimerSystem::GetFromScene(m_Scene).TimerAt(m_MovementActions.back().TimerKey).GetOnUpdateEvent().Subscribe(subAction);*/
 }
 
-void dae::MovementActionSequence::AddEndSubAction(const std::function<void()>& subAction)
+void dae::CMovementActionSequence::AddEndSubAction(const std::function<void()>& subAction)
 {
 	m_MovementActions.back()->AddEndSubAction(subAction);
 
@@ -247,7 +247,12 @@ void dae::MovementActionSequence::AddEndSubAction(const std::function<void()>& s
 
 #pragma region MovementAction
 
-void dae::MovementActionSequence::MovementAction::Initialize(MovementActionSequence* movementActionSequence)
+dae::CMovementActionSequence::MovementAction::MovementAction()
+{
+	m_MovementPathDecidingFunc = []() {return glm::vec2{}; };
+}
+
+void dae::CMovementActionSequence::MovementAction::Initialize(CMovementActionSequence* movementActionSequence)
 {
 	m_MovementActionSequence = movementActionSequence;
 	m_Scene = &SceneManager::GetInstance().GetCurrentScene();
@@ -255,27 +260,27 @@ void dae::MovementActionSequence::MovementAction::Initialize(MovementActionSeque
 
 }
 
-bool dae::MovementActionSequence::MovementAction::WasInitilized() const
+bool dae::CMovementActionSequence::MovementAction::WasInitilized() const
 {
 	return m_Scene != nullptr;
 }
 
-void dae::MovementActionSequence::MovementAction::SetName(const std::string& actionName) {
+void dae::CMovementActionSequence::MovementAction::SetName(const std::string& actionName) {
 	m_ActionName = actionName;
 }
-const std::string& dae::MovementActionSequence::MovementAction::GetName()const {
+const std::string& dae::CMovementActionSequence::MovementAction::GetName()const {
 	return m_ActionName;
 }
 
-dae::TimerKey dae::MovementActionSequence::MovementAction::GetTimerKey()
+dae::TimerKey dae::CMovementActionSequence::MovementAction::GetTimerKey()
 {
 	return m_TimerKey;
 }
 
-float dae::MovementActionSequence::MovementAction::GetDuration() {
+float dae::CMovementActionSequence::MovementAction::GetDuration() {
 	return m_Duration;
 }
-void dae::MovementActionSequence::MovementAction::SetDuration(float duration) {
+void dae::CMovementActionSequence::MovementAction::SetDuration(float duration) {
 	
 	m_Duration = duration;
 
@@ -285,7 +290,7 @@ void dae::MovementActionSequence::MovementAction::SetDuration(float duration) {
 	}
 }
 
-void dae::MovementActionSequence::MovementAction::SetActionDependsOnDuration(bool dependsOnTime, float time) {
+void dae::CMovementActionSequence::MovementAction::SetActionDependsOnDuration(bool dependsOnTime, float time) {
 
 	m_DependsOnTime = dependsOnTime;
 	time = dependsOnTime ? time : -1; //-1 == duration is infinite
@@ -300,26 +305,26 @@ void dae::MovementActionSequence::MovementAction::SetActionDependsOnDuration(boo
 
 }
 
-bool dae::MovementActionSequence::MovementAction::HasNextTimerKey() const
+bool dae::CMovementActionSequence::MovementAction::HasNextTimerKey() const
 {
 	return m_HasNextTimerKey;
 }
 
-dae::TimerKey dae::MovementActionSequence::MovementAction::GetNextTimerKey()
+dae::TimerKey dae::CMovementActionSequence::MovementAction::GetNextTimerKey()
 {
 	return m_NextActionTimerKey;
 }
 
-void dae::MovementActionSequence::MovementAction::SetNextTimerKey(bool hasNextTimerKey, TimerKey nextTimerKey)
+void dae::CMovementActionSequence::MovementAction::SetNextTimerKey(bool hasNextTimerKey, TimerKey nextTimerKey)
 {
 	m_HasNextTimerKey = hasNextTimerKey;
 	m_NextActionTimerKey = nextTimerKey;
 }
 
-void dae::MovementActionSequence::MovementAction::AddConditionToStartOrRestartAction(const std::function<bool()>& condition) {
+void dae::CMovementActionSequence::MovementAction::AddConditionToStartOrRestartAction(const std::function<bool()>& condition) {
 	m_ConditionsToStartOrRestart.push_back(condition);
 }
-bool dae::MovementActionSequence::MovementAction::CanStartOrRestartAction() const
+bool dae::CMovementActionSequence::MovementAction::CanStartOrRestartAction() const
 {
 	for (size_t i = 0; i < m_ConditionsToStartOrRestart.size(); i++)
 	{
@@ -330,11 +335,11 @@ bool dae::MovementActionSequence::MovementAction::CanStartOrRestartAction() cons
 	}
 	return true;
 }
-void dae::MovementActionSequence::MovementAction::AddConditionToStopAction(const std::function<bool()>& condition) {
+void dae::CMovementActionSequence::MovementAction::AddConditionToStopAction(const std::function<bool()>& condition) {
 	m_ConditionsToStopAction.push_back(condition);
 }
 
-bool dae::MovementActionSequence::MovementAction::CanStopAction() const
+bool dae::CMovementActionSequence::MovementAction::CanStopAction() const
 {
 	for (size_t i = 0; i < m_ConditionsToStopAction.size(); i++)
 	{
@@ -346,14 +351,14 @@ bool dae::MovementActionSequence::MovementAction::CanStopAction() const
 	return false;
 }
 
-void dae::MovementActionSequence::MovementAction::SetMovementPathDecidingFunction(std::function<glm::vec2()> functionThatReturnsVectorWithMovementDirectionAndMagnitude) {
+void dae::CMovementActionSequence::MovementAction::SetMovementPathDecidingFunction(std::function<glm::vec2()> functionThatReturnsVectorWithMovementDirectionAndMagnitude) {
 	m_MovementPathDecidingFunc = functionThatReturnsVectorWithMovementDirectionAndMagnitude;
 }
-void dae::MovementActionSequence::MovementAction::AddActionFunction(std::function<bool(float timeSinceActionStarted, const dae::MovementData&)> movementFuncThatReturnsWhenItIsDone) {
+void dae::CMovementActionSequence::MovementAction::AddActionFunction(std::function<bool(float timeSinceActionStarted, const dae::MovementData&)> movementFuncThatReturnsWhenItIsDone) {
 	m_ActionFunctions.push_back(movementFuncThatReturnsWhenItIsDone);
 }
 
-void dae::MovementActionSequence::MovementAction::RestartAction()
+void dae::CMovementActionSequence::MovementAction::RestartAction()
 {
 	if (!CanStartOrRestartAction())
 	{
@@ -361,7 +366,7 @@ void dae::MovementActionSequence::MovementAction::RestartAction()
 	}
 }
 
-void dae::MovementActionSequence::MovementAction::StartAction()
+void dae::CMovementActionSequence::MovementAction::StartAction()
 {
 	m_MovementData.BeginningPosition = m_MovementActionSequence->Owner().Transform().GetWorldTransform().Position;
 	m_MovementData.BeginningDeltaTowardsTarget = m_MovementPathDecidingFunc();
@@ -376,7 +381,7 @@ void dae::MovementActionSequence::MovementAction::StartAction()
 	}
 }
 
-void dae::MovementActionSequence::MovementAction::UpdateAction()
+void dae::CMovementActionSequence::MovementAction::UpdateAction()
 {
 	if (CanStopAction())
 	{
@@ -398,7 +403,7 @@ void dae::MovementActionSequence::MovementAction::UpdateAction()
 	m_UpdateSubActions.Invoke();
 }
 
-void dae::MovementActionSequence::MovementAction::EndAction()
+void dae::CMovementActionSequence::MovementAction::EndAction()
 {
 	m_EndSubActions.Invoke();
 
@@ -408,13 +413,13 @@ void dae::MovementActionSequence::MovementAction::EndAction()
 	}
 }
 
-void dae::MovementActionSequence::MovementAction::AddStartSubAction(const std::function<void()>& subAction) {
+void dae::CMovementActionSequence::MovementAction::AddStartSubAction(const std::function<void()>& subAction) {
 	m_StartSubActions.Subscribe(subAction);
 }
-void dae::MovementActionSequence::MovementAction::AddPostActionUpdateSubAction(const std::function<void()>& subAction) {
+void dae::CMovementActionSequence::MovementAction::AddPostActionUpdateSubAction(const std::function<void()>& subAction) {
 	m_UpdateSubActions.Subscribe(subAction);
 }
-void dae::MovementActionSequence::MovementAction::AddEndSubAction(const std::function<void()>& subAction) {
+void dae::CMovementActionSequence::MovementAction::AddEndSubAction(const std::function<void()>& subAction) {
 	m_EndSubActions.Subscribe(subAction);
 }
 

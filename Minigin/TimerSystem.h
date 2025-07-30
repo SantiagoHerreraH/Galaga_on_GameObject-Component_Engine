@@ -69,12 +69,15 @@ namespace dae {
 	class TimerSystem final : public SceneSingleton<TimerSystem>
 	{
 	public:
+		void Update()override;
+		void Reset()override;
+
 		size_t GetActivatedTimersSize()const;
-		void UpdateTimers();
 		TimerKey AddTimer(const Timer& timer);
 		bool RemoveTimer(TimerKey key);
 		void ClearTimerEvents(TimerKey key);
 		Timer& TimerAt(TimerKey key);
+		bool HasTimer(TimerKey key)const;
 		bool IsTimerActive(TimerKey key)const;
 		void RestartTimer(TimerKey key);
 		void EndTimer(TimerKey key);

@@ -44,7 +44,7 @@ namespace dae {
 		CollisionTag m_CollisionTag{-1};//default collision tag
 		std::vector<CollisionTag> m_CollisionTagsToCollideWith{};
 
-		bool m_RenderCollider{ false };
+		bool m_RenderCollider{ true };
 		std::vector<std::shared_ptr<CCollider>> m_CollidersToCollideWith;
 
 		bool IsStayOverlappingWith(const GameObject& other);

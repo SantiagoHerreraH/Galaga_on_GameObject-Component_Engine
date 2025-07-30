@@ -6,19 +6,19 @@
 #include "ParticleSystem.h"
 #include "ScoreSaver.h"
 #include "Gun.h"
-#include "CreateParticleSystem.h"
+#include "Misc_CreationFunctions.h"
 #include "HighscoreScene.h"
 #include "ResourceManager.h"
 
-dae::RoundManager::RoundManager(const std::string& fileName) : 
+dae::RoundManager::RoundManager(const std::string& fileName) :
     m_RoundManagerData(std::make_shared<RoundManagerData>()),
     m_FileName(fileName)
 {
     if (LoadRoundManagerType(fileName))
     {
         m_RoundManagerData->ParticleSystemGameObj = CreateParticleSystem();
-        CreateHighscoreScene();
         CreatePlayers();
+        CreateHighscoreScene();
         CreateRounds();
     }
 
@@ -49,7 +49,7 @@ void dae::RoundManager::CreatePlayers()
     {
         currentPlayerPos.x = int((g_WindowWidth/ (m_RoundManagerData->RoundManagerType.PlayerCount + 1)) * (i + 1) );
 
-        m_RoundManagerData->Players.push_back(Player{ currentPlayerPos, 180 , playerType });
+        m_RoundManagerData->Players.push_back(Player{ currentPlayerPos, 0 , (int)i, playerType });
         m_RoundManagerData->Players.back().SubscribeOnPlayerDie([data]()
             {
                 ++(data->PlayerDeaths);
@@ -91,6 +91,8 @@ void dae::RoundManager::CreateRounds()
     auto data = m_RoundManagerData;
     auto sceneCreationFunction = [data](Scene& scene) 
         {
+            CreateHighscore(scene, "HI-SCORE", { g_WindowWidth * 4.3f / 5.f , (g_WindowHeight * 0.8f / 5.f) });
+
             scene.AddGameObjectHandle(data->ParticleSystemGameObj);
 
             GameObjectHandle enemyFormationOne{ scene.CreateGameObject() };
@@ -118,28 +120,34 @@ void dae::RoundManager::CreateRounds()
                     }
                 };
 
-            CEnemyFormation formationOne{ glm::vec2{},    0.3f, data->GetRandomPlayer(), data->GetCurrentRoundType().FirstEnemyFormation};
-            formationOne.SubscribeOnFormationDeath(checkFormationDeath);
+            CEnemyFormation formationOne{ glm::vec2{g_WindowWidth / 2.f, g_WindowHeight/5.f},    0.3f, 2.5f,  data->GetRandomPlayer(), data->GetCurrentRoundType().FirstEnemyFormation};
+            formationOne.SubscribeOnFormationDeath(checkFormationDeath); 
+            formationOne.SubscribeOnEndFormationSwirlBehaviour([enemyFormationOne, enemyFormationTwo, enemyFormationThree]() 
+                {
+                    enemyFormationThree->GetComponent<CEnemyFormation>()->StartSendingTroops();
+                    enemyFormationTwo->GetComponent<CEnemyFormation>()->StartSendingTroops();
+                    enemyFormationOne->GetComponent<CEnemyFormation>()->StartSendingTroops();
+                });
 
-            CEnemyFormation formationTwo{ glm::vec2{},    0.3f, data->GetRandomPlayer(), data->GetCurrentRoundType().SecondEnemyFormation};
+            CEnemyFormation formationTwo{ glm::vec2{g_WindowWidth / 2.f, g_WindowHeight * 2.f / 5.f},    0.3f, 2.5f, data->GetRandomPlayer(), data->GetCurrentRoundType().SecondEnemyFormation};
             formationTwo.SubscribeOnFormationDeath(checkFormationDeath);
             formationTwo.SubscribeOnEndFormationSwirlBehaviour([enemyFormationOne]() {
 
-                enemyFormationOne->GetComponent<CEnemyFormation>()->StartEnemySwirlBehaviour(true);
+                enemyFormationOne->GetComponent<CEnemyFormation>()->StartEnemySwirlBehaviour();
                 });
             
-            CEnemyFormation formationThree{ glm::vec2{},    0.3f, data->GetRandomPlayer(), data->GetCurrentRoundType().ThirdEnemyFormation};
+            CEnemyFormation formationThree{ glm::vec2{g_WindowWidth / 2.f, g_WindowHeight * 3.f / 5.f},    0.3f, 2.5f, data->GetRandomPlayer(), data->GetCurrentRoundType().ThirdEnemyFormation};
             formationThree.SubscribeOnFormationDeath(checkFormationDeath);
             formationThree.SubscribeOnEndFormationSwirlBehaviour([enemyFormationTwo]() {
 
-                enemyFormationTwo->GetComponent<CEnemyFormation>()->StartEnemySwirlBehaviour(false);
+                enemyFormationTwo->GetComponent<CEnemyFormation>()->StartEnemySwirlBehaviour();
                 });
 
 
-            RoundUI roundUI{ scene, (int)data->CurrentRoundIdx };
+            RoundUI roundUI{ scene, (int)data->CurrentRoundIdx + 1 };
             roundUI.SubscribeOnRoundTextEnd([enemyFormationThree](){
                 
-                enemyFormationThree->GetComponent<CEnemyFormation>()->StartEnemySwirlBehaviour(false);
+                enemyFormationThree->GetComponent<CEnemyFormation>()->StartEnemySwirlBehaviour();
                 
                 });
 
@@ -166,6 +174,6 @@ void dae::RoundManager::CreateRounds()
 
 void dae::RoundManager::CreateHighscoreScene()
 {
-    HighscoreScene highscoreScene{ m_RoundManagerData->Players, "HighscoreScene"};
+    HighscoreScene highscoreScene{ m_RoundManagerData->Players, "HighScoreScene", m_FileName };
     m_RoundManagerData->HighscoreSceneName = highscoreScene.GetName();
 }

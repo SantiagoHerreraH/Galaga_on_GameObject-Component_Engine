@@ -71,7 +71,7 @@ namespace dae {
 			}
 
 			Player& GetRandomPlayer() {
-				return Players[Random::GetRandomBetweenRange(0, (int)Players.size())];
+				return Players[Random::GetRandomBetweenRange(0, (int)(Players.size() - 1))];
 			}
 
 			RoundManagerType RoundManagerType;

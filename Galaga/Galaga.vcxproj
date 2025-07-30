@@ -45,7 +45,7 @@
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="CaptureZoneWeaponType.h" />
     <ClInclude Include="CCaptureZone.h" />
-    <ClInclude Include="CreateParticleSystem.h" />
+    <ClInclude Include="Misc_CreationFunctions.h" />
     <ClInclude Include="HighscoreScene.h" />
     <ClInclude Include="PlayerVsScene.h" />
     <ClInclude Include="WeaponType.h" />

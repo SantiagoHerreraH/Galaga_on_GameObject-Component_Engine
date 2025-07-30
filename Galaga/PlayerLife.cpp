@@ -11,18 +11,16 @@ void dae::CPlayerLife::Start()
 	CPlayerController* playerController = GetPlayerController();
 	CStatController* currentStatController = GetStatController();
 
-	PlayerId playerId = playerController->GetPlayerId();
-
 
 	Event<>& onHealthZeroOrLess = currentStatController->OnCurrentStatZeroOrLess(StatType::Health);
 	Event<int>& onHealthChange = currentStatController->OnCurrentStatChange(StatType::Health);
 
 	std::vector<dae::GameObjectHandle> healthIndicators =
 		CreatePlayerHealthIndicator(
-			playerId,
+			m_PlayerNum,
 			m_MaxHealth,
 			glm::vec2{ g_WindowWidth * 4.3f / 5.f,
-			(g_WindowHeight * 2.3f / 5.f) + (playerId * 100) }, 1, 1);
+			(g_WindowHeight * 2.3f / 5.f) + (m_PlayerNum * 100) }, 1, 1);
 
 	auto changeHealthIndicators = [healthIndicators](int currentHealth) mutable
 		{
@@ -57,14 +55,17 @@ void dae::CPlayerLife::Start()
 		};
 
 	TimerSystem* TIMERSYSTEM = &TimerSystem::GetCurrent();
-	float secondsToRespawn = 2.5f;
-	TimerKey respawnKey = TIMERSYSTEM->TriggerFunctionAfterSeconds(respawnPlayer, secondsToRespawn, false, true);
+	TimerKey respawnKey = TIMERSYSTEM->TriggerFunctionAfterSeconds(respawnPlayer, m_SecondsToRespawn, false, true);
 
 	auto despawnAndRespawnAfterTime = [self, respawnKey, TIMERSYSTEM](int) mutable {
 		
 		self->Owner().SetActive(false);
 		self->m_OnDespawnFromDamage.Invoke();
-		TIMERSYSTEM->RestartTimer(respawnKey);
+
+		if (TIMERSYSTEM->HasTimer(respawnKey))//because this might be called after scene reset
+		{
+			TIMERSYSTEM->RestartTimer(respawnKey);
+		}
 
 		};
 
@@ -73,10 +74,14 @@ void dae::CPlayerLife::Start()
 	onHealthZeroOrLess.Subscribe([self]() mutable {
 
 		self->m_OnDie.Invoke();
-		CStatController* currentStatController = self->Owner().GetComponent<CStatController>();
-		currentStatController->ResetCurrentStat(StatType::Health);
 
 		});
+
+	for (size_t i = 0; i < healthIndicators.size(); i++)
+	{
+		SceneManager::GetInstance().GetCurrentScene().AddGameObjectHandle(healthIndicators[i]);
+	}
+
 }
 
 void dae::CPlayerLife::SubscribeOnPlayerDie(const std::function<void()>& func)

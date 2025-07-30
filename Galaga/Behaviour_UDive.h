@@ -41,7 +41,7 @@ namespace dae {
 				};
 
 
-			MovementActionSequence uDiveBehavior{ "UDiveBehavior" };
+			CMovementActionSequence uDiveBehavior{ "UDiveBehavior" };
 
 			//-------GO BEHIND THE PLAYER--------
 

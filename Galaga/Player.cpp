@@ -16,9 +16,12 @@
 #include "Bullet.h"
 #include "Gun.h"
 
-dae::Player::Player(const glm::vec2& startPos, float zRotation, const PlayerType& playerType)
-{
+#undef max
+#undef min
+#include <limits>
 
+dae::Player::Player(const glm::vec2& startPos, float zRotation, int playerNum, const PlayerType& playerType)
+{
 	//------- PLAYER
 
 	dae::GameObjectHandle currentPlayer = std::make_shared<GameObject>();
@@ -30,10 +33,6 @@ dae::Player::Player(const glm::vec2& startPos, float zRotation, const PlayerType
 	shootingPivot->Transform().SetLocalPositionY(-10);
 	shootingPivot->Transform().SetParent(*currentPlayer, dae::ETransformReparentType::KeepLocalTransform);
 
-	auto weaponType = playerType.WeaponType;
-
-	weaponType->Create(shootingPivot);
-
 	//----- COMPONENTS -----
 
 	Rect rect{};
@@ -41,7 +40,6 @@ dae::Player::Player(const glm::vec2& startPos, float zRotation, const PlayerType
 	rect.Width = 32;
 
 	dae::CCollider collider{ rect, (int)GalagaCollisionLayers::Player };
-	collider.AddCollisionTagToCollideWith((int)GalagaCollisionLayers::Enemies);
 	collider.CenterRect();
 
 	currentPlayer->AddComponent(collider);
@@ -69,10 +67,7 @@ dae::Player::Player(const glm::vec2& startPos, float zRotation, const PlayerType
 
 	//-----
 
-	CPlayerController playerController{};
-	PlayerId playerId = playerController.GetPlayerId();
-
-	currentPlayer->AddComponent(playerController);
+	auto playerControllerRef = currentPlayer->AddComponent(CPlayerController{});
 
 	//-----
 
@@ -81,7 +76,7 @@ dae::Player::Player(const glm::vec2& startPos, float zRotation, const PlayerType
 	IntStat initialHealth{ 3, 3, 3 };
 
 
-	const int maxInt = std::numeric_limits<int>::infinity();
+	constexpr int maxInt = std::numeric_limits<int>::max();
 
 	IntStat initialPoints{ 0, maxInt, maxInt };
 	IntStat initialShotsFired{ 0, maxInt, maxInt };
@@ -105,7 +100,7 @@ dae::Player::Player(const glm::vec2& startPos, float zRotation, const PlayerType
 	statDisplayData.StatTypeToDisplay = StatType::Points;
 	statDisplayData.StatValueColor = { 255, 255, 255 };
 	statDisplayData.StatValueOffsetFromStatName = {0,5};
-	statDisplayData.Where = { g_WindowWidth * 4.3f / 5.f , (g_WindowHeight * 1.6f / 5.f) + (50 * playerId) };
+	statDisplayData.Where = { g_WindowWidth * 4.3f / 5.f , (g_WindowHeight * 1.6f / 5.f) + (50 * playerNum) };
 
 	CStatDisplayer statDisplayer{ statDisplayData };
 
@@ -113,13 +108,17 @@ dae::Player::Player(const glm::vec2& startPos, float zRotation, const PlayerType
 
 	//----
 
-	CPlayerLife playerHealthComponent{ 3, glm::vec3{g_WindowWidth/2.f, g_WindowHeight - 50, 0} };
+	CPlayerLife playerHealthComponent{ 3, glm::vec3{g_WindowWidth/2.f, g_WindowHeight - 50, 0}, 5.f, playerNum };
 
 	currentPlayer->AddComponent(playerHealthComponent);
 
-	//-----
+	//----
+	
+	auto weaponType = playerType.WeaponType;
 
-	currentPlayer->SetActive(false);
+	weaponType->Create(currentPlayer);
+
+	//-----
 
 	currentPlayer->Transform().SetLocalPositionX(startPos.x);
 	currentPlayer->Transform().SetLocalPositionY(startPos.y);
@@ -136,7 +135,7 @@ dae::Player::Player(const glm::vec2& startPos, float zRotation, const PlayerType
 
 	// - Shooting Action
 
-	auto shootAction = [shootingPivot, weaponType](GameObject&) mutable { weaponType->Execute(*shootingPivot); };
+	auto shootAction = [currentPlayer, weaponType](GameObject&) mutable { weaponType->Execute(*currentPlayer); };
 
 	//Events
 
@@ -152,23 +151,23 @@ dae::Player::Player(const glm::vec2& startPos, float zRotation, const PlayerType
 	moveDownEvent.Subscribe(moveDown);
 	shootEvent.Subscribe(shootAction);
 
-	playerController.BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_SPACE,	std::make_shared<EventTriggerCommand>(shootEvent) });
-	playerController.BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_LEFT,	std::make_shared<EventTriggerCommand>(moveLeftEvent) });
-	playerController.BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_RIGHT,	std::make_shared<EventTriggerCommand>(moveRightEvent) });
-	playerController.BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_UP,		std::make_shared<EventTriggerCommand>(moveUpEvent) });
-	playerController.BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_DOWN,	std::make_shared<EventTriggerCommand>(moveDownEvent) });
+	playerControllerRef->BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_SPACE,	std::make_shared<EventTriggerCommand>(shootEvent) });
+	playerControllerRef->BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_LEFT,	std::make_shared<EventTriggerCommand>(moveLeftEvent) });
+	playerControllerRef->BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_RIGHT,	std::make_shared<EventTriggerCommand>(moveRightEvent) });
+	playerControllerRef->BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_UP,		std::make_shared<EventTriggerCommand>(moveUpEvent) });
+	playerControllerRef->BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_DOWN,	std::make_shared<EventTriggerCommand>(moveDownEvent) });
 
-	playerController.BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_A,	 std::make_shared<EventTriggerCommand>(moveLeftEvent) });
-	playerController.BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_D,	 std::make_shared<EventTriggerCommand>(moveRightEvent) });
-	playerController.BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_W,	 std::make_shared<EventTriggerCommand>(moveUpEvent) });
-	playerController.BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_S,	 std::make_shared<EventTriggerCommand>(moveDownEvent) });
+	playerControllerRef->BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_A,	 std::make_shared<EventTriggerCommand>(moveLeftEvent) });
+	playerControllerRef->BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_D,	 std::make_shared<EventTriggerCommand>(moveRightEvent) });
+	playerControllerRef->BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_W,	 std::make_shared<EventTriggerCommand>(moveUpEvent) });
+	playerControllerRef->BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_S,	 std::make_shared<EventTriggerCommand>(moveDownEvent) });
 
 
-	playerController.BindKey(dae::PlayerGamepadKeyData{ ButtonState::BUTTON_PRESSED, GamepadButton::ButtonX,	 std::make_shared<EventTriggerCommand>(shootEvent) });
-	playerController.BindKey(dae::PlayerGamepadKeyData{ ButtonState::BUTTON_PRESSED, GamepadButton::DpadLeft,	 std::make_shared<EventTriggerCommand>(moveLeftEvent) });
-	playerController.BindKey(dae::PlayerGamepadKeyData{ ButtonState::BUTTON_PRESSED, GamepadButton::DpadRight,	 std::make_shared<EventTriggerCommand>(moveRightEvent) });
-	playerController.BindKey(dae::PlayerGamepadKeyData{ ButtonState::BUTTON_PRESSED, GamepadButton::DpadUp,		 std::make_shared<EventTriggerCommand>(moveUpEvent) });
-	playerController.BindKey(dae::PlayerGamepadKeyData{ ButtonState::BUTTON_PRESSED, GamepadButton::DpadDown,	 std::make_shared<EventTriggerCommand>(moveDownEvent) });
+	playerControllerRef->BindKey(dae::PlayerGamepadKeyData{ ButtonState::BUTTON_PRESSED, GamepadButton::ButtonX,	 std::make_shared<EventTriggerCommand>(shootEvent) });
+	playerControllerRef->BindKey(dae::PlayerGamepadKeyData{ ButtonState::BUTTON_PRESSED, GamepadButton::DpadLeft,	 std::make_shared<EventTriggerCommand>(moveLeftEvent) });
+	playerControllerRef->BindKey(dae::PlayerGamepadKeyData{ ButtonState::BUTTON_PRESSED, GamepadButton::DpadRight,	 std::make_shared<EventTriggerCommand>(moveRightEvent) });
+	playerControllerRef->BindKey(dae::PlayerGamepadKeyData{ ButtonState::BUTTON_PRESSED, GamepadButton::DpadUp,		 std::make_shared<EventTriggerCommand>(moveUpEvent) });
+	playerControllerRef->BindKey(dae::PlayerGamepadKeyData{ ButtonState::BUTTON_PRESSED, GamepadButton::DpadDown,	 std::make_shared<EventTriggerCommand>(moveDownEvent) });
 
 	m_CurrentPlayer = currentPlayer;
 }

@@ -4,7 +4,7 @@
 dae::RoundUI::RoundUI(dae::Scene& scene, int roundNumber)
 {
 	m_RoundNumBeginning = CreateRoundNumBeginning(scene, roundNumber);
-	m_RoundNum = CreateRoundNum(scene, roundNumber, glm::vec2{g_WindowWidth - 50, g_WindowHeight - 50});
+	m_RoundNum = CreateRoundNum(scene, roundNumber, glm::vec2{g_WindowWidth - 100, g_WindowHeight - 50});
 }
 
 void dae::RoundUI::SubscribeOnRoundTextEnd(const std::function<void()>& onRoundTextEnd)
@@ -21,7 +21,8 @@ dae::GameObjectHandle dae::RoundUI::CreateRoundNum(dae::Scene& scene, int roundN
 	currentText.SetColor(SDL_Color{ 255, 0, 0 });
 	currentText.Center();
 
-	dae::GameObjectHandle title{ scene.CreateGameObject() }; //, currentTransformData, currentText
+	dae::GameObjectHandle title{ scene.CreateGameObject() }; 
+	title->SetName("RoundText");
 	title->Transform().SetLocalPositionX(startPos.x);
 	title->Transform().SetLocalPositionY(startPos.y);
 	title->AddComponent(currentText);
@@ -45,11 +46,10 @@ dae::GameObjectHandle dae::RoundUI::CreateRoundNumBeginning(dae::Scene& scene, i
 	CLifeTime lifeTime{ 3.f, false };
 
 	dae::GameObjectHandle roundText{ scene.CreateGameObject() };// , currentTransformData, currentText
+	roundText->SetName("RoundStartText");
 	roundText->Transform().SetLocalTransform(currentTransformData);
 	roundText->AddComponent(currentText);
 	roundText->AddComponent(lifeTime);
-
-	roundText->SetActive(false);
 
 	return roundText;
 

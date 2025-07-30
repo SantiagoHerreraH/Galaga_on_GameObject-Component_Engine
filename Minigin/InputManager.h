@@ -1,5 +1,5 @@
 #pragma once
-#include "Singleton.h"
+#include "SceneSingleton.h"
 #include <tuple>
 #include <map>
 #include <memory>
@@ -69,20 +69,15 @@ namespace dae
 	using GamepadEvents = std::vector<GamepadKeyData>;
 	using KeyboardEvents = std::vector<KeyboardKeyData>;
 
-	enum class HowToTreatKeyboardController {
-		KeyboardIsAnotherController,
-		KeyboardIsTheSameAsFirstGamepadController,
-	};
 
 	struct InputControllerData {
 		bool AllowKeyboard = true;
-		HowToTreatKeyboardController HowToTreatKeyboardController;
 		int MaxControllers = XUSER_MAX_COUNT;
 		Event<> OnConnected{};
 		Event<> OnDisconnected{};
 	};
 
-	class InputManager final : public Singleton<InputManager>
+	class InputManager final : public SceneSingleton<InputManager>
 	{
 	public:
 		InputManager(const InputControllerData& defaultData = InputControllerData{});
@@ -92,9 +87,11 @@ namespace dae
 		InputManager& operator=(const InputManager& other) = delete;
 		InputManager& operator=(InputManager&& other) = delete;
 
+		void Update()override;
+		void Reset()override;
+
 		void SetData(const InputControllerData& data);
 		bool GetNextAvailableControllerInstance(ControllerInstance& out); //return false if no available controller instance
-		void ProcessInput();
 		void EnableInput(PlayerId playerId);
 		void DisableInput(PlayerId playerId);
 
@@ -106,7 +103,6 @@ namespace dae
 
 		GamepadEvents m_GamepadEvents{};
 		KeyboardEvents m_KeyboardEvents{};
-		bool m_Cleared{};
 
 		bool IsPressed(GamepadButton button, PlayerId id) const;
 		bool IsDownThisFrame(GamepadButton button, PlayerId id) const;
@@ -146,8 +142,8 @@ namespace dae
 		std::unordered_set<PlayerId> m_DisabledPlayerIds;
 		std::vector<bool> m_KeyboardKeyStates;
 		std::vector<GamepadInputManager> m_GamepadInputManagers;
-		InputControllerData m_Data;
-		PlayerId m_CurrentPlayerId;
+		InputControllerData m_Data{};
+		PlayerId m_CurrentPlayerId{0};
 	};
 
 	

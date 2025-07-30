@@ -15,7 +15,7 @@ namespace dae {
 
 			StringToEnemyGridData::AddDataModificationFunction("SmallGrid", SetSmallGrid);
 			StringToEnemyGridData::AddDataModificationFunction("MediumGrid", SetMediumGrid);
-			StringToEnemyGridData::AddDataModificationFunction("BigGrid", SetLargeGrid);
+			StringToEnemyGridData::AddDataModificationFunction("LargeGrid", SetLargeGrid);
 
 		}
 

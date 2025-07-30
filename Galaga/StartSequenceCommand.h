@@ -11,7 +11,7 @@ namespace dae {
 
 		virtual void Execute(GameObject& gameObject) {
 
-			MovementActionSequence* sequence = gameObject.GetComponent<MovementActionSequence>();
+			CMovementActionSequence* sequence = gameObject.GetComponent<CMovementActionSequence>();
 
 			if (sequence && !sequence->IsActing())
 			{

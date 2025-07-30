@@ -6,7 +6,7 @@
 #include "Scene.h"
 #include "SceneManager.h"
 
-dae::GameObject::GameObject() : m_Transform(*this)
+dae::GameObject::GameObject(const std::string& name) : m_Transform(*this), m_Name(name)
 {
 }
 
@@ -52,10 +52,7 @@ void dae::GameObject::Start()
 
 	for (size_t i = 0; i < m_Components.size(); i++)
 	{
-		if (m_Components[i].ComponentHandle->IsActive())
-		{
-			m_Components[i].ComponentHandle->Start();
-		}
+		m_Components[i].ComponentHandle->Start();
 	}
 }
 
@@ -89,5 +86,11 @@ void dae::GameObject::Render() const
 		{
 			m_Components[i].ComponentHandle->Render();
 		}
+	}
+
+	if (m_RenderTransform)
+	{
+		glm::vec2 pos = TransformConst().GetWorldTransform().Position;
+		Renderer::GetInstance().DrawCross(pos, 5, { 0,255,0 });
 	}
 }

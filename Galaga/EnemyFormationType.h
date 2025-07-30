@@ -25,7 +25,7 @@ namespace dae {
 		std::vector<std::string> swirlFormations = j.at("SwirlFormations");
 		
 		StringToEnemyGridData::ApplyDataModification(gridType, managerType.EnemyGridData);
-		StringToEnemyType::ApplyDataModification(gridType, managerType.EnemyType);
+		StringToEnemyType::ApplyDataModification(enemyType, managerType.EnemyType);
 
 		managerType.EnemyUnitSwirlData.SwirlDataPerUnit.clear();
 		for (size_t i = 0; i < swirlFormations.size(); i++)

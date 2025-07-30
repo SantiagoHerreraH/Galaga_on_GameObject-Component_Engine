@@ -4,6 +4,7 @@
 #include <glm.hpp>
 #include "EventSystem.h"
 #include "Button.h"
+#include "PlayerController.h"
 
 namespace dae {
 
@@ -29,7 +30,6 @@ namespace dae {
 	private:
 		CPlayerController* GetPlayerController();
 		void MapButtonSelectionToKeys();
-
 
 		struct ButtonGridInternalData {
 			std::vector<GameObjectHandle> ButtonGameObjs;

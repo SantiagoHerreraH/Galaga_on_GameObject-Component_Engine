@@ -16,6 +16,7 @@ dae::Enemy::Enemy(const EnemyInstanceData& enemyInstanceData, const EnemyType& e
 	m_EnemyInstanceData(enemyInstanceData),
 	m_EnemyType(enemyType)
 {
+	m_OnEndStartingFormationSequence = std::make_shared<Event<GameObject&>>();
 	GameObjectHandle player{ enemyInstanceData.Player };
 
 	TransformData transformData{};
@@ -41,6 +42,7 @@ dae::Enemy::Enemy(const EnemyInstanceData& enemyInstanceData, const EnemyType& e
 	rect.Width = 32;
 
 	CCollider collider{ rect, (int)GalagaCollisionLayers::Enemies };
+	collider.AddCollisionTagToCollideWith((int)GalagaCollisionLayers::Player);
 	collider.CenterRect();
 
 	collider.OnCollisionBeginEvent().Subscribe([player](GameObject&, GameObject& other) mutable
@@ -73,6 +75,8 @@ dae::Enemy::Enemy(const EnemyInstanceData& enemyInstanceData, const EnemyType& e
 	{
 		enemy = enemyInstanceData.Enemy;
 	}
+
+	enemy->SetName("Enemy");
 
 	m_Self = enemy;
 	enemy->Transform().SetLocalTransform(transformData);
@@ -166,7 +170,15 @@ dae::GameObjectHandle dae::Enemy::GetGameObjectHandle() const
 
 void dae::Enemy::SetStartingFormationBehaviour(EnemyBehaviour& enemyBehaviour)
 {
+	auto onEnd = m_OnEndStartingFormationSequence;
+	auto self = m_Self;
 	m_StartFormationSequence = enemyBehaviour.CreateInstance(*this);
+	m_StartFormationSequence->AddEndSubAction([onEnd, self]() {onEnd->Invoke(*self); });
+}
+
+void dae::Enemy::SubscribeOnEndStartingFormationBehaviour(const std::function<void(GameObject&)>& func)
+{
+	m_OnEndStartingFormationSequence->Subscribe(func);
 }
 
 void dae::Enemy::AddActingBehaviour(EnemyBehaviour& enemyBehaviour)
@@ -195,7 +207,7 @@ bool dae::Enemy::StartFormation()
 	return m_StartFormationSequence->RestartSequence();
 }
 
-const dae::MovementActionSequence& dae::Enemy::Act()
+const dae::CMovementActionSequence& dae::Enemy::Act()
 {
 	int chosenIndex = Random::GetRandomBetweenRange(0, (int)m_EnemyActingSequences.size() - 1);
 

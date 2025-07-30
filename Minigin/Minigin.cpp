@@ -90,7 +90,6 @@ void dae::Minigin::Run(const std::function<void()>& load)
 
 	auto& renderer = Renderer::GetInstance();
 	auto& sceneManager = SceneManager::GetInstance();
-	auto& input = InputManager::GetInstance();
 
 	Audio* audioService = ServiceLocator::GetInstance().GetService<Audio>();
 
@@ -118,9 +117,6 @@ void dae::Minigin::Run(const std::function<void()>& load)
 		Time::GetInstance().m_ElapsedSeconds = deltaTime;
 		lastTime = currentTime;
 		lag += deltaTime;
-
-
-		input.ProcessInput();
 
 		while (lag >= fixedTimeStep)
 		{

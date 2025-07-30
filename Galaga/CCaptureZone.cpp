@@ -108,7 +108,7 @@ dae::GameObjectHandle dae::CCaptureZone::CreateCaptureZone(GameObjectHandle targ
 		playerDummy->Transform().SetLocalPosition(target->Transform().GetWorldTransform().Position);
 		playerDummy->SetActive(true);
 
-		playerDummy->GetComponent<MovementActionSequence>()->StartSequence();
+		playerDummy->GetComponent<CMovementActionSequence>()->StartSequence();
 		TIMERSYSTEM->RestartTimer(offsetStatAfterTime_TimerKey);
 
 		};
@@ -150,7 +150,7 @@ dae::GameObjectHandle dae::CCaptureZone::CreatePlayerDummy(dae::Scene& scene, co
 	dummy->Transform().OverrideWorldScaleWithLocalScale(true);
 	dummy->AddComponent(currentTexture);
 
-	MovementActionSequence actionSequence{ "Player Dummy Movement Sequence" };
+	CMovementActionSequence actionSequence{ "Player Dummy Movement Sequence" };
 
 	float acceptableRadius = 10;
 	float targetDistanceFromParentY = -35;
@@ -196,6 +196,8 @@ dae::GameObjectHandle dae::CCaptureZone::CreatePlayerDummy(dae::Scene& scene, co
 		});
 
 	dummy->AddComponent(actionSequence);
+
+	dummy->SetActive(false);
 
 	return dummy;
 }

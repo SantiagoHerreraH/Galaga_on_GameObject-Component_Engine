@@ -16,7 +16,6 @@ namespace dae {
 		bool EraseAt(size_t index);
 
 		bool Add(const KeyType& key, const ValueType& value, bool activateOnCreation = true); //default creation is deactivated
-		bool Retrieve(KeyType&& key, ValueType&& value, bool activateOnCreation = true); // same as add but with &&
 
 		void LockCreation();
 		void UnlockCreation();
@@ -49,6 +48,8 @@ namespace dae {
 
 		ValueType& At(size_t index);
 		const ValueType& ConstAt(size_t index) const;
+
+		void Clear();
 
 	private:
 		bool m_CreationLocked{ false };
@@ -121,28 +122,6 @@ namespace dae {
 				{
 					size_t lastIdx{ m_Values.size() - 1 };
 					ActivateAt(lastIdx);
-				}
-
-				return true;
-			}
-		}
-
-		return false;
-	}
-	template<typename KeyType, typename ValueType>
-	inline bool ActivatableFlatMap<KeyType, ValueType>::Retrieve(KeyType&& key, ValueType&& value, bool activateOnCreation)
-	{
-		if (!m_CreationLocked && !m_ActivationLocked && !m_Keys_To_Indexes.contains(key))
-		{
-			if ((m_ActivationLocked && !activateOnCreation) || !m_ActivationLocked) 
-			{
-				m_Keys_To_Indexes.emplace(std::pair(key, m_Values.size()));
-				m_Values.emplace_back(value);
-				m_Keys.emplace_back(key);
-
-				if (activateOnCreation)
-				{
-					ActivateAt(m_Values.size() - 1);
 				}
 
 				return true;
@@ -365,6 +344,15 @@ namespace dae {
 	inline const ValueType& ActivatableFlatMap<KeyType, ValueType>::ConstAt(size_t index) const
 	{
 		return m_Values.at(index);
+	}
+
+	template<typename KeyType, typename ValueType>
+	inline void ActivatableFlatMap<KeyType, ValueType>::Clear()
+	{
+		m_Keys_To_Indexes.clear();
+		m_Keys.clear(); 
+		m_Values.clear();
+		m_NumberOfActivated = 0;
 	}
 
 #pragma endregion
