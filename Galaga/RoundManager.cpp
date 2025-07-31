@@ -100,13 +100,15 @@ void dae::RoundManager::CreateRounds()
             GameObjectHandle enemyFormationThree{ scene.CreateGameObject() };
 
 
-            int currentFormationDeaths = 0;
+            std::shared_ptr<int> currentFormationDeaths = std::make_shared<int>(0);
             auto checkFormationDeath = [currentFormationDeaths, data]() mutable
                 {
-                    ++currentFormationDeaths;
+                    ++(*currentFormationDeaths);
 
-                    if (currentFormationDeaths >= 3)//3 == num of formations
+                    if ((*currentFormationDeaths) >= 3)//3 == num of formations
                     {
+                        (*currentFormationDeaths) = 0;
+
                         if (data->CanIncreaseRoundNum())
                         {
                             data->IncreaseRoundNum();

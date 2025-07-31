@@ -43,6 +43,11 @@ void dae::CEnemyFormation::StartSendingTroops()
 	SendNextTroops(nullptr);
 }
 
+bool dae::CEnemyFormation::IsEnemySwirlBehaviourFinished() const
+{
+	return m_IsEnemySwirlBehaviourFinished;
+}
+
 void dae::CEnemyFormation::StartEnemySwirlBehaviour()
 {
 	if (!m_CreatedFormationTimer)
@@ -86,6 +91,7 @@ void dae::CEnemyFormation::StartEnemySwirlBehaviour()
 		});
 
 	TIMERSYSTEM->RestartTimer(m_FormationTimerKey);
+	m_IsEnemySwirlBehaviourFinished = false;
 }
 
 bool dae::CEnemyFormation::SendNextTroops(GameObject* incomingTroop)
@@ -138,7 +144,13 @@ void dae::CEnemyFormation::CreatePlayerReactions()
 {
 	CEnemyFormation* self{this};
 	auto stopSendingTroops = [self]() { self->StopSendingTroops(); };
-	auto startSendingTroops = [self]() { self->StartSendingTroops(); };
+	auto startSendingTroops = [self]() 
+		{
+			if (self->IsEnemySwirlBehaviourFinished())
+			{
+				self->StartSendingTroops();
+			}
+		};
 
 	m_Player.SubscribeOnPlayerDespawnFromDamage(stopSendingTroops);
 	m_Player.SubscribeOnPlayerRespawnFromDamage(startSendingTroops);
@@ -284,19 +296,22 @@ void dae::CEnemyFormation::CreateEnemies()
 		}
 	}
 
-	m_Enemies.back().SubscribeOnEndStartingFormationBehaviour([self](GameObject&){self->m_OnEndSwirlFormation.Invoke(); });
+	m_Enemies.back().SubscribeOnEndStartingFormationBehaviour([self](GameObject&){
+		self->m_IsEnemySwirlBehaviourFinished = true;
+		self->m_OnEndSwirlFormation.Invoke(); });
 	
 }
 
 void dae::CEnemyFormation::CheckEnemyDeaths()
 {
-	for (size_t i = 0; i < m_Enemies.size(); i++)
+	++m_EnemyDeathCount;
+
+	if (m_EnemyDeathCount >= m_Enemies.size())
 	{
-		if (m_Enemies[i].GetGameObject().IsActive())
-		{
-			return;
-		}
+
+		m_EnemyDeathCount = 0;
+
+		m_OnFormationDeath.Invoke();
 	}
 
-	m_OnFormationDeath.Invoke();
 }

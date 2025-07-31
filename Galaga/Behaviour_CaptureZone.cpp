@@ -13,8 +13,7 @@ dae::MovementActionSequenceHandle dae::CaptureZoneBehaviour::CreateInstance(Enem
 	relativePos.y = enemyCreator.GetEnemyInstanceData().RelativePos.y;
 	bool goTowardsLeft = enemyCreator.GetEnemyInstanceData().MoveTowardsLeft;
 
-	CCaptureZone captureZoneData{ player,  glm::vec3{ 0,50,0 } };
-	auto captureZone = enemy->AddComponent(captureZoneData);
+	auto captureZone = enemy->AddComponent(CCaptureZone{ player,  glm::vec3{ 0,50,0 } });
 
 	//------ PARENTING
 

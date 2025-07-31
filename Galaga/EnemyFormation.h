@@ -24,6 +24,7 @@ namespace dae {
 
 		virtual void Start() override;
 
+		bool IsEnemySwirlBehaviourFinished()const;
 		void StartEnemySwirlBehaviour();
 
 		void StopSendingTroops();
@@ -41,8 +42,10 @@ namespace dae {
 		void CreateEnemies();
 		void CheckEnemyDeaths();
 		std::vector<Enemy> m_Enemies;
+		int m_EnemyDeathCount{ 0 };
 
-		bool m_CanSendTroops{false};
+		bool m_IsEnemySwirlBehaviourFinished{false};
+		bool m_CanSendTroops{ false };
 
 		float m_SecondsBetweenSpawning{ 1.f };
 		float m_SecondsBetweenUnitSpawning{ 1.f };

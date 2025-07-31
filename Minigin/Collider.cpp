@@ -130,10 +130,10 @@ namespace dae {
 				{
 					if (!isStayOverlapping)
 					{
-						m_OnCollisionBeginEvent.Invoke(owner, *otherOwner);
-
 						m_CollidingWithEntities.push_back(otherOwner);
 						m_CollidersToCollideWith[i]->m_CollidingWithEntities.push_back(&Owner());
+
+						m_OnCollisionBeginEvent.Invoke(owner, *otherOwner);
 					}
 
 					m_OnCollisionStayEvent.Invoke(owner, *otherOwner);

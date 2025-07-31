@@ -20,6 +20,7 @@ namespace dae {
 		CMovementActionSequence(const std::string& sequenceName = "NoSequenceName");
 
 		void Start() override;
+		void SetActive(bool isActive)override;
 
 		const std::string& GetName()const { return m_SequenceName; }
 		void SetName(const std::string& sequenceName) { m_SequenceName = sequenceName; }
@@ -27,6 +28,7 @@ namespace dae {
 		bool StartSequence();
 		bool RestartSequence();
 		void StopSequence();
+		void EndSequence();
 
 		bool IsActing()const;
 

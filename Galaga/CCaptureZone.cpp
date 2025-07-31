@@ -24,7 +24,6 @@ void dae::CCaptureZone::SetActive(bool isActive)
 {
 	Component::SetActive(isActive);
 
-
 	if (!isActive && m_CaptureZone && m_PlayerDummy)
 	{
 		m_CaptureZone->SetActive(false);

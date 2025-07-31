@@ -16,7 +16,7 @@ namespace dae {
 			StringToSwirlType::AddDataModificationFunction("CircularUp",		AddCircularUpSwirls);
 			StringToSwirlType::AddDataModificationFunction("CircularDown",		AddCircularDownSwirls);
 			StringToSwirlType::AddDataModificationFunction("DownUTurn",			AddDownUTurns);
-			StringToSwirlType::AddDataModificationFunction("EllipticalDown",	AddElipticalDownSwirls);
+			StringToSwirlType::AddDataModificationFunction("EllipticalDown",	AddEllipticalDownSwirls);
 		}
 
 		static void AddCircularUpSwirls(EnemyUnitSwirlData& data) {
@@ -113,9 +113,13 @@ namespace dae {
 			swirlData_2_left.PreSwirlMovementDirection = { 0, 1 };
 
 			swirlData_2_left.SwirlTimeMultiplier = -1;
+
+
+			data.SwirlDataPerUnit.push_back(swirlData_2_right);
+			data.SwirlDataPerUnit.push_back(swirlData_2_left);
 		}
 
-		static void AddElipticalDownSwirls(EnemyUnitSwirlData& data) {
+		static void AddEllipticalDownSwirls(EnemyUnitSwirlData& data) {
 
 
 			SwirlData swirlData_3_right{};
@@ -143,6 +147,10 @@ namespace dae {
 			swirlData_3_left.PreSwirlMovementDirection = { 1, -1 };
 
 			swirlData_3_left.SwirlTimeMultiplier = -1;
+
+
+			data.SwirlDataPerUnit.push_back(swirlData_3_right);
+			data.SwirlDataPerUnit.push_back(swirlData_3_left);
 
 		}
 	};

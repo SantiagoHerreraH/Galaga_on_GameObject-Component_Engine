@@ -38,17 +38,17 @@
 			"FirstFormation": {
 				"GridType": "MediumGrid",
 				"EnemyType": "Bird",
-				"SwirlFormations": ["ElipticalDown", "DownUTurn"]
+				"SwirlFormations": ["EllipticalDown", "DownUTurn"]
 			},
 			"SecondFormation": {
 				"GridType": "MediumGrid",
 				"EnemyType": "Bird",
-				"SwirlFormations": ["ElipticalDown", "DownUTurn"]
+				"SwirlFormations": ["EllipticalDown", "DownUTurn"]
 			},
 			"ThirdFormation": {
 				"GridType": "LargeGrid",
 				"EnemyType": "Butterfly",
-				"SwirlFormations": ["ElipticalDown", "DownUTurn"]
+				"SwirlFormations": ["EllipticalDown", "DownUTurn"]
 			}
 		},
 		{
@@ -60,7 +60,7 @@
 			"SecondFormation": {
 				"GridType": "MediumGrid",
 				"EnemyType": "Bird",
-				"SwirlFormations": ["ElipticalDown", "DownUTurn"]
+				"SwirlFormations": ["EllipticalDown", "DownUTurn"]
 			},
 			"ThirdFormation": {
 				"GridType": "LargeGrid",

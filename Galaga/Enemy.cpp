@@ -100,19 +100,17 @@ dae::Enemy::Enemy(const EnemyInstanceData& enemyInstanceData, const EnemyType& e
 
 	IntStat pointsInFormation{ enemyType.PointsInFormation, enemyType.PointsInFormation, enemyType.PointsInFormation };
 	GameObjectHandle pointsInFormationIndicator{ CreatePointIndicator(*enemyInstanceData.Scene, pointsInFormation.CurrentStat) };
-	TimerKey showPointsInFormationKey = TIMERSYSTEM->StartEndFunctionWithDuration(
-		[pointsInFormationIndicator, enemy]() mutable {
 
-			pointsInFormationIndicator->Transform().SetLocalPosition(enemy->Transform().GetWorldTransform().Position);
-			pointsInFormationIndicator->SetActive(true); },
+	TimerKey showPointsInFormationKey = TIMERSYSTEM->TriggerFunctionAfterSeconds(
 		[pointsInFormationIndicator]() mutable {pointsInFormationIndicator->SetActive(false); },
 		showPointsDuration,
 		false,
-		true
-	);
+		true);
 
-	pointsInFormation.OnResetCurrentStat.Subscribe([TIMERSYSTEM, showPointsInFormationKey]() {
+	pointsInFormation.OnResetCurrentStat.Subscribe([TIMERSYSTEM, pointsInFormationIndicator, enemy, showPointsInFormationKey]() {
 
+		pointsInFormationIndicator->Transform().SetLocalPosition(enemy->Transform().GetWorldTransform().Position);
+		pointsInFormationIndicator->SetActive(true);
 		TIMERSYSTEM->RestartTimer(showPointsInFormationKey);
 
 		});
@@ -121,33 +119,21 @@ dae::Enemy::Enemy(const EnemyInstanceData& enemyInstanceData, const EnemyType& e
 
 	IntStat pointsWhileDiving{ enemyType.PointOnDive, enemyType.PointOnDive, enemyType.PointOnDive };
 	GameObjectHandle pointsWhileDivingIndicator{ CreatePointIndicator(*enemyInstanceData.Scene, pointsWhileDiving.CurrentStat) };
-	TimerKey showPointsWhileDivingKey = TIMERSYSTEM->StartEndFunctionWithDuration(
-		[pointsWhileDivingIndicator, enemy]() mutable {
-			pointsWhileDivingIndicator->Transform().SetLocalPosition(enemy->Transform().GetWorldTransform().Position);
-			pointsWhileDivingIndicator->SetActive(true); },
-		[pointsWhileDivingIndicator]() mutable {pointsWhileDivingIndicator->SetActive(false); },
-		showPointsDuration,
+	TimerKey showPointsWhileDivingKey = TIMERSYSTEM->TriggerFunctionAfterSeconds(
+		[pointsWhileDivingIndicator]() mutable { pointsWhileDivingIndicator->SetActive(false); },
+		showPointsDuration, 
 		false,
-		true
-	);
+		true);
 
-	pointsWhileDiving.OnResetCurrentStat.Subscribe([TIMERSYSTEM, showPointsWhileDivingKey]() {
+	pointsWhileDiving.OnResetCurrentStat.Subscribe([TIMERSYSTEM, showPointsWhileDivingKey, pointsWhileDivingIndicator, enemy]() {
 
+		pointsWhileDivingIndicator->Transform().SetLocalPosition(enemy->Transform().GetWorldTransform().Position);
+		pointsWhileDivingIndicator->SetActive(true);
 		TIMERSYSTEM->RestartTimer(showPointsWhileDivingKey);
 
 		});
 
 	enemy->GetComponent<CStatController>()->CreateStat(StatType::Points, pointsInFormation);
-
-
-	CEnemyFormation* enemyManager = m_EnemyInstanceData.EnemyManager;
-
-	OnDie().Subscribe([enemy, enemyManager]() {
-		enemy->SetActive(false);
-		enemy->GetComponent<CStatController>()->ResetCurrentStat(StatType::Points);
-		enemyManager->SendNextTroops(enemy.get());
-		});
-
 
 	m_PointsWhileDiving = pointsWhileDiving;
 	m_PointsInFormation = pointsInFormation;
@@ -156,6 +142,18 @@ dae::Enemy::Enemy(const EnemyInstanceData& enemyInstanceData, const EnemyType& e
 	{
 		AddActingBehaviour(*m_EnemyType.Behaviours[i]);
 	}
+
+	CEnemyFormation* enemyManager = m_EnemyInstanceData.EnemyManager;
+
+	OnDie().Subscribe([enemy, enemyManager]()
+		{
+			enemy->GetComponent<CStatController>()->ResetCurrentStat(StatType::Points);
+			enemy->SetActive(false);
+			enemyManager->SendNextTroops(enemy.get());
+		});
+
+
+	
 }
 
 dae::GameObject& dae::Enemy::GetGameObject()

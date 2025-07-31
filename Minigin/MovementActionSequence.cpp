@@ -49,6 +49,16 @@ void dae::CMovementActionSequence::Start()
 	}
 }
 
+void dae::CMovementActionSequence::SetActive(bool isActive)
+{
+	Component::SetActive(isActive);
+
+	if (!isActive && IsActing())
+	{
+		EndSequence();
+	}
+}
+
 bool dae::CMovementActionSequence::StartSequence()
 {
 
@@ -102,6 +112,22 @@ void dae::CMovementActionSequence::StopSequence()
 	{
 		TimerSystem::GetFromScene(m_Scene).PauseTimer(m_MovementActions[i]->GetTimerKey());
 	}
+}
+
+void dae::CMovementActionSequence::EndSequence()
+{
+	if (!m_Scene)
+	{
+		m_StopSequenceOnStart = true;
+		return;
+	}
+
+	for (size_t i = 0; i < m_MovementActions.size(); i++)
+	{
+		TimerSystem::GetFromScene(m_Scene).PauseTimer(m_MovementActions[i]->GetTimerKey());
+	}
+
+	TimerSystem::GetFromScene(m_Scene).EndTimer(m_MovementActions.back()->GetTimerKey());
 }
 
 
@@ -169,80 +195,31 @@ void dae::CMovementActionSequence::SetActionDuration(float time)
 void dae::CMovementActionSequence::AddConditionToStopAction(const std::function<bool()>& condition)
 {
 	m_MovementActions.back()->AddConditionToStopAction(condition);
-
-	//auto timerKey = m_MovementActions.back().TimerKey;
-	//Scene* scenePtr = m_Scene;
-	//auto conditionFunction = [condition, timerKey, scenePtr]()mutable {
-	//	
-	//	if (condition())
-	//	{
-	//		TimerSystem::GetFromScene(scenePtr).EndTimer(timerKey);
-	//	}
-	//	
-	//	};
-
-	//TimerSystem::GetFromScene(m_Scene).TimerAt(m_MovementActions.back().TimerKey).GetOnUpdateEvent().Subscribe(conditionFunction);
 }
 
 void dae::CMovementActionSequence::SetMovementPathDecidingFunction(std::function<glm::vec2()> functionThatReturnsVectorWithMovementDirectionAndMagnitude)
 {
 	m_MovementActions.back()->SetMovementPathDecidingFunction(functionThatReturnsVectorWithMovementDirectionAndMagnitude);
-
-	/*std::shared_ptr<MovementData> movementData = m_MovementActions.back().MovementData;
-	GameObjectHandle self = m_Self;
-	auto function = [functionThatReturnsVectorWithMovementDirectionAndMagnitude, movementData, self]()mutable {
-
-		movementData.get()->BeginningDeltaTowardsTarget = functionThatReturnsVectorWithMovementDirectionAndMagnitude();
-		movementData.get()->BeginningPosition = self->Transform().GetWorldTransform().Position;
-
-		};
-
-	TimerSystem::GetFromScene(m_Scene).TimerAt(m_MovementActions.back().TimerKey).GetOnStartEvent().Subscribe(function);*/
 }
 
 void dae::CMovementActionSequence::AddActionFunction(std::function<bool(float timeSinceActionStarted, const MovementData&)> movementFuncThatReturnsWhenItIsDone)
 {
 	m_MovementActions.back()->AddActionFunction(movementFuncThatReturnsWhenItIsDone);
-
-	/*auto timerKey = m_MovementActions.back().TimerKey;
-	std::shared_ptr<MovementData> movementData = m_MovementActions.back().MovementData;
-
-	Scene* scenePtr = m_Scene;
-
-	auto function = [movementFuncThatReturnsWhenItIsDone, movementData, timerKey, scenePtr]()mutable {
-
-		if (movementFuncThatReturnsWhenItIsDone(
-			TimerSystem::GetFromScene(scenePtr).TimerAt(timerKey).GetTime(),
-			*movementData.get()))
-		{
-
-			TimerSystem::GetFromScene(scenePtr).EndTimer(timerKey);
-		}
-
-		};
-
-	TimerSystem::GetFromScene(m_Scene).TimerAt(m_MovementActions.back().TimerKey).GetOnUpdateEvent().Subscribe(function);*/
 }
 
 void dae::CMovementActionSequence::AddStartSubAction(const std::function<void()>& subAction)
 {
 	m_MovementActions.back()->AddStartSubAction(subAction);
-
-	/*TimerSystem::GetFromScene(m_Scene).TimerAt(m_MovementActions.back().TimerKey).GetOnStartEvent().Subscribe(subAction);*/
 }
 
 void dae::CMovementActionSequence::AddUpdateSubAction(const std::function<void()>& subAction)
 {
 	m_MovementActions.back()->AddPostActionUpdateSubAction(subAction);
-
-	/*TimerSystem::GetFromScene(m_Scene).TimerAt(m_MovementActions.back().TimerKey).GetOnUpdateEvent().Subscribe(subAction);*/
 }
 
 void dae::CMovementActionSequence::AddEndSubAction(const std::function<void()>& subAction)
 {
 	m_MovementActions.back()->AddEndSubAction(subAction);
-
-	//TimerSystem::GetFromScene(m_Scene).TimerAt(m_MovementActions.back().TimerKey).GetOnEndEvent().Subscribe(subAction);
 }
 
 #pragma region MovementAction
