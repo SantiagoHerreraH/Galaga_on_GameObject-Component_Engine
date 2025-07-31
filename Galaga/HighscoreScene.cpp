@@ -9,7 +9,10 @@
 
 dae::HighscoreScene::HighscoreScene(std::vector<Player> players, const std::string& sceneName, std::string gameModeName) : m_SceneName(sceneName)
 {
-    auto highscoreSceneCreation = [players, gameModeName](Scene& scene) mutable{
+    m_OnHighscoreEnd = std::make_shared<Event<>>();
+    auto onHighscoreEnd = m_OnHighscoreEnd;
+
+    auto highscoreSceneCreation = [players, gameModeName, onHighscoreEnd](Scene& scene) mutable{
 
         auto particleSystemObj = CreateParticleSystem();
         scene.AddGameObjectHandle(particleSystemObj);
@@ -21,7 +24,12 @@ dae::HighscoreScene::HighscoreScene(std::vector<Player> players, const std::stri
         ScoreData scoreData{};
         scoreData.GameModeName = gameModeName;
 
-        auto backToMainMenu = [](GameObject&) {SceneManager::GetInstance().ChangeCurrentScene(MainMenu::Name()); };
+        auto backToMainMenu = [onHighscoreEnd](GameObject&) 
+            {
+                onHighscoreEnd->Invoke();
+                SceneManager::GetInstance().ChangeCurrentScene(MainMenu::Name()); 
+            };
+
         Event<GameObject&> backToMainMenuEvent{};
         backToMainMenuEvent.Subscribe(backToMainMenu);
 
@@ -107,4 +115,21 @@ dae::HighscoreScene::HighscoreScene(std::vector<Player> players, const std::stri
         };
 
     SceneManager::GetInstance().AddScene(m_SceneName, highscoreSceneCreation);
+
+    SubscribeOnHighscoreSceneEnd([players]() mutable
+        {
+            for (size_t i = 0; i < players.size(); i++)
+            {
+                players[i].GetGameObject().GetComponent<CStatController>()->SetStat(StatType::NumberOfHits, 0);
+                players[i].GetGameObject().GetComponent<CStatController>()->SetStat(StatType::Points,       0);
+                players[i].GetGameObject().GetComponent<CStatController>()->SetStat(StatType::ShotsFired,   0);
+                players[i].GetGameObject().GetComponent<CStatController>()->ResetCurrentStat(StatType::Health);
+            }
+
+        });
+}
+
+void dae::HighscoreScene::SubscribeOnHighscoreSceneEnd(const std::function<void()>& func)
+{
+    m_OnHighscoreEnd->Subscribe(func);
 }

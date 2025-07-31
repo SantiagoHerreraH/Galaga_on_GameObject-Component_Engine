@@ -15,6 +15,7 @@
 #include "ConsoleAudio.h"
 #include "ServiceLocator.h"
 #include "Settings.h"
+#include "EventSystem.h"
 #include <memory>
 
 SDL_Window* g_window{};
@@ -90,6 +91,7 @@ void dae::Minigin::Run(const std::function<void()>& load)
 
 	auto& renderer = Renderer::GetInstance();
 	auto& sceneManager = SceneManager::GetInstance();
+	auto& eventSystem = EventSystem::GetInstance();
 
 	Audio* audioService = ServiceLocator::GetInstance().GetService<Audio>();
 
@@ -124,6 +126,7 @@ void dae::Minigin::Run(const std::function<void()>& load)
 			lag -= fixedTimeStep;
 		}
 
+		eventSystem.Update();
 		sceneManager.Update();
 		renderer.Render();
 

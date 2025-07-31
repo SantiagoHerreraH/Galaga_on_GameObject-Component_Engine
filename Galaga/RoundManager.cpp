@@ -160,6 +160,7 @@ void dae::RoundManager::CreateRounds()
 
             for (auto& player : data->Players)
             {
+                player.GetGameObject().SetActive(true);
                 player.AddScene(scene);
             }
 

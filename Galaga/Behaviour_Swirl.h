@@ -86,7 +86,6 @@ namespace dae {
 
 					if (glm::length(currentDelta) >= swirlData.PreSwirlGoalDistance)
 					{
-						std::cout << "\nStopped Moving Forward in Swirl with length " + std::to_string(glm::length(currentDelta));
 						return true;
 					}
 

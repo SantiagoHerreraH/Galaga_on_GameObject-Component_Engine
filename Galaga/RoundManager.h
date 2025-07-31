@@ -6,6 +6,7 @@
 
 namespace dae {
 
+	class HighscoreScene;
 
 	struct RoundType {
 		EnemyFormationType FirstEnemyFormation;
@@ -82,6 +83,7 @@ namespace dae {
 			std::string HighscoreSceneName;
 			GameObjectHandle ParticleSystemGameObj;
 		};
+
 
 		std::string m_FileName;
 		std::shared_ptr<RoundManagerData> m_RoundManagerData;

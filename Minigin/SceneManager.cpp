@@ -4,6 +4,7 @@
 
 void dae::SceneManager::Start()
 {
+	CheckChangeScene();
 	m_Scenes[m_CurrentSceneIndex]->Start();
 }
 
@@ -14,13 +15,23 @@ void dae::SceneManager::FixedUpdate()
 
 void dae::SceneManager::Update()
 {
-
+	CheckChangeScene();
 	m_Scenes[m_CurrentSceneIndex]->Update();
 }
 
 void dae::SceneManager::Render()const
 {
 	m_Scenes[m_CurrentSceneIndex]->Render();
+}
+
+void dae::SceneManager::CheckChangeScene()
+{
+	if (m_CurrentSceneIndex != m_NextSceneIndex)
+	{
+		m_Scenes[m_CurrentSceneIndex]->End();
+		m_CurrentSceneIndex = m_NextSceneIndex;
+		m_Scenes[m_CurrentSceneIndex]->Start();
+	}
 }
 
 dae::Scene& dae::SceneManager::AddScene(const std::string& name, const std::function<void(Scene&)>& sceneCreationFunction)
@@ -39,9 +50,8 @@ dae::Scene* dae::SceneManager::ChangeCurrentScene(const std::string& name)
 		{
 			if (m_CurrentSceneIndex != i)
 			{
-				m_Scenes[m_CurrentSceneIndex]->End();
-				m_CurrentSceneIndex = i;
-				m_Scenes[m_CurrentSceneIndex]->Start();
+
+				m_NextSceneIndex = i;
 			}
 
 			return m_Scenes[i].get();
@@ -79,34 +89,26 @@ dae::Scene& dae::SceneManager::NextScene(SceneTraversalType sceneTraversalType)
 			return *m_Scenes[m_CurrentSceneIndex].get();
 		}
 
-		m_Scenes[m_CurrentSceneIndex]->End();
+		m_NextSceneIndex = m_CurrentSceneIndex + 1;
 
-		++m_CurrentSceneIndex;
-
-		m_Scenes[m_CurrentSceneIndex]->Start();
-
-		return *m_Scenes[m_CurrentSceneIndex].get();
+		return *m_Scenes[m_NextSceneIndex].get();
 
 		break;
 
 	case SceneTraversalType::Loop:
 
 
-		m_Scenes[m_CurrentSceneIndex]->End();
-
 		if (m_CurrentSceneIndex == (m_Scenes.size() - 1))
 		{
-			m_CurrentSceneIndex = 0;
+			m_NextSceneIndex = 0;
 
 		}
 		else
 		{
-			++m_CurrentSceneIndex;
+			m_NextSceneIndex = m_CurrentSceneIndex + 1;
 		}
 
-		m_Scenes[m_CurrentSceneIndex]->Start();
-
-		return *m_Scenes[m_CurrentSceneIndex].get();
+		return *m_Scenes[m_NextSceneIndex].get();
 
 		break;	
 	
@@ -128,34 +130,26 @@ dae::Scene& dae::SceneManager::PreviousScene(SceneTraversalType sceneTraversalTy
 			return *m_Scenes[m_CurrentSceneIndex].get();
 		}
 
-		m_Scenes[m_CurrentSceneIndex]->End();
+		m_NextSceneIndex = m_CurrentSceneIndex - 1;
 
-		--m_CurrentSceneIndex;
-
-		m_Scenes[m_CurrentSceneIndex]->Start();
-
-		return *m_Scenes[m_CurrentSceneIndex].get();
+		return *m_Scenes[m_NextSceneIndex].get();
 
 		break;
 
 	case SceneTraversalType::Loop:
 
 
-		m_Scenes[m_CurrentSceneIndex]->End();
-
 		if (m_CurrentSceneIndex == 0)
 		{
-			m_CurrentSceneIndex = int(m_Scenes.size() - 1);
+			m_NextSceneIndex = int(m_Scenes.size() - 1);
 
 		}
 		else
 		{
-			--m_CurrentSceneIndex;
+			m_NextSceneIndex = m_CurrentSceneIndex - 1;
 		}
 
-		m_Scenes[m_CurrentSceneIndex]->Start();
-
-		return *m_Scenes[m_CurrentSceneIndex].get();
+		return *m_Scenes[m_NextSceneIndex].get();
 
 		break;
 
