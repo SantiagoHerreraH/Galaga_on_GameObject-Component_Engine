@@ -94,3 +94,12 @@ void dae::GameObject::Render() const
 		Renderer::GetInstance().DrawCross(pos, 5, { 0,255,0 });
 	}
 }
+
+
+void dae::GameObject::End() {
+
+	for (size_t i = 0; i < m_Components.size(); i++)
+	{
+		m_Components[i].ComponentHandle->End();
+	}
+}

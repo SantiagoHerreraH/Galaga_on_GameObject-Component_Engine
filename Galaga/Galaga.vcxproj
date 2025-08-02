@@ -22,9 +22,11 @@
     <ClCompile Include="Behaviour_CaptureZone.cpp" />
     <ClCompile Include="CaptureZoneWeaponType.cpp" />
     <ClCompile Include="CCaptureZone.cpp" />
+    <ClCompile Include="CNameDisplayer.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="EnemyFormation.cpp" />
     <ClCompile Include="HighscoreScene.cpp" />
+    <ClCompile Include="NameAssignerScene.cpp" />
     <ClCompile Include="PlayerVsScene.cpp" />
     <ClCompile Include="ScoreSaver.cpp" />
     <ClCompile Include="Gun.cpp" />
@@ -45,8 +47,10 @@
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="CaptureZoneWeaponType.h" />
     <ClInclude Include="CCaptureZone.h" />
+    <ClInclude Include="CNameDisplayer.h" />
     <ClInclude Include="Misc_CreationFunctions.h" />
     <ClInclude Include="HighscoreScene.h" />
+    <ClInclude Include="NameAssignerScene.h" />
     <ClInclude Include="PlayerVsScene.h" />
     <ClInclude Include="WeaponType.h" />
     <ClInclude Include="StartSequenceCommand.h" />

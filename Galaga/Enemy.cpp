@@ -41,16 +41,14 @@ dae::Enemy::Enemy(const EnemyInstanceData& enemyInstanceData, const EnemyType& e
 	rect.Height = 32;
 	rect.Width = 32;
 
-	CCollider collider{ rect, (int)GalagaCollisionLayers::Enemies };
-	collider.AddCollisionTagToCollideWith((int)GalagaCollisionLayers::Player);
+	CCollider collider{ rect, (int)CollisionLayers::Enemies };
+	collider.AddCollisionTagToCollideWith((int)CollisionLayers::Player);
 	collider.CenterRect();
 
-	collider.OnCollisionBeginEvent().Subscribe([player](GameObject&, GameObject& other) mutable
+	collider.OnCollisionBeginEvent().Subscribe([](GameObject&, GameObject& other) mutable
 		{
-			if (player.get() == &other)
-			{
-				player->GetComponent<CStatController>()->OffsetStat(StatType::Health, -1);
-			}
+			other.GetComponent<CStatController>()->OffsetStat(StatType::Health, -1);
+
 		});
 
 	//------
@@ -151,8 +149,6 @@ dae::Enemy::Enemy(const EnemyInstanceData& enemyInstanceData, const EnemyType& e
 			enemy->SetActive(false);
 			enemyManager->SendNextTroops(enemy.get());
 		});
-
-
 	
 }
 

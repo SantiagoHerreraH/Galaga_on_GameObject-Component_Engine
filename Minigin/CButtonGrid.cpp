@@ -154,23 +154,28 @@ dae::CPlayerController* dae::CButtonGrid::GetPlayerController() {
 
 void dae::CButtonGrid::MapButtonSelectionToKeys()
 {
-	CPlayerController* playerController = GetPlayerController();
+	if (!m_MappedSelection)
+	{
+		m_MappedSelection = true;
+		CPlayerController* playerController = GetPlayerController();
 
-	playerController->BindKey(PlayerGamepadKeyData{ ButtonState::BUTTON_DOWN, GamepadButton::ButtonX,		std::make_shared<EventTriggerCommand>(m_ButtonGridEvents.OnPress) });
-	playerController->BindKey(PlayerGamepadKeyData{ ButtonState::BUTTON_DOWN, GamepadButton::DpadLeft,		std::make_shared<EventTriggerCommand>(m_ButtonGridEvents.OnMoveLeft) });
-	playerController->BindKey(PlayerGamepadKeyData{ ButtonState::BUTTON_DOWN, GamepadButton::DpadRight,		std::make_shared<EventTriggerCommand>(m_ButtonGridEvents.OnMoveRight) });
-	playerController->BindKey(PlayerGamepadKeyData{ ButtonState::BUTTON_DOWN, GamepadButton::DpadUp,		std::make_shared<EventTriggerCommand>(m_ButtonGridEvents.OnMoveUp) });
-	playerController->BindKey(PlayerGamepadKeyData{ ButtonState::BUTTON_DOWN, GamepadButton::DpadDown,		std::make_shared<EventTriggerCommand>(m_ButtonGridEvents.OnMoveDown) });
+		playerController->BindKey(PlayerGamepadKeyData{ ButtonState::BUTTON_DOWN, GamepadButton::ButtonX,		std::make_shared<EventTriggerCommand>(m_ButtonGridEvents.OnPress) });
+		playerController->BindKey(PlayerGamepadKeyData{ ButtonState::BUTTON_DOWN, GamepadButton::DpadLeft,		std::make_shared<EventTriggerCommand>(m_ButtonGridEvents.OnMoveLeft) });
+		playerController->BindKey(PlayerGamepadKeyData{ ButtonState::BUTTON_DOWN, GamepadButton::DpadRight,		std::make_shared<EventTriggerCommand>(m_ButtonGridEvents.OnMoveRight) });
+		playerController->BindKey(PlayerGamepadKeyData{ ButtonState::BUTTON_DOWN, GamepadButton::DpadUp,		std::make_shared<EventTriggerCommand>(m_ButtonGridEvents.OnMoveUp) });
+		playerController->BindKey(PlayerGamepadKeyData{ ButtonState::BUTTON_DOWN, GamepadButton::DpadDown,		std::make_shared<EventTriggerCommand>(m_ButtonGridEvents.OnMoveDown) });
 
-	playerController->BindKey(PlayerKeyboardKeyData{ ButtonState::BUTTON_DOWN, SDL_SCANCODE_SPACE,		std::make_shared<EventTriggerCommand>(m_ButtonGridEvents.OnPress) });
-	playerController->BindKey(PlayerKeyboardKeyData{ ButtonState::BUTTON_DOWN, SDL_SCANCODE_LEFT,		std::make_shared<EventTriggerCommand>(m_ButtonGridEvents.OnMoveLeft) });
-	playerController->BindKey(PlayerKeyboardKeyData{ ButtonState::BUTTON_DOWN, SDL_SCANCODE_RIGHT,		std::make_shared<EventTriggerCommand>(m_ButtonGridEvents.OnMoveRight) });
-	playerController->BindKey(PlayerKeyboardKeyData{ ButtonState::BUTTON_DOWN, SDL_SCANCODE_UP,			std::make_shared<EventTriggerCommand>(m_ButtonGridEvents.OnMoveUp) });
-	playerController->BindKey(PlayerKeyboardKeyData{ ButtonState::BUTTON_DOWN, SDL_SCANCODE_DOWN,		std::make_shared<EventTriggerCommand>(m_ButtonGridEvents.OnMoveDown) });
+		playerController->BindKey(PlayerKeyboardKeyData{ ButtonState::BUTTON_DOWN, SDL_SCANCODE_SPACE,		std::make_shared<EventTriggerCommand>(m_ButtonGridEvents.OnPress) });
+		playerController->BindKey(PlayerKeyboardKeyData{ ButtonState::BUTTON_DOWN, SDL_SCANCODE_LEFT,		std::make_shared<EventTriggerCommand>(m_ButtonGridEvents.OnMoveLeft) });
+		playerController->BindKey(PlayerKeyboardKeyData{ ButtonState::BUTTON_DOWN, SDL_SCANCODE_RIGHT,		std::make_shared<EventTriggerCommand>(m_ButtonGridEvents.OnMoveRight) });
+		playerController->BindKey(PlayerKeyboardKeyData{ ButtonState::BUTTON_DOWN, SDL_SCANCODE_UP,			std::make_shared<EventTriggerCommand>(m_ButtonGridEvents.OnMoveUp) });
+		playerController->BindKey(PlayerKeyboardKeyData{ ButtonState::BUTTON_DOWN, SDL_SCANCODE_DOWN,		std::make_shared<EventTriggerCommand>(m_ButtonGridEvents.OnMoveDown) });
 
-	playerController->BindKey(PlayerKeyboardKeyData{ ButtonState::BUTTON_DOWN, SDL_SCANCODE_A,		std::make_shared<EventTriggerCommand>(m_ButtonGridEvents.OnMoveLeft) });
-	playerController->BindKey(PlayerKeyboardKeyData{ ButtonState::BUTTON_DOWN, SDL_SCANCODE_D,		std::make_shared<EventTriggerCommand>(m_ButtonGridEvents.OnMoveRight) });
-	playerController->BindKey(PlayerKeyboardKeyData{ ButtonState::BUTTON_DOWN, SDL_SCANCODE_W,		std::make_shared<EventTriggerCommand>(m_ButtonGridEvents.OnMoveUp) });
-	playerController->BindKey(PlayerKeyboardKeyData{ ButtonState::BUTTON_DOWN, SDL_SCANCODE_S,		std::make_shared<EventTriggerCommand>(m_ButtonGridEvents.OnMoveDown) });
+		playerController->BindKey(PlayerKeyboardKeyData{ ButtonState::BUTTON_DOWN, SDL_SCANCODE_A,		std::make_shared<EventTriggerCommand>(m_ButtonGridEvents.OnMoveLeft) });
+		playerController->BindKey(PlayerKeyboardKeyData{ ButtonState::BUTTON_DOWN, SDL_SCANCODE_D,		std::make_shared<EventTriggerCommand>(m_ButtonGridEvents.OnMoveRight) });
+		playerController->BindKey(PlayerKeyboardKeyData{ ButtonState::BUTTON_DOWN, SDL_SCANCODE_W,		std::make_shared<EventTriggerCommand>(m_ButtonGridEvents.OnMoveUp) });
+		playerController->BindKey(PlayerKeyboardKeyData{ ButtonState::BUTTON_DOWN, SDL_SCANCODE_S,		std::make_shared<EventTriggerCommand>(m_ButtonGridEvents.OnMoveDown) });
 
+	}
+	
 }

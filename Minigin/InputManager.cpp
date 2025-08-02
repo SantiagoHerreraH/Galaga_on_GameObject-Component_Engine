@@ -75,6 +75,7 @@ void dae::InputManager::Reset()
 	m_KeyboardEvents.clear();
 	m_DisabledPlayerIds.clear();
 	m_CurrentPlayerId = 0;
+	m_PopulatedKeyboard = false;
 }
 
 void dae::InputManager::SetData(const InputControllerData& data)
@@ -104,9 +105,34 @@ bool dae::InputManager::GetNextAvailableControllerInstance(ControllerInstance& o
 {
 	if (m_CurrentPlayerId == 0 && m_Data.AllowKeyboard)
 	{
-		out.ControllerType = ControllerType::Both;
-		out.PlayerId = m_CurrentPlayerId;
-		++m_CurrentPlayerId;
+
+		switch (m_Data.HowToTreatKeyboard)
+		{
+		case dae::HowToTreatKeyboard::SharePlayerIdWithFirstController:
+			out.ControllerType = ControllerType::Both;
+			out.PlayerId = m_CurrentPlayerId;
+			++m_CurrentPlayerId;
+			break;
+		case dae::HowToTreatKeyboard::MakeItAnIndependentPlayerId:
+
+			if (m_PopulatedKeyboard)
+			{
+				out.ControllerType = ControllerType::Gamepad;
+				out.PlayerId = m_CurrentPlayerId;
+				++m_CurrentPlayerId;
+			}
+			else
+			{
+				out.ControllerType = ControllerType::Keyboard;
+				out.PlayerId = -1;
+				m_PopulatedKeyboard = true;
+			}
+
+			break;
+		default:
+			return false;
+			break;
+		}
 		
 		return true;
 	}

@@ -158,6 +158,23 @@ namespace dae {
 			Renderer::GetInstance().DrawRect(m_TransformedRect.Left, m_TransformedRect.Top, m_TransformedRect.Width, m_TransformedRect.Height, false);
 		}
 	}
+	void CCollider::SetActive(bool isActive)
+	{
+		Component::SetActive(isActive);
+
+		if (!isActive)
+		{
+			for (size_t i = 0; i < m_CollidersToCollideWith.size(); i++)
+			{
+
+				GameObject* otherOwner = &m_CollidersToCollideWith[i]->Owner();
+				m_OnCollisionEndEvent.Invoke(Owner(), *otherOwner);
+
+				std::erase(m_CollidingWithEntities, otherOwner);
+				std::erase(m_CollidersToCollideWith[i]->m_CollidingWithEntities, &Owner());
+			}
+		}
+	}
 }
 
 

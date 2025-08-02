@@ -41,6 +41,7 @@ namespace dae {
 
         ScoreData GetHighscore();
         int GetLastScore(const std::string& gameModeName);
+        ScoreData GetHighscoreInTheLastScores(const std::string& gameModeName, int amountOfLastScores);
 
         void Save();
 

@@ -69,9 +69,14 @@ namespace dae
 	using GamepadEvents = std::vector<GamepadKeyData>;
 	using KeyboardEvents = std::vector<KeyboardKeyData>;
 
+	enum class HowToTreatKeyboard {
+		SharePlayerIdWithFirstController,
+		MakeItAnIndependentPlayerId
+	};
 
 	struct InputControllerData {
 		bool AllowKeyboard = true;
+		HowToTreatKeyboard HowToTreatKeyboard;
 		int MaxControllers = XUSER_MAX_COUNT;
 		Event<> OnConnected{};
 		Event<> OnDisconnected{};
@@ -143,6 +148,7 @@ namespace dae
 		std::vector<bool> m_KeyboardKeyStates;
 		std::vector<GamepadInputManager> m_GamepadInputManagers;
 		InputControllerData m_Data{};
+		bool m_PopulatedKeyboard{false};
 		PlayerId m_CurrentPlayerId{0};
 	};
 

@@ -18,6 +18,7 @@ namespace dae {
 		void Start() override;
 		void FixedUpdate() override;
 		void Render()const override;
+		void SetActive(bool isActive) override;
 
 		void SetRectOffset(const glm::vec2& offset);
 		void CenterRect();

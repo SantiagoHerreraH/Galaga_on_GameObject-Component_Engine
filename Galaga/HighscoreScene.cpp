@@ -6,6 +6,7 @@
 #include "PlayerController.h"
 #include "EventTriggerCommand.h"
 #include "MainMenu.h"
+#include "Collider.h"
 
 dae::HighscoreScene::HighscoreScene(std::vector<Player> players, const std::string& sceneName, std::string gameModeName) : m_SceneName(sceneName)
 {
@@ -13,6 +14,15 @@ dae::HighscoreScene::HighscoreScene(std::vector<Player> players, const std::stri
     auto onHighscoreEnd = m_OnHighscoreEnd;
 
     auto highscoreSceneCreation = [players, gameModeName, onHighscoreEnd](Scene& scene) mutable{
+
+
+
+        InputControllerData inputData{};
+        inputData.AllowKeyboard = true;
+        inputData.HowToTreatKeyboard = players.size() > 1 ? HowToTreatKeyboard::MakeItAnIndependentPlayerId : HowToTreatKeyboard::SharePlayerIdWithFirstController;
+        inputData.MaxControllers = players.size() > XUSER_MAX_COUNT ? XUSER_MAX_COUNT : players.size();
+
+        InputManager::GetFromScene(&scene).SetData(inputData);
 
         auto particleSystemObj = CreateParticleSystem();
         scene.AddGameObjectHandle(particleSystemObj);
@@ -35,12 +45,18 @@ dae::HighscoreScene::HighscoreScene(std::vector<Player> players, const std::stri
 
         for (auto& player : players)
         {
+
+            scoreData.PlayerName = player.GetGameObject().GetName();
             float xWhere = (g_WindowWidth / (players.size() + 1)) * (count + 1);
+
+
+            TextCreator currentText{ scoreData.PlayerName, {xWhere, (g_WindowHeight / 2.f) - (vertOffsetBetweenDisplayers * 2)}, 15, {255, 255, 255} };
+            scene.AddGameObjectHandle(currentText.GetGameObjectHandle());
 
             GameObjectHandle statDisplayerGameObj = scene.CreateGameObject();
 
             StatDisplayData pointsDisplayData{};
-            pointsDisplayData.StatNameTextData.FontData.FontFullPath = "Emulogic-zrEw.ttf";
+            pointsDisplayData.StatNameTextData.FontData.FontFile = "Emulogic-zrEw.ttf";
             pointsDisplayData.StatNameTextData.FontData.FontSize = 13;
             pointsDisplayData.StatNameTextData.Color = { 255, 0, 0 };
             pointsDisplayData.StatNameTextData.Text = "POINTS :";
@@ -49,6 +65,7 @@ dae::HighscoreScene::HighscoreScene(std::vector<Player> players, const std::stri
             pointsDisplayData.StatValueOffsetFromStatName = { 0, 5 };
             pointsDisplayData.StatValueBaseOffsetMultiplierX = 0;
             pointsDisplayData.StatValueBaseOffsetMultiplierY = 1;
+            pointsDisplayData.UpdateAutomatically = false;
             pointsDisplayData.Where = { xWhere, (g_WindowHeight / 2.f) - vertOffsetBetweenDisplayers };
             pointsDisplayData.FromWho = player.GetGameObjectHandle();
 
@@ -56,13 +73,13 @@ dae::HighscoreScene::HighscoreScene(std::vector<Player> players, const std::stri
 
             statDisplayerGameObj->AddComponent(pointsDisplayer);
 
-            scoreData.PlayerName = "New Player " + std::to_string(count);
             scoreData.Score = pointsDisplayData.FromWho->GetComponent<CStatController>()->GetStat(StatType::Points, StatCategory::CurrentStat);
             scoreSaver.AddScore(scoreData);
+
             //------------
 
             StatDisplayData shotsFiredDisplayData{};
-            shotsFiredDisplayData.StatNameTextData.FontData.FontFullPath = "Emulogic-zrEw.ttf";
+            shotsFiredDisplayData.StatNameTextData.FontData.FontFile = "Emulogic-zrEw.ttf";
             shotsFiredDisplayData.StatNameTextData.FontData.FontSize = 13;
             shotsFiredDisplayData.StatNameTextData.Color = { 255, 0, 0 };
             shotsFiredDisplayData.StatNameTextData.Text = "SHOTS FIRED :";
@@ -72,7 +89,8 @@ dae::HighscoreScene::HighscoreScene(std::vector<Player> players, const std::stri
             shotsFiredDisplayData.StatValueBaseOffsetMultiplierX = 0;
             shotsFiredDisplayData.StatValueBaseOffsetMultiplierY = 1;
             shotsFiredDisplayData.Where = { xWhere , (g_WindowHeight / 2.f) };
-            shotsFiredDisplayData.FromWho = player.GetGameObjectHandle();
+            shotsFiredDisplayData.FromWho = player.GetGameObjectHandle();       
+            shotsFiredDisplayData.UpdateAutomatically = false;
 
             CStatDisplayer shotsFiredDisplayer{ shotsFiredDisplayData };
 
@@ -81,7 +99,7 @@ dae::HighscoreScene::HighscoreScene(std::vector<Player> players, const std::stri
             //------------
 
             StatDisplayData hitNumDisplayData{};
-            hitNumDisplayData.StatNameTextData.FontData.FontFullPath = "Emulogic-zrEw.ttf";
+            hitNumDisplayData.StatNameTextData.FontData.FontFile = "Emulogic-zrEw.ttf";
             hitNumDisplayData.StatNameTextData.FontData.FontSize = 13;
             hitNumDisplayData.StatNameTextData.Color = { 255, 0, 0 };
             hitNumDisplayData.StatNameTextData.Text = "HIT NUM :";
@@ -92,24 +110,36 @@ dae::HighscoreScene::HighscoreScene(std::vector<Player> players, const std::stri
             hitNumDisplayData.StatValueBaseOffsetMultiplierY = 1;
             hitNumDisplayData.Where = { xWhere, (g_WindowHeight / 2.f) + vertOffsetBetweenDisplayers };
             hitNumDisplayData.FromWho = player.GetGameObjectHandle();
+            hitNumDisplayData.UpdateAutomatically = false;
+
 
             CStatDisplayer hitNumDisplayer{ hitNumDisplayData };
 
             statDisplayerGameObj->AddComponent(hitNumDisplayer);
 
+            float shotsFired =  player.GetGameObject().GetComponent<CStatController>()->GetStat(StatType::ShotsFired);
+            float numberOfHits = player.GetGameObject().GetComponent<CStatController>()->GetStat(StatType::NumberOfHits);
+            float hitMissRatioVal = shotsFired != 0 ? (numberOfHits * 100) / shotsFired : 0;
 
+            TextCreator hitMissRatioText("HIT MISS RATIO: ", { xWhere,   (g_WindowHeight / 2.f) + (vertOffsetBetweenDisplayers * 2) }, 13, SDL_Color{ 255, 0 , 0 });
+            TextCreator hitMissRatio("% " + std::to_string(hitMissRatioVal), {xWhere,   (g_WindowHeight / 2.f) + (vertOffsetBetweenDisplayers * 2) + 18}, 13, SDL_Color{255, 255 , 255});
 
+            scene.AddGameObjectHandle(hitMissRatioText.GetGameObjectHandle());
+            scene.AddGameObjectHandle(hitMissRatio.GetGameObjectHandle());
+
+            player.GetGameObject().SetActive(true, false);
+            player.GetGameObject().GetComponent<CCollider>()->SetActive(false);
             scene.AddGameObjectHandle(player.GetGameObjectHandle());
             CPlayerController& playerController = *player.GetGameObject().GetComponent<CPlayerController>();
 
-            playerController.BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_SPACE,	     std::make_shared<EventTriggerCommand>(backToMainMenuEvent) });
-            playerController.BindKey(dae::PlayerGamepadKeyData{ ButtonState::BUTTON_PRESSED, GamepadButton::ButtonX,	 std::make_shared<EventTriggerCommand>(backToMainMenuEvent) });
+            playerController.BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_DOWN, SDL_SCANCODE_RETURN,	     std::make_shared<EventTriggerCommand>(backToMainMenuEvent) });
+            playerController.BindKey(dae::PlayerGamepadKeyData{ ButtonState::BUTTON_DOWN, GamepadButton::RightShoulder,	 std::make_shared<EventTriggerCommand>(backToMainMenuEvent) });
 
 
             ++count;
         }
 
-        TextCreator message("PRESS SPACE OR X TO EXIT", { int(g_WindowWidth / 2.f),   int(g_WindowHeight * 5.5 / 6.f) }, 13, SDL_Color{ 255, 255 , 255 });
+        TextCreator message("PRESS RETURN OR RIGHT SHOULDER TO EXIT", { int(g_WindowWidth / 2.f),   int(g_WindowHeight * 5.5 / 6.f) }, 13, SDL_Color{ 255, 255 , 255 });
         scene.AddGameObjectHandle(message.GetGameObjectHandle());
 
         };

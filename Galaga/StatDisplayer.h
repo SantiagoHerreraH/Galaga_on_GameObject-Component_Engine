@@ -22,6 +22,7 @@ namespace dae {
 		float StatValueBaseOffsetMultiplierY{1}; // 1 == exaclty below
 
 		GameObjectHandle FromWho;
+		bool UpdateAutomatically{ true };
 	};
 
 	class CStatDisplayer : public Component {

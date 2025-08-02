@@ -17,6 +17,7 @@ namespace dae {
 		virtual void FixedUpdate() {}
 		virtual void Update() {}
 		virtual void Render() const {}
+		virtual void End(){}
 		const GameObject& OwnerConst() const{ return *m_Owner; }
 		GameObject& Owner() { return *m_Owner; }
 		bool HasOwner()const { return m_Owner != nullptr; };

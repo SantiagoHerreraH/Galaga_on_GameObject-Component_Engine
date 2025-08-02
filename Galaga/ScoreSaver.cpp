@@ -68,6 +68,38 @@ namespace dae {
         return 0;
     }
 
+    ScoreData ScoreSaver::GetHighscoreInTheLastScores(const std::string& gameModeName, int amountOfLastScores)
+    {
+        if (m_Scores.empty())
+        {
+            return ScoreData{};
+        }
+        int startIdx = m_Scores.size() - 1;
+        startIdx = startIdx < 0 ? 0 : startIdx;
+
+        ScoreData scoreData{ m_Scores[startIdx] };
+        scoreData.Score = 0;
+
+        int currentAmountOfScores = 0;
+        int currentIdx = startIdx;
+
+        while (currentAmountOfScores < amountOfLastScores && currentIdx >= 0)
+        {
+            if (m_Scores[currentIdx].GameModeName == gameModeName)
+            {
+                ++currentAmountOfScores;
+                if (scoreData.Score < m_Scores[currentIdx].Score)
+                {
+                    scoreData = m_Scores[currentIdx];
+                }
+            }
+
+            --currentIdx;
+        }
+
+        return scoreData;
+    }
+
     void ScoreSaver::Save()
     {
         if (!m_WasModified)

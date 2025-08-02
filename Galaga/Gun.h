@@ -10,8 +10,8 @@ namespace dae {
 	struct GunData {
 		int BulletAmount{ 10 };
 		float BulletLifeTime{};
-		GalagaCollisionLayers BulletCollisionLayer;
-		GalagaCollisionLayers BulletCollisionLayerToCollideAgainst;
+		CollisionLayers BulletCollisionLayer;
+		CollisionLayers BulletCollisionLayerToCollideAgainst;
 		float TimeBetweenShots{ 0.3f };
 		GameObjectHandle Shooter;
 	};
@@ -37,9 +37,16 @@ namespace dae {
 	class GunWeaponType : public WeaponType {
 
 	public:
+		GunWeaponType( CollisionLayers bulletCollisionLayer, CollisionLayers  collisionLayerToCollideAgainst) :
+			m_BulletCollisionLayer(bulletCollisionLayer),
+			m_CollisionLayerToCollideAgainst(collisionLayerToCollideAgainst){ }
+
 		void Create(const GameObjectHandle& gameObject) override;
 		void Execute(GameObject& obj) override;
 
+	private:
+		CollisionLayers m_BulletCollisionLayer;
+		CollisionLayers  m_CollisionLayerToCollideAgainst;
 	};
 
 }

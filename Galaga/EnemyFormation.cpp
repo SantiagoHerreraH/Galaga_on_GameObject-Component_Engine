@@ -31,6 +31,12 @@ void dae::CEnemyFormation::Start()
 	}
 }
 
+void dae::CEnemyFormation::End()
+{
+	m_OnFormationDeath.UnsubscribeAll();
+	m_OnEndSwirlFormation.UnsubscribeAll();
+}
+
 void dae::CEnemyFormation::StopSendingTroops()
 {
 	m_CanSendTroops = false;

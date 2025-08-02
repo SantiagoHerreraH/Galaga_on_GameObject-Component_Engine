@@ -5,6 +5,7 @@
 
 #include "Scene.h"
 #include "WeaponType.h"
+#include "CollisionLayers.h"
 
 
 
@@ -13,6 +14,8 @@ namespace dae {
 	//finish this and do the main scene set up
 	struct PlayerType {
 		std::string TextureName;
+		CollisionLayers PlayerCollisionLayer{ CollisionLayers::Player};
+		bool HasVerticalMovement{ true };
 		std::shared_ptr<WeaponType> WeaponType;
 	};
 

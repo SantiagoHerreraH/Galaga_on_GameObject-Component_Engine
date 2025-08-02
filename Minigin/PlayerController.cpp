@@ -10,29 +10,36 @@ void dae::CPlayerController::Start()
 
 	if (m_IsValid)
 	{
-		GamepadKeyData gamePagKeyData{};
-		gamePagKeyData.PlayerId = m_ControllerInstance.PlayerId;
-		gamePagKeyData.PlayerGameObject = &Owner();
-
-		for (size_t i = 0; i < m_PlayerGamepadKeyData.size(); i++)
+		if (m_ControllerInstance.ControllerType != ControllerType::Keyboard)
 		{
-			gamePagKeyData.ButtonState   = m_PlayerGamepadKeyData[i].ButtonState   ;
-			gamePagKeyData.GamepadButton = m_PlayerGamepadKeyData[i].GamepadButton ;
-			gamePagKeyData.OnTriggered   = m_PlayerGamepadKeyData[i].OnTriggered;
-			InputManager::GetCurrent().BindKey(gamePagKeyData);
+			GamepadKeyData gamePadKeyData{};
+			gamePadKeyData.PlayerId = m_ControllerInstance.PlayerId;
+			gamePadKeyData.PlayerGameObject = &Owner();
+
+			for (size_t i = 0; i < m_PlayerGamepadKeyData.size(); i++)
+			{
+				gamePadKeyData.ButtonState = m_PlayerGamepadKeyData[i].ButtonState;
+				gamePadKeyData.GamepadButton = m_PlayerGamepadKeyData[i].GamepadButton;
+				gamePadKeyData.OnTriggered = m_PlayerGamepadKeyData[i].OnTriggered;
+				InputManager::GetCurrent().BindKey(gamePadKeyData);
+			}
+		}
+		if (m_ControllerInstance.ControllerType != ControllerType::Gamepad)
+		{
+			KeyboardKeyData keyboardKeyData{};
+			keyboardKeyData.PlayerGameObject = &Owner();
+
+			for (size_t i = 0; i < m_PlayerKeyboardKeyData.size(); i++)
+			{
+				keyboardKeyData.ButtonState = m_PlayerKeyboardKeyData[i].ButtonState;
+				keyboardKeyData.Key = m_PlayerKeyboardKeyData[i].Key;
+				keyboardKeyData.OnTriggered = m_PlayerKeyboardKeyData[i].OnTriggered;
+
+				InputManager::GetCurrent().BindKey(keyboardKeyData);
+			}
 		}
 
-		KeyboardKeyData keyboardKeyData{};
-		keyboardKeyData.PlayerGameObject = &Owner();
-
-		for (size_t i = 0; i < m_PlayerKeyboardKeyData.size(); i++)
-		{
-			keyboardKeyData.ButtonState	 = m_PlayerKeyboardKeyData[i].ButtonState;
-			keyboardKeyData.Key			 = m_PlayerKeyboardKeyData[i].Key			;
-			keyboardKeyData.OnTriggered	 = m_PlayerKeyboardKeyData[i].OnTriggered;
-
-			InputManager::GetCurrent().BindKey(keyboardKeyData);
-		}
+		
 	}
 }
 

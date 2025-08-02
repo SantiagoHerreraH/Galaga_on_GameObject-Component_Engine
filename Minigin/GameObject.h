@@ -29,6 +29,7 @@ namespace dae
 		void Update();
 		void FixedUpdate();
 		void Render() const;
+		void End();
 
 		bool IsActive()const;
 		void SetActive(bool active, bool affectChildren = true);

@@ -15,6 +15,7 @@
 #include "StatDisplayer.h"
 #include "Bullet.h"
 #include "Gun.h"
+#include "CNameDisplayer.h"
 
 #undef max
 #undef min
@@ -39,7 +40,7 @@ dae::Player::Player(const glm::vec2& startPos, float zRotation, int playerNum, c
 	rect.Height = 32;
 	rect.Width = 32;
 
-	dae::CCollider collider{ rect, (int)GalagaCollisionLayers::Player };
+	dae::CCollider collider{ rect, (int)playerType.PlayerCollisionLayer };
 	collider.CenterRect();
 
 	currentPlayer->AddComponent(collider);
@@ -54,6 +55,19 @@ dae::Player::Player(const glm::vec2& startPos, float zRotation, int playerNum, c
 	dae::CMovement2D movement{};
 	movement.SetMaxSpeed(300);
 	currentPlayer->AddComponent(movement);
+
+	//----
+
+	TransformData textDisplayerOffset{};
+	textDisplayerOffset.Position.x = 60;
+
+	TextData textDisplayerTextData{};
+	textDisplayerTextData.Color = { 255, 255, 255 };
+	textDisplayerTextData.FontData.FontFile = "Emulogic-zrEw.ttf";
+	textDisplayerTextData.FontData.FontSize = 15;
+
+	CNameDisplayer nameDisplayer{ textDisplayerTextData , textDisplayerOffset };
+	currentPlayer->AddComponent(nameDisplayer);
 
 	//-----
 
@@ -93,13 +107,16 @@ dae::Player::Player(const glm::vec2& startPos, float zRotation, int playerNum, c
 	//----
 
 	StatDisplayData statDisplayData{};
-	statDisplayData.StatNameTextData.FontData.FontFullPath = "Emulogic-zrEw.ttf";
+	statDisplayData.StatNameTextData.FontData.FontFile = "Emulogic-zrEw.ttf";
 	statDisplayData.StatNameTextData.FontData.FontSize = 13;
 	statDisplayData.StatNameTextData.Color = {255, 0, 0 };
 	statDisplayData.StatNameTextData.Text = "1UP ";
 	statDisplayData.StatTypeToDisplay = StatType::Points;
 	statDisplayData.StatValueColor = { 255, 255, 255 };
+	statDisplayData.StatValueBaseOffsetMultiplierX = 0;
+	statDisplayData.StatValueBaseOffsetMultiplierY = 1;
 	statDisplayData.StatValueOffsetFromStatName = {0,5};
+	statDisplayData.UpdateAutomatically = true;
 	statDisplayData.Where = { g_WindowWidth * 4.3f / 5.f , (g_WindowHeight * 1.6f / 5.f) + (50 * playerNum) };
 
 	CStatDisplayer statDisplayer{ statDisplayData };
@@ -108,7 +125,7 @@ dae::Player::Player(const glm::vec2& startPos, float zRotation, int playerNum, c
 
 	//----
 
-	CPlayerLife playerHealthComponent{ 3, glm::vec3{g_WindowWidth/2.f, g_WindowHeight - 50, 0}, 5.f, playerNum };
+	CPlayerLife playerHealthComponent{ 3, startPos, 3.f, playerNum };
 
 	currentPlayer->AddComponent(playerHealthComponent);
 
@@ -154,21 +171,32 @@ dae::Player::Player(const glm::vec2& startPos, float zRotation, int playerNum, c
 	playerControllerRef->BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_SPACE,	std::make_shared<EventTriggerCommand>(shootEvent) });
 	playerControllerRef->BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_LEFT,	std::make_shared<EventTriggerCommand>(moveLeftEvent) });
 	playerControllerRef->BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_RIGHT,	std::make_shared<EventTriggerCommand>(moveRightEvent) });
-	playerControllerRef->BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_UP,		std::make_shared<EventTriggerCommand>(moveUpEvent) });
-	playerControllerRef->BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_DOWN,	std::make_shared<EventTriggerCommand>(moveDownEvent) });
+
+	if (playerType.HasVerticalMovement)
+	{
+		playerControllerRef->BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_UP,		std::make_shared<EventTriggerCommand>(moveUpEvent) });
+		playerControllerRef->BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_DOWN,	std::make_shared<EventTriggerCommand>(moveDownEvent) });
+	}
 
 	playerControllerRef->BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_A,	 std::make_shared<EventTriggerCommand>(moveLeftEvent) });
 	playerControllerRef->BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_D,	 std::make_shared<EventTriggerCommand>(moveRightEvent) });
-	playerControllerRef->BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_W,	 std::make_shared<EventTriggerCommand>(moveUpEvent) });
-	playerControllerRef->BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_S,	 std::make_shared<EventTriggerCommand>(moveDownEvent) });
+
+	if (playerType.HasVerticalMovement)
+	{
+		playerControllerRef->BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_W,	 std::make_shared<EventTriggerCommand>(moveUpEvent) });
+		playerControllerRef->BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_S,	 std::make_shared<EventTriggerCommand>(moveDownEvent) });
+	}
 
 
 	playerControllerRef->BindKey(dae::PlayerGamepadKeyData{ ButtonState::BUTTON_PRESSED, GamepadButton::ButtonX,	 std::make_shared<EventTriggerCommand>(shootEvent) });
 	playerControllerRef->BindKey(dae::PlayerGamepadKeyData{ ButtonState::BUTTON_PRESSED, GamepadButton::DpadLeft,	 std::make_shared<EventTriggerCommand>(moveLeftEvent) });
 	playerControllerRef->BindKey(dae::PlayerGamepadKeyData{ ButtonState::BUTTON_PRESSED, GamepadButton::DpadRight,	 std::make_shared<EventTriggerCommand>(moveRightEvent) });
-	playerControllerRef->BindKey(dae::PlayerGamepadKeyData{ ButtonState::BUTTON_PRESSED, GamepadButton::DpadUp,		 std::make_shared<EventTriggerCommand>(moveUpEvent) });
-	playerControllerRef->BindKey(dae::PlayerGamepadKeyData{ ButtonState::BUTTON_PRESSED, GamepadButton::DpadDown,	 std::make_shared<EventTriggerCommand>(moveDownEvent) });
-
+	
+	if (playerType.HasVerticalMovement)
+	{
+		playerControllerRef->BindKey(dae::PlayerGamepadKeyData{ ButtonState::BUTTON_PRESSED, GamepadButton::DpadUp,		 std::make_shared<EventTriggerCommand>(moveUpEvent) });
+		playerControllerRef->BindKey(dae::PlayerGamepadKeyData{ ButtonState::BUTTON_PRESSED, GamepadButton::DpadDown,	 std::make_shared<EventTriggerCommand>(moveDownEvent) });
+	}
 	m_CurrentPlayer = currentPlayer;
 }
 

@@ -28,11 +28,13 @@ namespace dae {
 	public:
 		void Start() override;
 		void Update()override;
+		void SetActive(bool isActive) override;
 
 		void AddState(const std::shared_ptr<IState>& state, const std::string& stateName);
 		bool AddGateCondition(const std::string& stateName, const StateCondition& condition);
 		bool AddConnection(const std::string& from, const std::string& to, const StateCondition& condition);
 		bool SetState(const std::string& stateName);
+		bool SetDefaultState(const std::string& stateName);
 
 		void AddTrigger(const std::string& triggerName);
 		void Trigger(const std::string& triggerName);//triggers are active for one tick
@@ -62,6 +64,8 @@ namespace dae {
 		std::unordered_map<std::string, std::shared_ptr<StateData>> m_StateName_To_StateData;
 
 		std::shared_ptr<StateData> m_CurrentStateData{nullptr};
+
+		std::string m_DefaultStateName;
 
 		struct TriggerData {
 			std::string Name;

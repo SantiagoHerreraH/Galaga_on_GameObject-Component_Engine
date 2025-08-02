@@ -16,3 +16,8 @@ dae::TextCreator::TextCreator(const std::string& text, const glm::vec2& pos, uin
 	m_TextGameObject->Transform().SetLocalTransform(currentTransformData);
 	m_TextGameObject->AddComponent(currentText);
 }
+
+void dae::TextCreator::SetText(const std::string& text) 
+{
+	m_TextGameObject->GetComponent<CText>()->SetText(text);
+}

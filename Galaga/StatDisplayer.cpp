@@ -42,7 +42,7 @@ void dae::CStatDisplayer::Start()
 {
 
 	GameObject* gameObjPtr = m_StatDisplayData.FromWho != nullptr ? m_StatDisplayData.FromWho.get() : &Owner();
-	if (!m_Subscribed)
+	if (!m_Subscribed && m_StatDisplayData.UpdateAutomatically)
 	{
 		m_Subscribed = true; //in case of multiple starts -> one gameobj in multiple scenes
 		auto statValueGameObj = m_StatValue;

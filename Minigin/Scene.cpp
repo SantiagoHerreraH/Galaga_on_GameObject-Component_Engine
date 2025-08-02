@@ -76,6 +76,11 @@ void dae::Scene::End()
 	{
 		m_Systems[i]->Reset();
 	}
+
+	for (size_t i = 0; i < m_HandlesVec.size(); i++)
+	{
+		m_HandlesVec[i]->End();
+	}
 }
 
 void dae::Scene::FixedUpdate()

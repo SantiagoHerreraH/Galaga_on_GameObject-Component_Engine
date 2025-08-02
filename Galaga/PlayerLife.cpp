@@ -50,7 +50,7 @@ void dae::CPlayerLife::Start()
 		{
 			self->Owner().Transform().SetLocalPositionX(respawnPoint.x);
 			self->Owner().Transform().SetLocalPositionY(respawnPoint.y);
-			self->Owner().SetActive(true);
+			self->Owner().SetActive(true, false);
 			self->m_OnRespawnFromDamage.Invoke();
 		};
 
@@ -82,6 +82,15 @@ void dae::CPlayerLife::Start()
 		SceneManager::GetInstance().GetCurrentScene().AddGameObjectHandle(healthIndicators[i]);
 	}
 
+	changeHealthIndicators(currentStatController->GetStat(StatType::Health));
+
+}
+
+void dae::CPlayerLife::End()
+{
+	m_OnDie.UnsubscribeAll();
+	m_OnDespawnFromDamage.UnsubscribeAll();
+	m_OnRespawnFromDamage.UnsubscribeAll();
 }
 
 void dae::CPlayerLife::SubscribeOnPlayerDie(const std::function<void()>& func)

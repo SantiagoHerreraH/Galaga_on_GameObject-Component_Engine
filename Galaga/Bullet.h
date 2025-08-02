@@ -12,7 +12,7 @@
 
 namespace dae {
 
-	inline dae::GameObjectHandle CreateBullet(GameObjectHandle owner, GalagaCollisionLayers collisionLayer, GalagaCollisionLayers collisionLayerToCollideAgainst) {
+	inline dae::GameObjectHandle CreateBullet(GameObjectHandle owner, CollisionLayers collisionLayer, CollisionLayers collisionLayerToCollideAgainst) {
 
 		//----- COMPONENTS
 

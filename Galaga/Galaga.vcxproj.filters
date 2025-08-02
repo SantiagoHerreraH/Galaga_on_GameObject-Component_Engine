@@ -66,6 +66,12 @@
     <ClCompile Include="HighscoreScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="NameAssignerScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CNameDisplayer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Player.h">
@@ -183,6 +189,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Misc_CreationFunctions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NameAssignerScene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CNameDisplayer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

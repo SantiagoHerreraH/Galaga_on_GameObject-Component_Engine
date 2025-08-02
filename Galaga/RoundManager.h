@@ -43,7 +43,7 @@ namespace dae {
 	{
 	public:
 		RoundManager(const std::string& fileName);
-		std::string GetFirstRoundName()const;
+		std::string GetNameAssignerSceneName()const;
 		const std::string& GetFileName()const;
 
 	private:
@@ -51,6 +51,7 @@ namespace dae {
 		void CreateRounds();
 		void CreateHighscoreScene();
 		void CreatePlayers();
+		void CreateNameAssignerScene();
 
 		struct RoundManagerData {
 
@@ -78,7 +79,6 @@ namespace dae {
 			RoundManagerType RoundManagerType;
 			size_t CurrentRoundIdx{ 0 };
 			std::vector<Player> Players;
-			int PlayerDeaths;
 			std::vector<std::string> SceneNames;
 			std::string HighscoreSceneName;
 			GameObjectHandle ParticleSystemGameObj;

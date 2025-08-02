@@ -14,12 +14,12 @@ dae::CText::CText(const std::string& fullPath, uint8_t size)
 	SetFont(fullPath, size);
 }
 
-dae::CText::CText(const FontData& fontData) : CText(fontData.FontFullPath, fontData.FontSize){
+dae::CText::CText(const FontData& fontData) : CText(fontData.FontFile, fontData.FontSize){
 
 }
 
 
-dae::CText::CText(const TextData& textData) : CText(textData.FontData.FontFullPath, textData.FontData.FontSize) 
+dae::CText::CText(const TextData& textData) : CText(textData.FontData.FontFile, textData.FontData.FontSize) 
 {
 	SetColor(textData.Color);
 	SetText(textData.Text);
@@ -27,6 +27,11 @@ dae::CText::CText(const TextData& textData) : CText(textData.FontData.FontFullPa
 
 void dae::CText::Render()const
 {
+	if (m_Text.empty())
+	{
+		return;
+	}
+
 	TransformData transformData{ OwnerConst().TransformConst().GetWorldTransform() };
 	transformData += GetTextureTransform();
 
@@ -81,6 +86,10 @@ bool dae::CText::SetFont(const std::string& fullPath, uint8_t size)
 
 const dae::TextureData* dae::CText::Data() const
 {
+	if (m_Text.empty())
+	{
+		return nullptr;
+	}
 	if (m_TextureNeedsUpdate)
 	{
 		const auto surf = TTF_RenderText_Blended(m_FontData->GetData(), m_Text.c_str(), m_Color);
@@ -115,6 +124,10 @@ glm::vec2 dae::CText::GetScaledSize() const {
 
 void dae::CText::Center()
 {
+	if (m_Text.empty())
+	{
+		return;
+	}
 	glm::vec2 size = Data()->GetPixelSize();
 
 	m_TransformData.Position.x = (-size.x / 2.f) * m_TransformData.Scale.x;

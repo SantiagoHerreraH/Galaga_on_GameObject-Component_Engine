@@ -18,9 +18,7 @@ dae::MainMenu::MainMenu() : m_MainMenuCreator{ std::make_shared<MainMenuCreator>
 			creator->CreateTexture(scene, "galagaLogo.png", { int(g_WindowWidth / 2.f),   int(g_WindowHeight / 2.f) - 100 }, { 0.5f, 0.5f });
 
 			CreateLastScore(scene, "1_UP", "GameModes/OnePlayerVsEnemies.txt",{ int(g_WindowWidth * 1 / 4.f),      int(g_WindowHeight * 0.5 / 6.f) });
-			CreateLastScore(scene, "2_UP", "GameModes/TwoPlayersVsEnemies.txt",{ int(g_WindowWidth * 3 / 4.f),      int(g_WindowHeight * 0.5 / 6.f) });
-			//creator->CreateTitleAndSubTitle(scene, "1_UP", "00", { int(g_WindowWidth * 1 / 4.f),      int(g_WindowHeight * 0.5 / 6.f) });
-			//creator->CreateTitleAndSubTitle(scene, "2_UP", "00", { int(g_WindowWidth * 3 / 4.f),      int(g_WindowHeight * 0.5 / 6.f) });
+			CreateHighscoreInLastScores(scene, "2_UP", "GameModes/TwoPlayersVsEnemies.txt", 2, { int(g_WindowWidth * 3 / 4.f),      int(g_WindowHeight * 0.5 / 6.f) });
 			
 			TextCreator textCreatorOne("TM AND © 1981 1988 NAMCO LTD.", { int(g_WindowWidth / 2.f),   int(g_WindowHeight * 4.5 / 6.f) }, 13, SDL_Color{ 255, 255 , 255 });
 			TextCreator textCreatorTwo("BANDAI CO. LTD. IS LICENSED", { int(g_WindowWidth / 2.f),   int(g_WindowHeight * 5.0 / 6.f) }, 13, SDL_Color{ 255, 255 , 255 });
@@ -119,7 +117,7 @@ void dae::MainMenu::MainMenuCreator::CreateButton(const std::string& buttonName,
 {
 	std::string name = buttonName;
 	ButtonData data{};
-	data.FontData.FontFullPath = "Emulogic-zrEw.ttf";
+	data.FontData.FontFile = "Emulogic-zrEw.ttf";
 	data.FontData.FontSize = 13;
 	data.Name = name;
 	data.OnPress.Subscribe([sceneNameToTransition]() 

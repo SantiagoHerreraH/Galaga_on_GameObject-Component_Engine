@@ -30,6 +30,7 @@ namespace dae {
 	private:
 		CPlayerController* GetPlayerController();
 		void MapButtonSelectionToKeys();
+		bool m_MappedSelection = false;
 
 		struct ButtonGridInternalData {
 			std::vector<GameObjectHandle> ButtonGameObjs;
@@ -45,10 +46,10 @@ namespace dae {
 		};
 
 
-		ButtonGridEvents m_ButtonGridEvents;
-		ButtonGridData m_ButtonGridData;
-		int m_CurrentColIdx;
-		int m_CurrentRowIdx;
+		ButtonGridEvents m_ButtonGridEvents{};
+		ButtonGridData m_ButtonGridData{};
+		int m_CurrentColIdx{0};
+		int m_CurrentRowIdx{0};
 
 		std::shared_ptr<ButtonGridInternalData> m_ButtonGridInternalData;
 

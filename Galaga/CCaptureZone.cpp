@@ -28,6 +28,7 @@ void dae::CCaptureZone::SetActive(bool isActive)
 	{
 		m_CaptureZone->SetActive(false);
 		m_PlayerDummy->SetActive(false);
+		(*m_CapturedTarget) = false;
 	}
 }
 
@@ -63,8 +64,8 @@ dae::GameObjectHandle dae::CCaptureZone::CreateCaptureZone(GameObjectHandle targ
 	rect.Height = (int)spriteSheet.GetScaledCellHeight();
 	rect.Width = (int)spriteSheet.GetScaledCellWidth();
 
-	CCollider collider{ rect, (int)GalagaCollisionLayers::EnemyBullets };
-	collider.AddCollisionTagToCollideWith((int)GalagaCollisionLayers::Player);
+	CCollider collider{ rect, (int)CollisionLayers::EnemyBullets };
+	collider.AddCollisionTagToCollideWith((int)CollisionLayers::Player);
 	collider.CenterRect();
 
 	//------ CREATE GAMEOBJECT

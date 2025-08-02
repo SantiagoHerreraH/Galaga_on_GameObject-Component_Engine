@@ -23,6 +23,7 @@ namespace dae {
 			const EnemyFormationType& enemyFormationType);
 
 		virtual void Start() override;
+		virtual void End()override;
 
 		bool IsEnemySwirlBehaviourFinished()const;
 		void StartEnemySwirlBehaviour();

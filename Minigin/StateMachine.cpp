@@ -31,6 +31,16 @@ namespace dae {
 		}
 	}
 
+	void CStateMachine::SetActive(bool isActive)
+	{
+		Component::SetActive(isActive);
+
+		if (isActive)
+		{
+			SetState(m_DefaultStateName);
+		}
+	}
+
 	void dae::CStateMachine::AddState(const std::shared_ptr<IState>& state, const std::string& stateName)
 	{
 		if (m_StateName_To_StateData.contains(stateName))
@@ -76,13 +86,33 @@ namespace dae {
 	{
 		if (m_StateName_To_StateData.contains(stateName))
 		{
+			if (m_CurrentStateData)
+			{
+				m_CurrentStateData->State->End(Owner());
+			}
+
 			m_CurrentStateData = m_StateName_To_StateData[stateName];
+
+			m_CurrentStateData->State->Start(Owner());
 
 			return true;
 		}
 
 		return false;
 	}
+
+	bool dae::CStateMachine::SetDefaultState(const std::string& stateName) 
+	{
+		if (m_StateName_To_StateData.contains(stateName))
+		{
+			m_DefaultStateName = stateName;
+
+			return true;
+		}
+
+		return false;
+	}
+
 
 	CStateMachine::StateConnection& CStateMachine::GetStateConnection(StateData& from, const std::string& to)
 	{

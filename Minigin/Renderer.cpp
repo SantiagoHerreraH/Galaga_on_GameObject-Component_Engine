@@ -52,6 +52,7 @@ void dae::Renderer::RenderTexture(const TextureData& texture, glm::vec3 position
 {
 	// Query texture dimensions
 	int texWidth, texHeight;
+
 	SDL_QueryTexture(texture.GetSDLTexture(), NULL, NULL, &texWidth, &texHeight);
 
 	// Apply scaling

@@ -52,8 +52,8 @@ void dae::GunWeaponType::Create(const GameObjectHandle& gameObject)
 	gunData.BulletLifeTime = 1.5;
 	gunData.Shooter = gameObject;
 	gunData.TimeBetweenShots = 0.3f;
-	gunData.BulletCollisionLayer = GalagaCollisionLayers::PlayerBullets;
-	gunData.BulletCollisionLayerToCollideAgainst = GalagaCollisionLayers::Enemies;
+	gunData.BulletCollisionLayer = m_BulletCollisionLayer;
+	gunData.BulletCollisionLayerToCollideAgainst = m_CollisionLayerToCollideAgainst;
 	CGun gun{ gunData };
 	gameObject->AddComponent(gun);
 }

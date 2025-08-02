@@ -1,147 +1,57 @@
 [
     {
         "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
-        "PlayerName": "New Player 0",
-        "Score": 600
+        "PlayerName": "SANTI",
+        "Score": 150
     },
     {
         "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
-        "PlayerName": "New Player 0",
-        "Score": 3490
+        "PlayerName": "SANTIAGO",
+        "Score": 22400
     },
     {
-        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
-        "PlayerName": "New Player 0",
-        "Score": 25250
+        "GameModeName": "GameModes/TwoPlayersVsEnemies.txt",
+        "PlayerName": "JIMENA",
+        "Score": 0
     },
     {
-        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
-        "PlayerName": "New Player 0",
-        "Score": 25500
+        "GameModeName": "GameModes/TwoPlayersVsEnemies.txt",
+        "PlayerName": "SANTI",
+        "Score": 13000
     },
     {
-        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
-        "PlayerName": "New Player 0",
-        "Score": 29330
+        "GameModeName": "VERSUS",
+        "PlayerName": "",
+        "Score": 0
     },
     {
-        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
-        "PlayerName": "New Player 0",
-        "Score": 1280
-    },
-    {
-        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
-        "PlayerName": "New Player 0",
-        "Score": 6370
-    },
-    {
-        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
-        "PlayerName": "New Player 0",
-        "Score": 500
-    },
-    {
-        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
-        "PlayerName": "New Player 0",
-        "Score": 7020
-    },
-    {
-        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
-        "PlayerName": "New Player 0",
-        "Score": 5870
-    },
-    {
-        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
-        "PlayerName": "New Player 0",
+        "GameModeName": "VERSUS",
+        "PlayerName": "",
         "Score": 0
     },
     {
         "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
-        "PlayerName": "New Player 0",
+        "PlayerName": "SANTI",
+        "Score": 6670
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "SANTI",
+        "Score": 2890
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "SANTI",
+        "Score": 630
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "AJJ",
         "Score": 400
     },
     {
         "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
-        "PlayerName": "New Player 0",
-        "Score": 2040
-    },
-    {
-        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
-        "PlayerName": "New Player 0",
-        "Score": 2740
-    },
-    {
-        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
-        "PlayerName": "New Player 0",
-        "Score": 4010
-    },
-    {
-        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
-        "PlayerName": "New Player 0",
-        "Score": 0
-    },
-    {
-        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
-        "PlayerName": "New Player 0",
-        "Score": 150
-    },
-    {
-        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
-        "PlayerName": "New Player 0",
-        "Score": 200
-    },
-    {
-        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
-        "PlayerName": "New Player 0",
-        "Score": 600
-    },
-    {
-        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
-        "PlayerName": "New Player 0",
-        "Score": 350
-    },
-    {
-        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
-        "PlayerName": "New Player 0",
-        "Score": 200
-    },
-    {
-        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
-        "PlayerName": "New Player 0",
-        "Score": 400
-    },
-    {
-        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
-        "PlayerName": "New Player 0",
-        "Score": 50
-    },
-    {
-        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
-        "PlayerName": "New Player 0",
-        "Score": 150
-    },
-    {
-        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
-        "PlayerName": "New Player 0",
-        "Score": 300
-    },
-    {
-        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
-        "PlayerName": "New Player 0",
-        "Score": 450
-    },
-    {
-        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
-        "PlayerName": "New Player 0",
-        "Score": 200
-    },
-    {
-        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
-        "PlayerName": "New Player 0",
-        "Score": 500
-    },
-    {
-        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
-        "PlayerName": "New Player 0",
-        "Score": 150
+        "PlayerName": "AAAA",
+        "Score": 2890
     }
 ]

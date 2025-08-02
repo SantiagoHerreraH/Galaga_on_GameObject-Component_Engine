@@ -32,7 +32,7 @@ namespace dae {
 		Rect rect{};
 		rect.Height = 32;
 		rect.Width = 32;
-		CCollider collider{rect, (int)GalagaCollisionLayers::Enemies};
+		CCollider collider{rect, (int)CollisionLayers::Enemies};
 
 		collider.OnCollisionBeginEvent().Subscribe([player](GameObject&, GameObject& other) mutable
 			{

@@ -20,9 +20,9 @@ namespace dae {
 		RoundManager twoPlayersVsNPCs{"GameModes/TwoPlayersVsEnemies.txt"};
 		PlayerVsScene playerVsScene{};
 
-		mainMenu.AddSceneChangeButton(onePlayerVsNPCs.GetFirstRoundName(), "ONE");
-		mainMenu.AddSceneChangeButton(twoPlayersVsNPCs.GetFirstRoundName(), "TWO");
-		mainMenu.AddSceneChangeButton(playerVsScene.GetSceneName());
+		mainMenu.AddSceneChangeButton(onePlayerVsNPCs.GetNameAssignerSceneName(), "ONE");
+		mainMenu.AddSceneChangeButton(twoPlayersVsNPCs.GetNameAssignerSceneName(), "TWO");
+		mainMenu.AddSceneChangeButton(playerVsScene.GetNameAssignerSceneName(), "VERSUS");
 	}
 
 }

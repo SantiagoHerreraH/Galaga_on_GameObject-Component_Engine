@@ -8,7 +8,7 @@
 namespace dae {
 
 	struct FontData {
-		std::string FontFullPath;
+		std::string FontFile;
 		uint8_t FontSize;
 	};
 

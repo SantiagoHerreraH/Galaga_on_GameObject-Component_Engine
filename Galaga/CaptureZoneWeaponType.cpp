@@ -3,9 +3,11 @@
 #include "Movement.h"
 #include "CCaptureZone.h"
 #include <memory>
+#include "Settings.h"
 
-dae::CaptureZoneWeaponType::CaptureZoneWeaponType(const GameObjectHandle& target, const std::string& triggerName) : 
+dae::CaptureZoneWeaponType::CaptureZoneWeaponType(const GameObjectHandle& target,float speed, const std::string& triggerName) : 
 	m_Target(target),
+	m_Speed(speed),
 	m_TriggerName(triggerName)
 {
 }
@@ -22,20 +24,19 @@ void dae::CaptureZoneWeaponType::Create(const GameObjectHandle& gameObject)
 
 	std::shared_ptr<CStateMachine> stateMachine{ gameObject->AddComponent(CStateMachine{})};
 	stateMachine->AddTrigger(triggerName);
-	stateMachine->AddState(std::make_shared<IdleState>(), IdleState::Name());
-	stateMachine->AddState(std::make_shared<FollowState	>(m_Target), FollowState::Name());
-	stateMachine->AddState(std::make_shared<AscendState	>(), AscendState::Name());
-	stateMachine->AddState(std::make_shared<CaptureState	>(), CaptureState::Name());
+	stateMachine->AddState(std::make_shared<IdleState>		(m_Speed),		IdleState::Name());
+	stateMachine->AddState(std::make_shared<DescendState>	(m_Speed),		DescendState::Name());
+	stateMachine->AddState(std::make_shared<AscendState>	(m_Speed),		AscendState::Name());
+	stateMachine->AddState(std::make_shared<CaptureState>	(),				CaptureState::Name());
+	stateMachine->SetDefaultState(IdleState::Name());
 
-
-	stateMachine->AddConnection(IdleState::Name(), FollowState::Name(), [triggerName](const CStateMachine& stateMachine, const GameObject& gameObj) {
+	stateMachine->AddConnection(IdleState::Name(), DescendState::Name(), [triggerName](const CStateMachine& stateMachine, const GameObject& gameObj) {
 
 		return stateMachine.IsTriggerActive(triggerName);
 		});
-	stateMachine->AddConnection(FollowState::Name(), CaptureState::Name(), [target](const CStateMachine& stateMachine, const GameObject& gameObj) {
+	stateMachine->AddConnection(DescendState::Name(), CaptureState::Name(), [](const CStateMachine& stateMachine, const GameObject& gameObj) {
 
-		glm::vec2 delta = target->Transform().GetWorldTransform().Position - gameObj.TransformConst().GetWorldTransform().Position;
-		return glm::length(delta) < 10;
+		return gameObj.TransformConst().GetWorldTransform().Position.y > (g_WindowHeight - 100);
 		});
 	stateMachine->AddConnection(CaptureState::Name(), AscendState::Name(), [triggerName](const CStateMachine& stateMachine, const GameObject& gameObj) {
 
@@ -54,21 +55,20 @@ void dae::CaptureZoneWeaponType::Execute(GameObject& obj)
 
 void dae::IdleState::Start(GameObject& actor)
 {
-	actor.GetComponent<CMovement2D>()->SetMaxSpeed(80);
+	actor.GetComponent<CMovement2D>()->SetMaxSpeed(m_Speed);
 }
 
 
-void dae::FollowState::Start(GameObject& actor) {
-	actor.GetComponent<CMovement2D>()->SetMaxSpeed(100);
+void dae::DescendState::Start(GameObject& actor) {
+	actor.GetComponent<CMovement2D>()->SetMaxSpeed(m_Speed);
 }
-void dae::FollowState::Update(GameObject& actor) 
+void dae::DescendState::Update(GameObject& actor) 
 {
-	glm::vec2 delta = m_Target->Transform().GetWorldTransform().Position - actor.Transform().GetWorldTransform().Position;
-	actor.GetComponent<CMovement2D>()->AddSingleFrameMovementInput(delta);
+	actor.GetComponent<CMovement2D>()->AddSingleFrameMovementInput(glm::vec2{ 0, 1 });
 }
 
 void dae::AscendState::Start(GameObject& actor) {
-	actor.GetComponent<CMovement2D>()->SetMaxSpeed(100);
+	actor.GetComponent<CMovement2D>()->SetMaxSpeed(m_Speed);
 }
 void dae::AscendState::Update(GameObject& actor) {
 	actor.GetComponent<CMovement2D>()->AddSingleFrameMovementInput(glm::vec2{ 0,-1 });
