@@ -101,12 +101,13 @@
   <ItemGroup>
     <ClInclude Include="Animation.h" />
     <ClInclude Include="Audio.h" />
+    <ClInclude Include="AudioService.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="CButtonGrid.h" />
     <ClInclude Include="Collider.h" />
     <ClInclude Include="Command.h" />
     <ClInclude Include="Component.h" />
-    <ClInclude Include="ConsoleAudio.h" />
+    <ClInclude Include="AudioManager.h" />
     <ClInclude Include="EventSystem.h" />
     <ClInclude Include="EventTriggerCommand.h" />
     <ClInclude Include="Font.h" />
@@ -145,11 +146,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Animation.cpp" />
+    <ClCompile Include="Audio.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="CButtonGrid.cpp" />
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="Component.cpp" />
-    <ClCompile Include="ConsoleAudio.cpp" />
+    <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="EventSystem.cpp" />
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="GameObject.cpp" />

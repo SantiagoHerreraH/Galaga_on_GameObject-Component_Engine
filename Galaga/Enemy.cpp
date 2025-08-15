@@ -11,6 +11,8 @@
 #include "Behaviour_UDive.h"
 #include "Behaviour_ZigZagDive.h"
 #include "EnemyFormation.h"
+#include "Misc_CreationFunctions.h"
+#include "Audio.h"
 
 dae::Enemy::Enemy(const EnemyInstanceData& enemyInstanceData, const EnemyType& enemyType) :
 	m_EnemyInstanceData(enemyInstanceData),
@@ -28,12 +30,19 @@ dae::Enemy::Enemy(const EnemyInstanceData& enemyInstanceData, const EnemyType& e
 	//------
 
 	SpriteSheet spriteSheet{ dae::CTextureHandle{enemyType.TextureName}, 1, 2 };
-	spriteSheet.TextureHandle().Center();
 
 	CAnimation animation{};
 	animation.SetFramesPerSecond(2);
 	animation.AddFrame(spriteSheet.GetFrame(0, 0), 2);
 	animation.AddFrame(spriteSheet.GetFrame(0, 1), 1);
+
+
+	SpriteSheet secondStageSpriteSheet{ dae::CTextureHandle{"boss2.png"}, 1, 2};
+
+	CAnimation secondStageAnimation{};
+	secondStageAnimation.SetFramesPerSecond(2);
+	secondStageAnimation.AddFrame(secondStageSpriteSheet.GetFrame(0, 0), 2);
+	secondStageAnimation.AddFrame(secondStageSpriteSheet.GetFrame(0, 1), 1);
 
 	//------
 
@@ -61,6 +70,18 @@ dae::Enemy::Enemy(const EnemyInstanceData& enemyInstanceData, const EnemyType& e
 	statController.CreateStat(StatType::Health, initialHealth);
 
 
+	//------
+
+	AudioData dieAudioData{};
+	dieAudioData.File = "Sound/EnemyDeathSound.wav";
+	dieAudioData.LoopAmount = 0;
+
+
+	AudioData diveAudioData{};
+	diveAudioData.File = "Sound/DiveSound.wav";
+	diveAudioData.LoopAmount = 0;
+
+
 	//------ CREATE GAMEOBJECT
 
 	GameObjectHandle enemy{};
@@ -81,12 +102,23 @@ dae::Enemy::Enemy(const EnemyInstanceData& enemyInstanceData, const EnemyType& e
 	enemy->AddComponent(animation);
 	enemy->AddComponent(collider);
 	enemy->AddComponent(statController);
+	auto dieAudio = enemy->AddComponent(CAudio{ dieAudioData });
+	m_OnActAudio = enemy->AddComponent(CAudio{ diveAudioData });
 
 
 	enemy->Transform().SetParent(*enemyInstanceData.Grid, ETransformReparentType::KeepLocalTransform);
 	enemy->Transform().OverrideWorldScaleWithLocalScale(true);
 
-	enemy->GetComponent<CStatController>()->OnCurrentStatZeroOrLess(StatType::Health);
+	
+
+	if (enemyType.MaxHealth > 1)
+	{
+		enemy->GetComponent<CStatController>()->OnCurrentStatChange(StatType::Health).Subscribe([enemy, secondStageAnimation](float value)
+			{
+				enemy->SetComponent<CAnimation>(secondStageAnimation);
+
+			});
+	}
 
 	//-------- POINTS
 
@@ -141,10 +173,15 @@ dae::Enemy::Enemy(const EnemyInstanceData& enemyInstanceData, const EnemyType& e
 		AddActingBehaviour(*m_EnemyType.Behaviours[i]);
 	}
 
+	auto explosion = CreateExplosion("explosion.png");
+	m_EnemyInstanceData.Scene->AddGameObjectHandle(explosion);
+
 	CEnemyFormation* enemyManager = m_EnemyInstanceData.EnemyManager;
 
-	OnDie().Subscribe([enemy, enemyManager]()
+	OnDie().Subscribe([enemy, enemyManager, explosion, dieAudio]()
 		{
+			dieAudio->Play();
+			explosion->GetComponent<CLifeTime>()->Respawn(enemy->Transform().GetWorldTransform().Position);
 			enemy->GetComponent<CStatController>()->ResetCurrentStat(StatType::Points);
 			enemy->SetActive(false);
 			enemyManager->SendNextTroops(enemy.get());
@@ -214,6 +251,8 @@ const dae::CMovementActionSequence& dae::Enemy::Act()
 	m_Self->GetComponent<CStatController>()->CreateStat(StatType::Points, m_PointsWhileDiving);
 
 	m_CurrentEnemyActingSequence = chosenIndex;
+
+	m_OnActAudio->Play();
 
 	return *m_EnemyActingSequences[chosenIndex];
 }

@@ -186,8 +186,8 @@ void dae::CEnemyFormation::CreateGrid()
 	// ----- GRID MOVEMENT -----
 
 	float movementSpeed{ 2 };
-	float movementRange{ 1 };
-	float currentTime{ };
+	float movementRange{ 15 };
+	float currentTime{ 0};
 
 	auto moveHorizontal = [grid, movementSpeed, movementRange, currentTime, startGridX]()mutable
 		{
@@ -204,7 +204,7 @@ void dae::CEnemyFormation::CreateGrid()
 		};
 
 	float scaleSpeed{ 2 };
-	float scaleRange{ 0.1f };
+	float scaleRange{ 0.2f };
 	float scaleMidPoint{ 1 };
 
 	auto scale = [grid, scaleSpeed, scaleRange, scaleMidPoint, currentTime]()mutable

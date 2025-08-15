@@ -125,9 +125,15 @@ namespace dae {
 		m_NumberOfEmptyPixelsBetweenColumns(numberOfEmptyPixeBetweenColumns),
 		m_NumberOfEmptyPixelsBetweenRows(numberOfEmptyPixeBetweenRows)
 	{
-		m_Texture.Center();
+
 		m_CellWidth =  int(m_Texture.Data()->GetPixelSize().x / (float)m_NumberOfColumns);
 		m_CellHeight = int(m_Texture.Data()->GetPixelSize().y / (float)m_NumberOfRows	);
+
+		glm::vec2 size = { GetOriginalCellWidth() , GetOriginalCellHeight()};
+		TransformData transformData{ m_Texture.GetTextureTransform() };
+		transformData.Position.x = (-size.x / 2.f) * m_Texture.GetTextureTransform().Scale.x;
+		transformData.Position.y = (-size.y / 2.f) * m_Texture.GetTextureTransform().Scale.y;
+		m_Texture.SetTextureTransform(transformData);
 	}
 
 	const CTextureHandle& SpriteSheet::GetFrame(int rowIndex, int columnIndex)

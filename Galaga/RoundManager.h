@@ -39,7 +39,7 @@ namespace dae {
 		j.at("PlayerCount").get_to(roundManagerType.PlayerCount);
 	}
 
-	class RoundManager
+	class RoundManager final
 	{
 	public:
 		RoundManager(const std::string& fileName);
@@ -55,8 +55,15 @@ namespace dae {
 
 		struct RoundManagerData {
 
+			RoundManagerData(const std::string& fileName) : FileName(fileName){}
+
 			const RoundType& GetCurrentRoundType() {
 				return RoundManagerType.GameRounds[CurrentRoundIdx];
+			}
+
+			std::string GetRoundName(int roundIdx)
+			{
+				return FileName + " Round " + std::to_string(roundIdx + 1);
 			}
 
 			void IncreaseRoundNum() {
@@ -82,6 +89,7 @@ namespace dae {
 			std::vector<std::string> SceneNames;
 			std::string HighscoreSceneName;
 			GameObjectHandle ParticleSystemGameObj;
+			std::string FileName;
 		};
 
 

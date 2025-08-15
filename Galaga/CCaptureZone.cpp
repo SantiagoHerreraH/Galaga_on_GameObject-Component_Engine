@@ -8,16 +8,16 @@
 #include "CollisionLayers.h"
 #include "GalagaStats.h"
 
-dae::CCaptureZone::CCaptureZone(GameObjectHandle target, const glm::vec2& relativePos) : 
-	m_Target(target),
-	m_RelativePos(relativePos),
+
+dae::CCaptureZone::CCaptureZone(const CaptureZoneData& data) :
+	m_CaptureZoneData(data),
 	m_CapturedTarget(std::make_shared<bool>())
 {
 }
 
 void dae::CCaptureZone::Start()
 {
-	m_CaptureZone = CreateCaptureZone(m_Target, SceneManager::GetInstance().GetCurrentScene(), m_RelativePos, m_CapturedTarget);
+	m_CaptureZone = CreateCaptureZone(m_CaptureZoneData.Target, SceneManager::GetInstance().GetCurrentScene(), m_CaptureZoneData.RelativePos, m_CapturedTarget);
 }
 
 void dae::CCaptureZone::SetActive(bool isActive)
@@ -39,6 +39,11 @@ bool dae::CCaptureZone::CapturedTarget() const
 
 void dae::CCaptureZone::SetActiveCaptureZone(bool setActive)
 {
+	if (setActive)
+	{
+		m_OnActivateAudio->Play();
+	}
+	
 	m_CaptureZone->SetActive(setActive);
 }
 
@@ -50,7 +55,6 @@ dae::GameObjectHandle dae::CCaptureZone::CreateCaptureZone(GameObjectHandle targ
 	//------
 
 	SpriteSheet spriteSheet{ dae::CTextureHandle{"beam.png"}, 1, 3 };
-	spriteSheet.TextureHandle().Center();
 
 	CAnimation animation{};
 	animation.SetFramesPerSecond(6);
@@ -68,6 +72,8 @@ dae::GameObjectHandle dae::CCaptureZone::CreateCaptureZone(GameObjectHandle targ
 	collider.AddCollisionTagToCollideWith((int)CollisionLayers::Player);
 	collider.CenterRect();
 
+	
+
 	//------ CREATE GAMEOBJECT
 
 	GameObjectHandle captureZone = scene.CreateGameObject();
@@ -76,10 +82,25 @@ dae::GameObjectHandle dae::CCaptureZone::CreateCaptureZone(GameObjectHandle targ
 	captureZone->AddComponent(animation);
 	captureZone->AddComponent(collider);
 
+	captureZone->Transform().OverrideWorldScaleWithLocalScale(true);
 	captureZone->Transform().SetParent(Owner(), ETransformReparentType::KeepLocalTransform);
 	captureZone->SetActive(false);
 
+	//------
+	if (!m_CaptureZoneData.OnActivateAudioData.File.empty())
+	{
+		m_OnActivateAudio = captureZone->AddComponent(CAudio{ m_CaptureZoneData.OnActivateAudioData });
+	}
 
+	std::shared_ptr<CAudio> onHitAudio{};
+
+	//------
+	if (!m_CaptureZoneData.OnHitAudioData.File.empty())
+	{
+		onHitAudio = captureZone->AddComponent(CAudio{ m_CaptureZoneData.OnHitAudioData });
+	}
+
+	//------
 	GameObjectHandle playerDummy = CreatePlayerDummy(scene, glm::vec3{});
 	playerDummy->SetActive(false);
 
@@ -100,8 +121,9 @@ dae::GameObjectHandle dae::CCaptureZone::CreateCaptureZone(GameObjectHandle targ
 		});
 	TimerKey offsetStatAfterTime_TimerKey = TIMERSYSTEM->AddTimer(timer);
 
-	auto onCaptureZoneCollision = [TIMERSYSTEM, target, playerDummy, offsetStatAfterTime_TimerKey]() mutable {
+	auto onCaptureZoneCollision = [TIMERSYSTEM, target, playerDummy, offsetStatAfterTime_TimerKey, onHitAudio]() mutable {
 
+		onHitAudio->Play();
 		target->SetActive(false);//depending on how you code it, this might not work since it will be activated later thanks to the offset stat revival
 
 		playerDummy->Transform().MakeRootNode();

@@ -3,6 +3,7 @@
 #include "Component.h"
 #include "Texture.h"
 #include "Rect.h"
+#include "EventSystem.h"
 
 namespace dae {
 
@@ -26,6 +27,7 @@ namespace dae {
 
 		void Update()override;
 		void Render()const override;
+		void End()override;
 
 		void CanLoop(bool canLoop); //default is true
 		void SetFramesPerSecond(unsigned int numberOfFrames);
@@ -42,6 +44,8 @@ namespace dae {
 		const CTextureHandle& GetConstTextureRef(int frameNumber)const;
 		const CTextureHandle& GetCurrentFrame()const;
 
+		void SubscribeOnEnd(const std::function<void()>& func);
+
 	private:
 		int m_NumberOfLoops{ 0 };
 		bool m_CanLoop{ true };
@@ -49,6 +53,7 @@ namespace dae {
 		double m_CurrentTime{0};
 		int m_CurrentFrameIndex{ 0 };
 		float m_SecondsPerFrame{ 1 };
+		Event<> m_OnEnd{};
 
 		struct AnimationFrameInfo {
 			CTextureHandle TextureHandle;

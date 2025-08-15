@@ -56,7 +56,7 @@ void dae::Renderer::RenderTexture(const TextureData& texture, glm::vec3 position
 	SDL_QueryTexture(texture.GetSDLTexture(), NULL, NULL, &texWidth, &texHeight);
 
 	// Apply scaling
-	texWidth = static_cast<int>(texWidth * scale.x);
+	texWidth  = static_cast<int>(texWidth * scale.x);
 	texHeight = static_cast<int>(texHeight * scale.y);
 
 	SDL_Rect* srcRectPtr{nullptr};
@@ -66,6 +66,8 @@ void dae::Renderer::RenderTexture(const TextureData& texture, glm::vec3 position
 	{
 		srcRect = { textureView->Left, textureView->Top, textureView->Width, textureView->Height };
 		srcRectPtr = &srcRect;
+		texWidth   = textureView->Width;
+		texHeight  = textureView->Height;
 	}
 
 	SDL_Rect dstRect = { static_cast<int>(position.x), static_cast<int>(position.y), texWidth, texHeight };

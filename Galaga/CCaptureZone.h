@@ -2,16 +2,24 @@
 
 #include <glm.hpp>
 #include "Component.h"
+#include "Audio.h"
 
 
 namespace dae {
 
 	class Scene;
 
+	struct CaptureZoneData {
+		GameObjectHandle Target;
+		glm::vec2 RelativePos;
+		AudioData OnActivateAudioData;
+		AudioData OnHitAudioData;
+	};
+
 	class CCaptureZone final: public Component {
 
 	public:
-		CCaptureZone(GameObjectHandle target, const glm::vec2& relativePos);
+		CCaptureZone(const CaptureZoneData& data);
 
 		void Start()override;
 		void SetActive(bool isActive) override;
@@ -23,12 +31,15 @@ namespace dae {
 		dae::GameObjectHandle CreatePlayerDummy(dae::Scene& scene, const glm::vec2& relativePos);
 		GameObjectHandle CreateCaptureZone(GameObjectHandle player, dae::Scene& scene, const glm::vec2& relativePos, std::shared_ptr<bool>& outCapturedEnemy);
 		
+		CaptureZoneData m_CaptureZoneData;
+
+		std::shared_ptr<CAudio> m_OnActivateAudio;
+
 		GameObjectHandle m_CaptureZone;
-		GameObjectHandle m_Target;
 		GameObjectHandle m_PlayerDummy;
 
 		std::shared_ptr<bool> m_CapturedTarget;
-		glm::vec2 m_RelativePos;
+
 		
 	};
 }

@@ -88,7 +88,7 @@ bool dae::CPlayerController::BindKey(PlayerGamepadKeyData playerGamepadKeyData)
 		}
 		else
 		{
-			m_PlayerGamepadKeyData.push_back(std::move(playerGamepadKeyData));
+			m_PlayerGamepadKeyData.push_back(playerGamepadKeyData);
 		}
 
 		return true;
@@ -112,7 +112,7 @@ bool dae::CPlayerController::BindKey(PlayerKeyboardKeyData playerKeyboardKeyData
 		}
 		else
 		{
-			m_PlayerKeyboardKeyData.push_back(std::move(playerKeyboardKeyData));
+			m_PlayerKeyboardKeyData.push_back(playerKeyboardKeyData);
 		}
 
 		return true;

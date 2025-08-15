@@ -47,6 +47,11 @@ void dae::GameObject::SetActive(bool active, bool affectChildren)
 	}
 }
 
+bool dae::GameObject::AlreadyStarted() const
+{
+	return m_Started;
+}
+
 void dae::GameObject::Start()
 {
 
@@ -54,6 +59,8 @@ void dae::GameObject::Start()
 	{
 		m_Components[i].ComponentHandle->Start();
 	}
+
+	m_Started = true;
 }
 
 void dae::GameObject::Update()
@@ -102,4 +109,6 @@ void dae::GameObject::End() {
 	{
 		m_Components[i].ComponentHandle->End();
 	}
+
+	m_Started = false;
 }

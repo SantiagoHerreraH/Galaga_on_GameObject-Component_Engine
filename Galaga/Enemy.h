@@ -6,9 +6,11 @@
 #include "MovementActionSequence.h"
 #include "SwirlData.h"
 
+
 namespace dae {
 
 	class Enemy;
+	class CAudio;
 
 	using MovementActionSequenceHandle = std::shared_ptr<CMovementActionSequence>;
 
@@ -61,6 +63,7 @@ namespace dae {
 		int m_CurrentEnemyActingSequence{0};
 
 		std::shared_ptr<Event<GameObject&>> m_OnEndStartingFormationSequence;
+		std::shared_ptr<CAudio> m_OnActAudio;
 
 		IntStat m_PointsWhileDiving;
 		IntStat m_PointsInFormation;

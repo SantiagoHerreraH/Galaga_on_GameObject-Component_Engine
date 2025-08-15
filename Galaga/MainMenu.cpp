@@ -6,13 +6,28 @@
 #include "ParticleSystem.h"
 #include "ScoreSaver.h"
 #include "Misc_CreationFunctions.h"
+#include "AudioManager.h"
+#include "ServiceLocator.h"
+#include "Audio.h"
+#include "EventTriggerCommand.h"
 
 dae::MainMenu::MainMenu() : m_MainMenuCreator{ std::make_shared<MainMenuCreator>() }
 {
 	auto creator = m_MainMenuCreator;
 
-	auto createSceneFunc = [creator](Scene& scene)
+	AudioData audioData{};
+	audioData.File = "Sound/MenuMusic.wav";
+	audioData.LoopAmount = 0;
+
+	auto musicGO = std::make_shared<GameObject>();
+	musicGO->AddComponent(CAudio{ audioData });
+
+	auto createSceneFunc = [creator, musicGO](Scene& scene)
 		{			
+			scene.AddGameObjectHandle(musicGO);
+			musicGO->GetComponent<CAudio>()->Play();
+
+
 			CreateHighscore(scene, "HI-SCORE",{ int(g_WindowWidth / 2.f),   int(g_WindowHeight * 0.5 / 6.f) });
 			creator->CreateParticles(scene);
 			creator->CreateTexture(scene, "galagaLogo.png", { int(g_WindowWidth / 2.f),   int(g_WindowHeight / 2.f) - 100 }, { 0.5f, 0.5f });
@@ -150,7 +165,22 @@ void dae::MainMenu::MainMenuCreator::CreateGrid() {
 	buttonGridData.StartPos = {int(g_WindowWidth/2.f), int(g_WindowHeight/2.f) - 30 };
 	CButtonGrid buttonGrid{ buttonGridData };
 
+	auto toggleMute = [](GameObject&)
+
+		{
+			ServiceLocator::GetInstance().GetService<IAudioService>()->ToggleMute();
+		};
+
+
+	Event<GameObject&> toggleMuteEvent{};
+	toggleMuteEvent.Subscribe(toggleMute);
+
+	auto playerController = m_ButtonGrid->AddComponent(CPlayerController{});
 	m_ButtonGrid->AddComponent(buttonGrid);
+
+	playerController->BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_DOWN, SDL_SCANCODE_F2,	         std::make_shared<EventTriggerCommand>(toggleMuteEvent) });
+	playerController->BindKey(dae::PlayerGamepadKeyData{ ButtonState::BUTTON_DOWN, GamepadButton::Back,	        std::make_shared<EventTriggerCommand>(toggleMuteEvent) });
+
 }
 
 

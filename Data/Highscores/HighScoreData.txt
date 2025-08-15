@@ -53,5 +53,305 @@
         "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
         "PlayerName": "AAAA",
         "Score": 2890
+    },
+    {
+        "GameModeName": "GameModes/TwoPlayersVsEnemies.txt",
+        "PlayerName": "SANTI",
+        "Score": 0
+    },
+    {
+        "GameModeName": "GameModes/TwoPlayersVsEnemies.txt",
+        "PlayerName": "JIME",
+        "Score": 6490
+    },
+    {
+        "GameModeName": "GameModes/TwoPlayersVsEnemies.txt",
+        "PlayerName": "AAA",
+        "Score": 0
+    },
+    {
+        "GameModeName": "GameModes/TwoPlayersVsEnemies.txt",
+        "PlayerName": "JJJ",
+        "Score": 4010
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "AIII",
+        "Score": 6170
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "AAA",
+        "Score": 200
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "AAA",
+        "Score": 6740
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "AAA",
+        "Score": 1230
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "AAA",
+        "Score": 690
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "AAA",
+        "Score": 0
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "ABB",
+        "Score": 0
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "AJJS",
+        "Score": 480
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "AJKKT",
+        "Score": 0
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "AJKKT",
+        "Score": 0
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "AJKKT",
+        "Score": 0
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "AJKKT",
+        "Score": 0
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "ABJK",
+        "Score": 0
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "ABJK",
+        "Score": 0
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "ABJK",
+        "Score": 1200
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "ABJK",
+        "Score": 8300
+    },
+    {
+        "GameModeName": "GameModes/TwoPlayersVsEnemies.txt",
+        "PlayerName": "ABJ",
+        "Score": 0
+    },
+    {
+        "GameModeName": "GameModes/TwoPlayersVsEnemies.txt",
+        "PlayerName": "KK",
+        "Score": 0
+    },
+    {
+        "GameModeName": "GameModes/TwoPlayersVsEnemies.txt",
+        "PlayerName": "ABJ",
+        "Score": 0
+    },
+    {
+        "GameModeName": "GameModes/TwoPlayersVsEnemies.txt",
+        "PlayerName": "KK",
+        "Score": 0
+    },
+    {
+        "GameModeName": "GameModes/TwoPlayersVsEnemies.txt",
+        "PlayerName": "ABJ",
+        "Score": 0
+    },
+    {
+        "GameModeName": "GameModes/TwoPlayersVsEnemies.txt",
+        "PlayerName": "KK",
+        "Score": 0
+    },
+    {
+        "GameModeName": "GameModes/TwoPlayersVsEnemies.txt",
+        "PlayerName": "ABJ",
+        "Score": 0
+    },
+    {
+        "GameModeName": "GameModes/TwoPlayersVsEnemies.txt",
+        "PlayerName": "KK",
+        "Score": 0
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "AJR",
+        "Score": 2220
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "ABJ",
+        "Score": 200
+    },
+    {
+        "GameModeName": "GameModes/TwoPlayersVsEnemies.txt",
+        "PlayerName": "KLE",
+        "Score": 0
+    },
+    {
+        "GameModeName": "GameModes/TwoPlayersVsEnemies.txt",
+        "PlayerName": "LEM",
+        "Score": 1040
+    },
+    {
+        "GameModeName": "GameModes/TwoPlayersVsEnemies.txt",
+        "PlayerName": "AJKK",
+        "Score": 0
+    },
+    {
+        "GameModeName": "GameModes/TwoPlayersVsEnemies.txt",
+        "PlayerName": "LL",
+        "Score": 150
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "AJKK",
+        "Score": 1350
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "AJJK",
+        "Score": 150
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "AJJ",
+        "Score": 2940
+    },
+    {
+        "GameModeName": "GameModes/TwoPlayersVsEnemies.txt",
+        "PlayerName": "AIJ",
+        "Score": 0
+    },
+    {
+        "GameModeName": "GameModes/TwoPlayersVsEnemies.txt",
+        "PlayerName": "KK",
+        "Score": 2890
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "AJJ",
+        "Score": 2640
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "ABJK",
+        "Score": 250
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "ABR",
+        "Score": 650
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "AJK",
+        "Score": 2890
+    },
+    {
+        "GameModeName": "GameModes/TwoPlayersVsEnemies.txt",
+        "PlayerName": "A",
+        "Score": 680
+    },
+    {
+        "GameModeName": "GameModes/TwoPlayersVsEnemies.txt",
+        "PlayerName": "SANTI",
+        "Score": 6010
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "SANTI",
+        "Score": 4360
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "SANTI",
+        "Score": 19870
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "A",
+        "Score": 0
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "A",
+        "Score": 0
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "A",
+        "Score": 0
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "A",
+        "Score": 0
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "SANTI",
+        "Score": 0
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "SANTI",
+        "Score": 0
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "JIME",
+        "Score": 0
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "SANTI",
+        "Score": 300
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "SANTI",
+        "Score": 300
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "SANTI",
+        "Score": 300
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "SANTI",
+        "Score": 300
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "SANTI",
+        "Score": 150
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "SANTI",
+        "Score": 150
     }
 ]

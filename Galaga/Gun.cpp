@@ -15,6 +15,11 @@ dae::CGun::CGun(const GunData& gunData) : m_GunData(gunData)
 
 void dae::CGun::Start()
 {
+	if (!m_GunData.ShootAudio.File.empty())
+	{
+		m_ShootAudio = Owner().AddComponent(CAudio{ m_GunData.ShootAudio });
+	}
+
 	for (size_t i = 0; i < m_Bullets.size(); i++)
 	{
 		SceneManager::GetInstance().GetCurrentScene().AddGameObjectHandle(m_Bullets[i]);
@@ -35,6 +40,7 @@ void dae::CGun::Shoot()
 		m_CurrentTimerSystem->TimerAt(m_TimeBetweenShotsTimerKey).IsFinished())
 	{
 		m_GunData.Shooter->GetComponent<CStatController>()->OffsetStat(StatType::ShotsFired, 1);
+		m_ShootAudio->Play();
 
 		glm::vec2 where = Owner().Transform().GetWorldTransform().Position;
 		m_Bullets[m_CurrentBulletIndex]->GetComponent<CLifeTime>()->Respawn(where);
@@ -54,6 +60,8 @@ void dae::GunWeaponType::Create(const GameObjectHandle& gameObject)
 	gunData.TimeBetweenShots = 0.3f;
 	gunData.BulletCollisionLayer = m_BulletCollisionLayer;
 	gunData.BulletCollisionLayerToCollideAgainst = m_CollisionLayerToCollideAgainst;
+	gunData.ShootAudio.File = "Sound/ShootSound.wav";
+	gunData.ShootAudio.LoopAmount = 0;
 	CGun gun{ gunData };
 	gameObject->AddComponent(gun);
 }

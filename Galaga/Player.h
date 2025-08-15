@@ -6,6 +6,7 @@
 #include "Scene.h"
 #include "WeaponType.h"
 #include "CollisionLayers.h"
+#include "Audio.h"
 
 
 
@@ -37,6 +38,8 @@ namespace dae {
 	private:
 		GameObjectHandle m_CurrentPlayer;
 		GameObjectHandle m_ShootingPivot;
+		GameObjectHandle m_CurrentExplosion;
+		std::shared_ptr<CAudio> m_DeathAudio;
 
 	};
 }

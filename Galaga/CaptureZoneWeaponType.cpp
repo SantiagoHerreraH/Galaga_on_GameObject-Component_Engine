@@ -14,8 +14,17 @@ dae::CaptureZoneWeaponType::CaptureZoneWeaponType(const GameObjectHandle& target
 
 void dae::CaptureZoneWeaponType::Create(const GameObjectHandle& gameObject)
 {
-	auto target = m_Target;
-	CCaptureZone captureZone{ m_Target , glm::vec3{ 0,50,0 } };
+	CaptureZoneData captureZoneData{};
+
+	captureZoneData.OnActivateAudioData.File = "Sound/TractorBeam.wav";
+	captureZoneData.OnActivateAudioData.LoopAmount = 0;
+
+	captureZoneData.OnHitAudioData.File = "Sound/TractorBeamCaptured.wav";
+	captureZoneData.OnHitAudioData.LoopAmount = 0;
+
+	captureZoneData.RelativePos = glm::vec3{ 0,50,0 };
+	captureZoneData.Target = m_Target;
+	CCaptureZone captureZone{ captureZoneData };
 
 	gameObject->AddComponent(captureZone);
 

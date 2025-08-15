@@ -13,7 +13,18 @@ dae::MovementActionSequenceHandle dae::CaptureZoneBehaviour::CreateInstance(Enem
 	relativePos.y = enemyCreator.GetEnemyInstanceData().RelativePos.y;
 	bool goTowardsLeft = enemyCreator.GetEnemyInstanceData().MoveTowardsLeft;
 
-	auto captureZone = enemy->AddComponent(CCaptureZone{ player,  glm::vec3{ 0,50,0 } });
+	CaptureZoneData captureZoneData{};
+
+	captureZoneData.OnActivateAudioData.File = "Sound/TractorBeam.wav";
+	captureZoneData.OnActivateAudioData.LoopAmount = 0;
+
+	captureZoneData.OnHitAudioData.File = "Sound/TractorBeamCaptured.wav";
+	captureZoneData.OnHitAudioData.LoopAmount = 0;
+
+	captureZoneData.RelativePos = glm::vec3{ 0,50,0 };
+	captureZoneData.Target = player;
+
+	auto captureZone = enemy->AddComponent(CCaptureZone{ captureZoneData });
 
 	//------ PARENTING
 

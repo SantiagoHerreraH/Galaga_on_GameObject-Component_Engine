@@ -10,9 +10,12 @@
 #include "HighscoreScene.h"
 #include "ResourceManager.h"
 #include "NameAssignerScene.h"
+#include "PlayerController.h"
+#include "EventTriggerCommand.h"
+#include "ServiceLocator.h"
 
 dae::RoundManager::RoundManager(const std::string& fileName) :
-    m_RoundManagerData(std::make_shared<RoundManagerData>()),
+    m_RoundManagerData(std::make_shared<RoundManagerData>(fileName)),
     m_FileName(fileName)
 {
     if (LoadRoundManagerType(fileName))
@@ -49,11 +52,42 @@ void dae::RoundManager::CreatePlayers()
     playerType.HasVerticalMovement = true;
     playerType.WeaponType = std::make_shared<GunWeaponType>(CollisionLayers::PlayerBullets, CollisionLayers::Enemies);
 
+    auto nextScene = [data](GameObject&) mutable
+        {
+            if (SceneManager::GetInstance().GetCurrentScene().Name() == data->HighscoreSceneName)
+            {
+                data->ResetRoundNum();
+                SceneManager::GetInstance().ChangeCurrentScene(data->GetRoundName(data->CurrentRoundIdx));
+
+            }
+            else if (data->CanIncreaseRoundNum())
+            {
+                data->IncreaseRoundNum();
+                SceneManager::GetInstance().ChangeCurrentScene(data->GetRoundName(data->CurrentRoundIdx));
+            }
+            else if(SceneManager::GetInstance().GetCurrentScene().Name() != data->HighscoreSceneName)
+            {
+                data->ResetRoundNum();
+                SceneManager::GetInstance().ChangeCurrentScene(data->HighscoreSceneName);
+            }
+            
+        };
+
+
+    Event<GameObject&> nextSceneEvent{};
+    nextSceneEvent.Subscribe(nextScene);
+
     for (size_t i = 0; i < m_RoundManagerData->RoundManagerType.PlayerCount; i++)
     {
         currentPlayerPos.x = int((g_WindowWidth/ (m_RoundManagerData->RoundManagerType.PlayerCount + 1)) * (i + 1) );
 
-        m_RoundManagerData->Players.push_back(Player{ currentPlayerPos, 0 , (int)i, playerType });
+        m_RoundManagerData->Players.emplace_back(Player{ currentPlayerPos, 0 , (int)i, playerType });
+        auto playerController = m_RoundManagerData->Players.back().GetGameObject().GetComponent<CPlayerController>();
+        
+        playerController->BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_DOWN, SDL_SCANCODE_F1,	         std::make_shared<EventTriggerCommand>(nextSceneEvent) });
+        playerController->BindKey(dae::PlayerGamepadKeyData{ ButtonState::BUTTON_DOWN, GamepadButton::Start,	     std::make_shared<EventTriggerCommand>(nextSceneEvent) });
+        
+
     }
 
    
@@ -69,7 +103,7 @@ void dae::RoundManager::CreateNameAssignerScene()
     }
 
     data.SceneName = GetNameAssignerSceneName();
-    data.SceneNameUponCompletion = m_FileName + " Round " + std::to_string(1); //first round name
+    data.SceneNameUponCompletion = m_RoundManagerData->GetRoundName(0); //first round name
 
     NameAssignerScene nameAssignerScene{data};
 }
@@ -115,6 +149,7 @@ void dae::RoundManager::CreateRounds()
             GameObjectHandle enemyFormationTwo{ scene.CreateGameObject() };
             GameObjectHandle enemyFormationThree{ scene.CreateGameObject() };
 
+            const float xOffsetForFormation = 30;
 
             std::shared_ptr<int> currentFormationDeaths = std::make_shared<int>(0);
             auto checkFormationDeath = [currentFormationDeaths, data]() mutable
@@ -138,7 +173,7 @@ void dae::RoundManager::CreateRounds()
                     }
                 };
 
-            CEnemyFormation formationOne{ glm::vec2{g_WindowWidth / 2.f, g_WindowHeight/5.f},    0.3f, 2.5f,  data->GetRandomPlayer(), data->GetCurrentRoundType().FirstEnemyFormation};
+            CEnemyFormation formationOne{ glm::vec2{(g_WindowWidth / 2.f) - xOffsetForFormation, g_WindowHeight/5.f},    0.3f, 2.5f,  data->GetRandomPlayer(), data->GetCurrentRoundType().FirstEnemyFormation};
             formationOne.SubscribeOnFormationDeath(checkFormationDeath); 
             formationOne.SubscribeOnEndFormationSwirlBehaviour([enemyFormationOne, enemyFormationTwo, enemyFormationThree]() 
                 {
@@ -147,14 +182,14 @@ void dae::RoundManager::CreateRounds()
                     enemyFormationOne->GetComponent<CEnemyFormation>()->StartSendingTroops();
                 });
 
-            CEnemyFormation formationTwo{ glm::vec2{g_WindowWidth / 2.f, g_WindowHeight * 2.f / 5.f},    0.3f, 2.5f, data->GetRandomPlayer(), data->GetCurrentRoundType().SecondEnemyFormation};
+            CEnemyFormation formationTwo{ glm::vec2{(g_WindowWidth / 2.f) - xOffsetForFormation, g_WindowHeight * 2.f / 5.f},    0.3f, 2.5f, data->GetRandomPlayer(), data->GetCurrentRoundType().SecondEnemyFormation};
             formationTwo.SubscribeOnFormationDeath(checkFormationDeath);
             formationTwo.SubscribeOnEndFormationSwirlBehaviour([enemyFormationOne]() {
 
                 enemyFormationOne->GetComponent<CEnemyFormation>()->StartEnemySwirlBehaviour();
                 });
             
-            CEnemyFormation formationThree{ glm::vec2{g_WindowWidth / 2.f, g_WindowHeight * 3.f / 5.f},    0.3f, 2.5f, data->GetRandomPlayer(), data->GetCurrentRoundType().ThirdEnemyFormation};
+            CEnemyFormation formationThree{ glm::vec2{(g_WindowWidth / 2.f) - xOffsetForFormation, g_WindowHeight * 3.f / 5.f},    0.3f, 2.5f, data->GetRandomPlayer(), data->GetCurrentRoundType().ThirdEnemyFormation};
             formationThree.SubscribeOnFormationDeath(checkFormationDeath);
             formationThree.SubscribeOnEndFormationSwirlBehaviour([enemyFormationTwo]() {
 
@@ -189,6 +224,7 @@ void dae::RoundManager::CreateRounds()
                 data->Players[i].AddScene(scene);
                 data->Players[i].SubscribeOnPlayerDie([data]()
                     {
+                        data->ResetRoundNum();
                         SceneManager::GetInstance().ChangeCurrentScene(data->HighscoreSceneName); 
                         //if one player dies, it is over -> no waiting, more aggressive, you can die on purpose and win -> more tactical juice
                     });
@@ -199,7 +235,7 @@ void dae::RoundManager::CreateRounds()
 
     for (size_t i = 0; i < m_RoundManagerData->RoundManagerType.GameRounds.size(); i++)
     {
-        m_RoundManagerData->SceneNames.push_back(m_FileName + " Round " + std::to_string(i + 1));
+        m_RoundManagerData->SceneNames.push_back(m_RoundManagerData->GetRoundName(i));
 
         SceneManager::GetInstance().AddScene(m_RoundManagerData->SceneNames.back(), sceneCreationFunction);
     }

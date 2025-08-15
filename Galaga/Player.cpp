@@ -16,6 +16,9 @@
 #include "Bullet.h"
 #include "Gun.h"
 #include "CNameDisplayer.h"
+#include "Misc_CreationFunctions.h"
+#include "Audio.h"
+#include "ServiceLocator.h"
 
 #undef max
 #undef min
@@ -130,6 +133,15 @@ dae::Player::Player(const glm::vec2& startPos, float zRotation, int playerNum, c
 	currentPlayer->AddComponent(playerHealthComponent);
 
 	//----
+
+	AudioData dieAudioData{};
+	dieAudioData.File = "Sound/PlayerDeathSound.wav";
+	dieAudioData.LoopAmount = 0;
+
+
+	m_DeathAudio = currentPlayer->AddComponent(CAudio{ dieAudioData });
+
+	//----
 	
 	auto weaponType = playerType.WeaponType;
 
@@ -143,11 +155,55 @@ dae::Player::Player(const glm::vec2& startPos, float zRotation, int playerNum, c
 
 	//----- ACTIONS -----
 
+	 const float limitXLeft = 50;
+	 const float limitXRight = 200;
+	 const float limitY = 50;
+
 	// - Movement Action
-	auto moveLeft	= [](GameObject& gameObj) mutable {gameObj.GetComponent<CMovement2D>()->AddSingleFrameMovementInput(glm::vec2{ -1,  0 }); };
-	auto moveRight	= [](GameObject& gameObj) mutable {gameObj.GetComponent<CMovement2D>()->AddSingleFrameMovementInput(glm::vec2{ 1,  0 }); };
-	auto moveUp		= [](GameObject& gameObj) mutable {gameObj.GetComponent<CMovement2D>()->AddSingleFrameMovementInput(glm::vec2{ 0, -1 }); };
-	auto moveDown	= [](GameObject& gameObj) mutable {gameObj.GetComponent<CMovement2D>()->AddSingleFrameMovementInput(glm::vec2{ 0,  1 }); };
+	auto moveLeft	= [limitXLeft](GameObject& gameObj) mutable
+		{
+			if (gameObj.Transform().GetWorldTransform().Position.x < limitXLeft)
+			{
+				gameObj.Transform().SetLocalPositionX(limitXLeft);
+			}
+			else
+			{
+				gameObj.GetComponent<CMovement2D>()->AddSingleFrameMovementInput(glm::vec2{ -1,  0 });
+			}
+		};
+	auto moveRight	= [limitXRight](GameObject& gameObj) mutable
+		{
+			if (gameObj.Transform().GetWorldTransform().Position.x > (g_WindowWidth - limitXRight))
+			{
+				gameObj.Transform().SetLocalPositionX(g_WindowWidth - limitXRight);
+			}
+			else
+			{
+				gameObj.GetComponent<CMovement2D>()->AddSingleFrameMovementInput(glm::vec2{ 1,  0 });
+			}		
+		};
+	auto moveUp		= [limitY](GameObject& gameObj) mutable
+		{
+			if (gameObj.Transform().GetWorldTransform().Position.y < limitY)
+			{
+				gameObj.Transform().SetLocalPositionY(limitY);
+			}
+			else
+			{
+				gameObj.GetComponent<CMovement2D>()->AddSingleFrameMovementInput(glm::vec2{ 0,  -1 });
+			}	
+		};
+	auto moveDown	= [limitY](GameObject& gameObj) mutable
+		{
+			if (gameObj.Transform().GetWorldTransform().Position.y > g_WindowHeight - limitY)
+			{
+				gameObj.Transform().SetLocalPositionY(g_WindowHeight - limitY);
+			}
+			else
+			{
+				gameObj.GetComponent<CMovement2D>()->AddSingleFrameMovementInput(glm::vec2{ 0,  1 });
+			}	
+		};
 
 
 	// - Shooting Action
@@ -197,7 +253,27 @@ dae::Player::Player(const glm::vec2& startPos, float zRotation, int playerNum, c
 		playerControllerRef->BindKey(dae::PlayerGamepadKeyData{ ButtonState::BUTTON_PRESSED, GamepadButton::DpadUp,		 std::make_shared<EventTriggerCommand>(moveUpEvent) });
 		playerControllerRef->BindKey(dae::PlayerGamepadKeyData{ ButtonState::BUTTON_PRESSED, GamepadButton::DpadDown,	 std::make_shared<EventTriggerCommand>(moveDownEvent) });
 	}
+
+
+	auto toggleMute = [](GameObject&)
+
+		{
+			ServiceLocator::GetInstance().GetService<IAudioService>()->ToggleMute();
+		};
+
+
+	Event<GameObject&> toggleMuteEvent{};
+	toggleMuteEvent.Subscribe(toggleMute);
+
+	playerControllerRef->BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_DOWN, SDL_SCANCODE_F2,				std::make_shared<EventTriggerCommand>(toggleMuteEvent) });
+	playerControllerRef->BindKey(dae::PlayerGamepadKeyData{ ButtonState::BUTTON_DOWN, GamepadButton::Back,	        std::make_shared<EventTriggerCommand>(toggleMuteEvent) });
+
 	m_CurrentPlayer = currentPlayer;
+
+	m_CurrentExplosion = CreateExplosion("playerExplosion.png");
+	 
+
+	
 }
 
 dae::GameObjectHandle dae::Player::GetGameObjectHandle()
@@ -209,6 +285,16 @@ void dae::Player::AddScene(Scene& scene)
 {
 	scene.AddGameObjectHandle(m_CurrentPlayer);
 	scene.AddGameObjectHandle(m_ShootingPivot);
+	scene.AddGameObjectHandle(m_CurrentExplosion);
+
+	auto explosion = m_CurrentExplosion;
+	auto currentPlayer = m_CurrentPlayer;
+	auto dieAudio = m_DeathAudio;
+
+	SubscribeOnPlayerDespawnFromDamage([explosion, currentPlayer, dieAudio]() mutable{
+		dieAudio->Play();
+		explosion->GetComponent<CLifeTime>()->Respawn(currentPlayer->Transform().GetWorldTransform().Position);
+		});
 }
 
 void dae::Player::SubscribeOnPlayerDie(const std::function<void()>& func) {

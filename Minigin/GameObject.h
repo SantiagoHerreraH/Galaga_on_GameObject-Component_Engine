@@ -25,6 +25,8 @@ namespace dae
 		void SetName(const std::string& name) { m_Name = name; }
 		const std::string& GetName()const { return m_Name; }
 
+		bool AlreadyStarted()const;
+
 		void Start();
 		void Update();
 		void FixedUpdate();
@@ -53,13 +55,14 @@ namespace dae
 		std::vector<std::shared_ptr<ComponentType>> GetComponentHandles();
 
 		template< DerivedFromComponent ComponentType>
-		bool SetComponent(const ComponentType& component)const;
+		bool SetComponent(const ComponentType& component);
 
 	private:
 		bool m_RenderTransform{ true };
 		std::string m_Name;
 		dae::Transform m_Transform;
 		bool m_IsActive{ true };
+		bool m_Started{ false };
 
 		struct ComponentData {
 			ComponentHandle ComponentHandle;
@@ -163,13 +166,22 @@ namespace dae
 		return handles;
 	}
 	template<DerivedFromComponent ComponentType>
-	inline bool GameObject::SetComponent(const ComponentType& component) const
+	inline bool GameObject::SetComponent(const ComponentType& component) 
 	{
 		ComponentType *comp = GetComponent<ComponentType>();
-
+		
 		if (comp)
 		{
+			bool isActive = comp->IsActive();
 			*comp = component;
+			comp->SetOwner(*this);
+			comp->SetActive(isActive);
+
+			if (m_Started)
+			{
+				comp->Start();
+			}
+
 			return true;
 		}
 

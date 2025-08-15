@@ -24,6 +24,13 @@ namespace dae {
 	{
 		return m_Frames.at(m_CurrentFrameIndex).TextureHandle;
 	}
+
+	void CAnimation::SubscribeOnEnd(const std::function<void()>& func) {
+
+		m_OnEnd.Subscribe(func);
+	}
+
+
 	void CAnimation::CanLoop(bool canLoop)
 	{
 		m_CanLoop = canLoop;
@@ -99,6 +106,11 @@ namespace dae {
 
 				m_CurrentTime = m_CurrentFrameIndex == 0 ? 0 : m_CurrentTime;
 
+				if (m_CurrentTime == 0 && m_CurrentFrameIndex == 0)
+				{
+					m_OnEnd.Invoke();
+				}
+
 			}
 		}
 	}
@@ -114,6 +126,11 @@ namespace dae {
 			transformData.Rotation,
 			transformData.Scale,
 			GetCurrentFrame().GetTextureView());
+	}
+
+	void CAnimation::End()
+	{
+		m_OnEnd.UnsubscribeAll();
 	}
 
 #pragma endregion

@@ -12,7 +12,7 @@
 #include <chrono>
 #include <thread>
 #include "GameTime.h"
-#include "ConsoleAudio.h"
+#include "AudioManager.h"
 #include "ServiceLocator.h"
 #include "Settings.h"
 #include "EventSystem.h"
@@ -85,6 +85,13 @@ dae::Minigin::~Minigin()
 
 void dae::Minigin::Run(const std::function<void()>& load)
 {
+	IAudioService* audioService = ServiceLocator::GetInstance().GetService<IAudioService>();
+
+	if (!audioService)
+	{
+		audioService = ServiceLocator::GetInstance().SetService<IAudioService>(std::make_unique<AudioManager>());
+	}
+
 	load();
 	
 	srand((unsigned int)std::time(nullptr));
@@ -93,14 +100,9 @@ void dae::Minigin::Run(const std::function<void()>& load)
 	auto& sceneManager = SceneManager::GetInstance();
 	auto& eventSystem = EventSystem::GetInstance();
 
-	Audio* audioService = ServiceLocator::GetInstance().GetService<Audio>();
+	
 
-	if (!audioService)
-	{
-		audioService = ServiceLocator::GetInstance().SetService<Audio>(std::make_unique<ConsoleAudio>());
-	}
-
-	std::thread audioThread(&Audio::Update, audioService);
+	std::thread audioThread(&IAudioService::Update, audioService);
 
 	// todo: this update loop could use some work.
 	const float fixedTimeStep{ 0.02f };
