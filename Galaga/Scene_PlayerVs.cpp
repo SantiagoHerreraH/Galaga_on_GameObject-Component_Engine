@@ -18,8 +18,8 @@ dae::Scene_PlayerVs::Scene_PlayerVs()
 {
 	SceneData_PlayerVs playerVsSceneData{};
 
-	int xPos = g_WindowWidth / 2.f;
-	int yOffset = 50;
+	float xPos = g_WindowWidth / 2.f;
+	float yOffset = 50;
 
 	//---Player One
 	PlayerType playerType{};
@@ -99,7 +99,7 @@ void dae::Scene_PlayerVs::CreatePlayerVSScene(SceneData_PlayerVs playerVsSceneDa
 		InputControllerData inputData{};
 		inputData.AllowKeyboard = true;
 		inputData.HowToTreatKeyboard = players.size() > 1 ? HowToTreatKeyboard::MakeItAnIndependentPlayerId : HowToTreatKeyboard::SharePlayerIdWithFirstController;
-		inputData.MaxControllers = players.size() > XUSER_MAX_COUNT ? XUSER_MAX_COUNT : players.size();
+		inputData.MaxControllers = players.size() > XUSER_MAX_COUNT ? XUSER_MAX_COUNT : (int)players.size();
 
 		InputManager::GetFromScene(&scene).SetData(inputData);
 
@@ -130,7 +130,7 @@ void dae::Scene_PlayerVs::CreateHighscoreScene(std::vector<Player> players)
 			InputControllerData inputData{};
 			inputData.AllowKeyboard = true;
 			inputData.HowToTreatKeyboard = players.size() > 1 ? HowToTreatKeyboard::MakeItAnIndependentPlayerId : HowToTreatKeyboard::SharePlayerIdWithFirstController;
-			inputData.MaxControllers = players.size() > XUSER_MAX_COUNT ? XUSER_MAX_COUNT : players.size();
+			inputData.MaxControllers = players.size() > XUSER_MAX_COUNT ? XUSER_MAX_COUNT : (int)players.size();
 
 			InputManager::GetFromScene(&scene).SetData(inputData);
 

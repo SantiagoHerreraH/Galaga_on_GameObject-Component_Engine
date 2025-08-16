@@ -83,7 +83,7 @@ void dae::RoundManager::CreatePlayers()
 
     for (size_t i = 0; i < m_RoundManagerData->RoundManagerType.PlayerCount; i++)
     {
-        currentPlayerPos.x = int((g_WindowWidth/ (m_RoundManagerData->RoundManagerType.PlayerCount + 1)) * (i + 1) );
+        currentPlayerPos.x = (g_WindowWidth/ float(m_RoundManagerData->RoundManagerType.PlayerCount + 1)) * (i + 1) ;
 
         m_RoundManagerData->Players.emplace_back(Player{ currentPlayerPos, 0 , (int)i, playerType });
         auto playerController = m_RoundManagerData->Players.back().GetGameObject().GetComponent<CPlayerController>();
@@ -141,7 +141,7 @@ void dae::RoundManager::CreateRounds()
             InputControllerData inputData{};
             inputData.AllowKeyboard = true;
             inputData.HowToTreatKeyboard = data->Players.size() > 1 ? HowToTreatKeyboard::MakeItAnIndependentPlayerId : HowToTreatKeyboard::SharePlayerIdWithFirstController;
-            inputData.MaxControllers = data->Players.size() > XUSER_MAX_COUNT ? XUSER_MAX_COUNT : data->Players.size();
+            inputData.MaxControllers = data->Players.size() > XUSER_MAX_COUNT ? XUSER_MAX_COUNT : (int)data->Players.size();
 
             InputManager::GetFromScene(&scene).SetData(inputData);
 
@@ -220,7 +220,7 @@ void dae::RoundManager::CreateRounds()
 
             for (size_t i = 0; i < data->Players.size(); i++)
             {
-                currentPlayerPos.x = int((g_WindowWidth / (data->Players.size() + 1.f)) * (i + 1));
+                currentPlayerPos.x = (g_WindowWidth / float(data->Players.size() + 1.f)) * (i + 1);
 
                 data->Players[i].GetGameObject().Transform().SetLocalPositionX(currentPlayerPos.x);
                 data->Players[i].GetGameObject().Transform().SetLocalPositionY(currentPlayerPos.y);

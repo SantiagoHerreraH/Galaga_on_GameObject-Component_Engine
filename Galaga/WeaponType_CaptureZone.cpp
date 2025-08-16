@@ -38,19 +38,19 @@ void dae::WeaponType_CaptureZone::Create(const GameObjectHandle& gameObject)
 	stateMachine->AddState(std::make_shared<CaptureState>	(),				CaptureState::Name());
 	stateMachine->SetDefaultState(IdleState::Name());
 
-	stateMachine->AddConnection(IdleState::Name(), DescendState::Name(), [triggerName](const CStateMachine& stateMachine, const GameObject& gameObj) {
+	stateMachine->AddConnection(IdleState::Name(), DescendState::Name(), [triggerName](const CStateMachine& stateMachine, const GameObject& ) {
 
 		return stateMachine.IsTriggerActive(triggerName);
 		});
-	stateMachine->AddConnection(DescendState::Name(), CaptureState::Name(), [](const CStateMachine& stateMachine, const GameObject& gameObj) {
+	stateMachine->AddConnection(DescendState::Name(), CaptureState::Name(), [](const CStateMachine& , const GameObject& gameObj) {
 
 		return gameObj.TransformConst().GetWorldTransform().Position.y > (g_WindowHeight - 100);
 		});
-	stateMachine->AddConnection(CaptureState::Name(), AscendState::Name(), [triggerName](const CStateMachine& stateMachine, const GameObject& gameObj) {
+	stateMachine->AddConnection(CaptureState::Name(), AscendState::Name(), [triggerName](const CStateMachine& stateMachine, const GameObject& ) {
 
 		return stateMachine.IsTriggerActive(triggerName);
 		});
-	stateMachine->AddConnection(AscendState::Name(), IdleState::Name(), [](const CStateMachine& stateMachine, const GameObject& gameObj) {
+	stateMachine->AddConnection(AscendState::Name(), IdleState::Name(), [](const CStateMachine& , const GameObject& gameObj) {
 
 		return gameObj.TransformConst().GetWorldTransform().Position.y < 50;
 		});

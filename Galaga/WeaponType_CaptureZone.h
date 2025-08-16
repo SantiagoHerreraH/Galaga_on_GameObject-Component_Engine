@@ -12,8 +12,8 @@ namespace dae {
 		IdleState(float speed) : m_Speed(speed) {}
 		static std::string Name() { return "IdleState"; }
 		virtual void Start(GameObject& actor)override;
-		virtual void Update(GameObject& actor)override{}
-		virtual void End(GameObject& actor) override{}
+		virtual void Update(GameObject&)override{}
+		virtual void End(GameObject&) override{}
 
 
 	private:
@@ -27,7 +27,7 @@ namespace dae {
 		static std::string Name() { return "DescendState"; }
 		virtual void Start(GameObject& actor);
 		virtual void Update(GameObject& actor);
-		virtual void End(GameObject& actor){}
+		virtual void End(GameObject&){}
 
 	private:
 		float m_Speed{};
@@ -39,7 +39,7 @@ namespace dae {
 	public:
 		static std::string Name() { return "CaptureState"; }
 		virtual void Start(GameObject& actor);
-		virtual void Update(GameObject& actor){}
+		virtual void Update(GameObject&){}
 		virtual void End(GameObject& actor);
 
 	};
@@ -51,7 +51,7 @@ namespace dae {
 		static std::string Name() { return "AscendState"; }
 		virtual void Start(GameObject& actor);
 		virtual void Update(GameObject& actor);
-		virtual void End(GameObject& actor){}
+		virtual void End(GameObject&){}
 
 
 	private:

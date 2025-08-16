@@ -61,7 +61,7 @@ namespace dae {
 				return RoundManagerType.GameRounds[CurrentRoundIdx];
 			}
 
-			std::string GetRoundName(int roundIdx)
+			std::string GetRoundName(size_t roundIdx)
 			{
 				return FileName + " Round " + std::to_string(roundIdx + 1);
 			}

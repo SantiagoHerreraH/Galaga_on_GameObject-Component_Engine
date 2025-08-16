@@ -9,7 +9,6 @@
 
 void dae::CPlayerLife::Start()
 {
-	CPlayerController* playerController = GetPlayerController();
 	CGameStatController* currentStatController = GetStatController();
 
 

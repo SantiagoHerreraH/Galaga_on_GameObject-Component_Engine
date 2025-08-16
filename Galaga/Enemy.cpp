@@ -60,8 +60,8 @@ dae::Enemy::Enemy(const EnemyInstanceData& enemyInstanceData, const EnemyType& e
 	//------
 
 	Rect rect{};
-	rect.Height = spriteSheet.GetScaledCellHeight();
-	rect.Width = spriteSheet.GetScaledCellWidth();
+	rect.Height = (int)spriteSheet.GetScaledCellHeight();
+	rect.Width = (int)spriteSheet.GetScaledCellWidth();
 
 	CCollider collider{ rect, (int)CollisionLayers::Enemies };
 	collider.AddCollisionTagToCollideWith((int)CollisionLayers::Player);
@@ -126,7 +126,7 @@ dae::Enemy::Enemy(const EnemyInstanceData& enemyInstanceData, const EnemyType& e
 
 	if (enemyType.MaxHealth > 1 && !enemyType.SecondStageTextureName.empty())
 	{
-		enemy->GetComponent<CGameStatController>()->OnCurrentStatChange(GameStatType::Health).Subscribe([enemy, secondStageAnimation](float value)
+		enemy->GetComponent<CGameStatController>()->OnCurrentStatChange(GameStatType::Health).Subscribe([enemy, secondStageAnimation](int)
 			{
 				enemy->SetComponent<CAnimation>(secondStageAnimation);
 
