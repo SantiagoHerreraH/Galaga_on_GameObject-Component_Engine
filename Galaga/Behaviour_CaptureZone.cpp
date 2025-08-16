@@ -21,11 +21,9 @@ dae::MovementActionSequenceHandle dae::CaptureZoneBehaviour::CreateInstance(Enem
 	GameObjectHandle enemy{ enemyCreator.GetGameObjectHandle() };
 	GameObjectHandle player{ enemyCreator.GetEnemyInstanceData().Player };
 	GameObjectHandle grid{ enemyCreator.GetEnemyInstanceData().Grid };
-	Scene& scene{ *enemyCreator.GetEnemyInstanceData().Scene };
 	glm::vec3 relativePos{ };
 	relativePos.x = enemyCreator.GetEnemyInstanceData().RelativePos.x;
 	relativePos.y = enemyCreator.GetEnemyInstanceData().RelativePos.y;
-	bool goTowardsLeft = enemyCreator.GetEnemyInstanceData().MoveTowardsLeft;
 
 	CaptureZoneData captureZoneData{};
 

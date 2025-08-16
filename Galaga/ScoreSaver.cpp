@@ -74,7 +74,7 @@ namespace dae {
         {
             return ScoreData{};
         }
-        int startIdx = m_Scores.size() - 1;
+        int startIdx = int(m_Scores.size()) - 1;
         startIdx = startIdx < 0 ? 0 : startIdx;
 
         ScoreData scoreData{ m_Scores[startIdx] };

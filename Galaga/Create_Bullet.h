@@ -29,8 +29,8 @@ namespace dae {
 		// -- Collider
 		auto bulletSize = currentTexture.GetScaledSize();
 		Rect rect{};
-		rect.Height = bulletSize.y;
-		rect.Width = bulletSize.x;
+		rect.Height = (int)bulletSize.y;
+		rect.Width = (int)bulletSize.x;
 
 		CCollider collider{ rect, int(collisionLayer) };
 		collider.AddCollisionTagToCollideWith((int)collisionLayerToCollideAgainst);

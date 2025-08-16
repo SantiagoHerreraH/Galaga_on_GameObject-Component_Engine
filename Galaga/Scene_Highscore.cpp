@@ -18,7 +18,7 @@ dae::Scene_Highscore::Scene_Highscore(std::vector<Player> players, const std::st
         InputControllerData inputData{};
         inputData.AllowKeyboard = true;
         inputData.HowToTreatKeyboard = players.size() > 1 ? HowToTreatKeyboard::MakeItAnIndependentPlayerId : HowToTreatKeyboard::SharePlayerIdWithFirstController;
-        inputData.MaxControllers = players.size() > XUSER_MAX_COUNT ? XUSER_MAX_COUNT : players.size();
+        inputData.MaxControllers = players.size() > XUSER_MAX_COUNT ? XUSER_MAX_COUNT : (int)players.size();
 
         InputManager::GetFromScene(&scene).SetData(inputData);
 
@@ -45,7 +45,7 @@ dae::Scene_Highscore::Scene_Highscore(std::vector<Player> players, const std::st
         {
 
             scoreData.PlayerName = player.GetGameObject().GetName();
-            float xWhere = (g_WindowWidth / (players.size() + 1)) * (count + 1);
+            float xWhere = (g_WindowWidth / float(players.size() + 1)) * (count + 1);
 
 
             TextCreator currentText{ scoreData.PlayerName, {xWhere, (g_WindowHeight / 2.f) - (vertOffsetBetweenDisplayers * 2)}, 15, {255, 255, 255} };
@@ -115,9 +115,9 @@ dae::Scene_Highscore::Scene_Highscore(std::vector<Player> players, const std::st
 
             statDisplayerGameObj->AddComponent(hitNumDisplayer);
 
-            float shotsFired =  player.GetGameObject().GetComponent<CGameStatController>()->GetStat(GameStatType::ShotsFired);
-            float numberOfHits = player.GetGameObject().GetComponent<CGameStatController>()->GetStat(GameStatType::NumberOfHits);
-            float hitMissRatioVal = shotsFired != 0 ? (numberOfHits * 100) / shotsFired : 0;
+            int shotsFired =  player.GetGameObject().GetComponent<CGameStatController>()->GetStat(GameStatType::ShotsFired);
+            int numberOfHits = player.GetGameObject().GetComponent<CGameStatController>()->GetStat(GameStatType::NumberOfHits);
+            float hitMissRatioVal = shotsFired != 0 ? (numberOfHits * 100) / (float)shotsFired : 0;
 
             TextCreator hitMissRatioText("HIT MISS RATIO: ", { xWhere,   (g_WindowHeight / 2.f) + (vertOffsetBetweenDisplayers * 2) }, 13, SDL_Color{ 255, 0 , 0 });
             TextCreator hitMissRatio("% " + std::to_string(hitMissRatioVal), {xWhere,   (g_WindowHeight / 2.f) + (vertOffsetBetweenDisplayers * 2) + 18}, 13, SDL_Color{255, 255 , 255});

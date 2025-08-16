@@ -196,14 +196,14 @@ void dae::CEnemyFormation::CreateGrid()
 		{
 			currentTime += movementSpeed * GameTime::GetInstance().GetElapsedSeconds();
 
-			if (currentTime > M_PI)
+			if (currentTime > (float)M_PI)
 			{
-				currentTime -= M_PI;
+				currentTime -= (float)M_PI;
 			}
 
 			float value = std::sin(currentTime) * movementRange;
 
-			grid->Transform().SetLocalPositionX(startGridX + value);
+			grid->Transform().SetLocalPositionX(startGridX + value); 
 		};
 
 	float scaleSpeed{ 2 };
@@ -214,9 +214,9 @@ void dae::CEnemyFormation::CreateGrid()
 		{
 			currentTime += scaleSpeed * GameTime::GetInstance().GetElapsedSeconds();
 
-			if (currentTime > M_PI)
+			if (currentTime > (float)M_PI)
 			{
-				currentTime -= M_PI;
+				currentTime -= (float)M_PI;
 			}
 
 			float value = std::sin(currentTime) * scaleRange;
@@ -253,7 +253,6 @@ void dae::CEnemyFormation::CreateEnemies()
 
 
 	glm::vec3 currentRelativePos{};
-	const int totalEnemyAmount{ m_EnemyGridData.NumberOfEnemyRows * m_EnemyGridData.NumberOfEnemiesPerRow };
 
 	//---------- SWIRL DATA
 

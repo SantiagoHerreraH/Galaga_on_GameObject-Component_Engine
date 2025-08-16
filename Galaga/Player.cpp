@@ -80,8 +80,8 @@ dae::Player::Player(const glm::vec2& startPos, float zRotation, int playerNum, c
 
 	auto textureSize = currentTexture.GetScaledSize();
 
-	rect.Height = textureSize.y;
-	rect.Width = textureSize.x;
+	rect.Height = (int)textureSize.y;
+	rect.Width = (int)textureSize.x;
 
 	dae::CCollider collider{ rect, (int)playerType.PlayerCollisionLayer };
 	collider.CenterRect();

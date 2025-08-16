@@ -20,7 +20,7 @@ namespace dae {
 
 			if (movement)
 			{
-				if (m_Bounds.IsInBounds( pos.x, pos.y))
+				if (m_Bounds.IsInBounds( (int)pos.x, (int)pos.y))
 				{
 					movement->AddSingleFrameMovementInput(m_Direction);
 				}
