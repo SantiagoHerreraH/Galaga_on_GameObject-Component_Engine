@@ -6,7 +6,6 @@
 #include <windows.h>
 #include <Xinput.h>
 #include <glm.hpp>
-#include <iostream>
 
 void dae::InputManager::ClearKeys()
 {

@@ -162,7 +162,7 @@ std::vector<dae::GameObjectHandle> dae::CPlayerLife::CreatePlayerHealthIndicator
 	dae::TransformData textureTransformData{};
 	textureTransformData.Scale = { 0.5f, 0.5f , 0.5f };
 
-	dae::CTextureHandle currentTexture{ "galaga.png" };
+	dae::CTextureHandle currentTexture{ "galagaRed.png" };
 	currentTexture.SetTextureTransform(textureTransformData);
 	glm::vec2 textureSize = currentTexture.Data()->GetPixelSize();
 

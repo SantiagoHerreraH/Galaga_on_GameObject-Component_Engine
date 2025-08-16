@@ -1,0 +1,39 @@
+To fill a GameRound, you have to add an entry in the GameRounds field. Like so:
+
+		{
+			"FirstFormation": {
+				"GridType": "SmallGrid",
+				"EnemyType": "Bird",
+				"SwirlFormations": ["CircularUp", "CircularDown"]
+			},
+			"SecondFormation": {
+				"GridType": "MediumGrid",
+				"EnemyType": "Butterfly",
+				"SwirlFormations": ["CircularUp", "CircularDown"]
+			},
+			"ThirdFormation": {
+				"GridType": "LargeGrid",
+				"EnemyType": "Bee",
+				"SwirlFormations": ["CircularUp", "CircularDown"]
+			}
+		}
+
+This Data represents the enemy formation type for one round
+
+Possible GridTypes:
+- "SmallGrid"
+- "MediumGrid"
+- "LargeGrid"
+
+Possible EnemyTypes:
+- "Bee"
+- "Butterfly"
+- "Bird"
+
+Possible SwirlFormations (as you can see the swirl formations is an array of swirl formations):
+- "CircularUp"
+- "CircularDown"
+- "DownUTurn"
+- "EllipticalDown"
+
+
