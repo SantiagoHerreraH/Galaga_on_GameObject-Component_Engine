@@ -1,18 +1,18 @@
 #include "Enemy.h"
 #include "Scene.h"
-#include "MovementActionSequence.h"
-#include "Animation.h"
-#include "Collider.h"
+#include "CMovementActionSequence.h"
+#include "CAnimation.h"
+#include "CCollider.h"
 #include "CollisionLayers.h"
-#include "GalagaStats.h"
-#include "EnemyPointsIndicator.h"
+#include "CGameStatController.h"
+#include "Create_PointIndicator.h"
 #include "Random.hpp"
 #include "Behaviour_CaptureZone.h"
 #include "Behaviour_UDive.h"
 #include "Behaviour_ZigZagDive.h"
-#include "EnemyFormation.h"
-#include "Misc_CreationFunctions.h"
-#include "Audio.h"
+#include "CEnemyFormation.h"
+#include "Create_Explosion.h"
+#include "CAudio.h"
 
 dae::Enemy::Enemy(const EnemyInstanceData& enemyInstanceData, const EnemyType& enemyType) :
 	m_EnemyInstanceData(enemyInstanceData),
@@ -25,11 +25,15 @@ dae::Enemy::Enemy(const EnemyInstanceData& enemyInstanceData, const EnemyType& e
 	transformData.Position.x = enemyInstanceData.RelativePos.x;
 	transformData.Position.y = enemyInstanceData.RelativePos.y;
 	transformData.Scale = { 1, 1, 1 };
-	//transformData.Rotation.z = 180;
 
 	//------
 
-	SpriteSheet spriteSheet{ dae::CTextureHandle{enemyType.TextureName}, 1, 2 };
+	dae::CTextureHandle texture{ enemyType.TextureName };
+	TransformData textureTransformData{};
+	textureTransformData.Scale = { 2, 2, 2 };
+	texture.SetTextureTransform(textureTransformData);
+
+	SpriteSheet spriteSheet{ texture, 1, 2 };
 
 	CAnimation animation{};
 	animation.SetFramesPerSecond(2);
@@ -37,18 +41,27 @@ dae::Enemy::Enemy(const EnemyInstanceData& enemyInstanceData, const EnemyType& e
 	animation.AddFrame(spriteSheet.GetFrame(0, 1), 1);
 
 
-	SpriteSheet secondStageSpriteSheet{ dae::CTextureHandle{"boss2.png"}, 1, 2};
-
 	CAnimation secondStageAnimation{};
-	secondStageAnimation.SetFramesPerSecond(2);
-	secondStageAnimation.AddFrame(secondStageSpriteSheet.GetFrame(0, 0), 2);
-	secondStageAnimation.AddFrame(secondStageSpriteSheet.GetFrame(0, 1), 1);
+
+	if (!enemyType.SecondStageTextureName.empty())
+	{
+
+		dae::CTextureHandle secondStageTexture{ enemyType.SecondStageTextureName };
+		secondStageTexture.SetTextureTransform(textureTransformData);
+
+		SpriteSheet secondStageSpriteSheet{ secondStageTexture, 1, 2};
+
+		secondStageAnimation.SetFramesPerSecond(2);
+		secondStageAnimation.AddFrame(secondStageSpriteSheet.GetFrame(0, 0), 2);
+		secondStageAnimation.AddFrame(secondStageSpriteSheet.GetFrame(0, 1), 1);
+
+	}
 
 	//------
 
 	Rect rect{};
-	rect.Height = 32;
-	rect.Width = 32;
+	rect.Height = spriteSheet.GetScaledCellHeight();
+	rect.Width = spriteSheet.GetScaledCellWidth();
 
 	CCollider collider{ rect, (int)CollisionLayers::Enemies };
 	collider.AddCollisionTagToCollideWith((int)CollisionLayers::Player);
@@ -56,18 +69,18 @@ dae::Enemy::Enemy(const EnemyInstanceData& enemyInstanceData, const EnemyType& e
 
 	collider.OnCollisionBeginEvent().Subscribe([](GameObject&, GameObject& other) mutable
 		{
-			other.GetComponent<CStatController>()->OffsetStat(StatType::Health, -1);
+			other.GetComponent<CGameStatController>()->OffsetStat(GameStatType::Health, -1);
 
 		});
 
 	//------
 
-	CStatController statController{};
+	CGameStatController statController{};
 
-	IntStat initialHealth{ enemyType.MaxHealth, enemyType.MaxHealth, enemyType.MaxHealth };
-	IntStat initialKills{ 0, 0, 0 };
+	GameStat initialHealth{ enemyType.MaxHealth, enemyType.MaxHealth, enemyType.MaxHealth };
+	GameStat initialKills{ 0, 0, 0 };
 
-	statController.CreateStat(StatType::Health, initialHealth);
+	statController.CreateStat(GameStatType::Health, initialHealth);
 
 
 	//------
@@ -111,9 +124,9 @@ dae::Enemy::Enemy(const EnemyInstanceData& enemyInstanceData, const EnemyType& e
 
 	
 
-	if (enemyType.MaxHealth > 1)
+	if (enemyType.MaxHealth > 1 && !enemyType.SecondStageTextureName.empty())
 	{
-		enemy->GetComponent<CStatController>()->OnCurrentStatChange(StatType::Health).Subscribe([enemy, secondStageAnimation](float value)
+		enemy->GetComponent<CGameStatController>()->OnCurrentStatChange(GameStatType::Health).Subscribe([enemy, secondStageAnimation](float value)
 			{
 				enemy->SetComponent<CAnimation>(secondStageAnimation);
 
@@ -128,8 +141,8 @@ dae::Enemy::Enemy(const EnemyInstanceData& enemyInstanceData, const EnemyType& e
 
 	TimerSystem* TIMERSYSTEM = &TimerSystem::GetFromScene(enemyInstanceData.Scene);
 
-	IntStat pointsInFormation{ enemyType.PointsInFormation, enemyType.PointsInFormation, enemyType.PointsInFormation };
-	GameObjectHandle pointsInFormationIndicator{ CreatePointIndicator(*enemyInstanceData.Scene, pointsInFormation.CurrentStat) };
+	GameStat pointsInFormation{ enemyType.PointsInFormation, enemyType.PointsInFormation, enemyType.PointsInFormation };
+	GameObjectHandle pointsInFormationIndicator{ Create_PointIndicator(*enemyInstanceData.Scene, pointsInFormation.CurrentStat) };
 
 	TimerKey showPointsInFormationKey = TIMERSYSTEM->TriggerFunctionAfterSeconds(
 		[pointsInFormationIndicator]() mutable {pointsInFormationIndicator->SetActive(false); },
@@ -147,8 +160,8 @@ dae::Enemy::Enemy(const EnemyInstanceData& enemyInstanceData, const EnemyType& e
 
 	//-- POINTS WHILE DIVING
 
-	IntStat pointsWhileDiving{ enemyType.PointOnDive, enemyType.PointOnDive, enemyType.PointOnDive };
-	GameObjectHandle pointsWhileDivingIndicator{ CreatePointIndicator(*enemyInstanceData.Scene, pointsWhileDiving.CurrentStat) };
+	GameStat pointsWhileDiving{ enemyType.PointOnDive, enemyType.PointOnDive, enemyType.PointOnDive };
+	GameObjectHandle pointsWhileDivingIndicator{ Create_PointIndicator(*enemyInstanceData.Scene, pointsWhileDiving.CurrentStat) };
 	TimerKey showPointsWhileDivingKey = TIMERSYSTEM->TriggerFunctionAfterSeconds(
 		[pointsWhileDivingIndicator]() mutable { pointsWhileDivingIndicator->SetActive(false); },
 		showPointsDuration, 
@@ -163,7 +176,7 @@ dae::Enemy::Enemy(const EnemyInstanceData& enemyInstanceData, const EnemyType& e
 
 		});
 
-	enemy->GetComponent<CStatController>()->CreateStat(StatType::Points, pointsInFormation);
+	enemy->GetComponent<CGameStatController>()->CreateStat(GameStatType::Points, pointsInFormation);
 
 	m_PointsWhileDiving = pointsWhileDiving;
 	m_PointsInFormation = pointsInFormation;
@@ -173,7 +186,7 @@ dae::Enemy::Enemy(const EnemyInstanceData& enemyInstanceData, const EnemyType& e
 		AddActingBehaviour(*m_EnemyType.Behaviours[i]);
 	}
 
-	auto explosion = CreateExplosion("explosion.png");
+	auto explosion = Create_Explosion("explosion.png");
 	m_EnemyInstanceData.Scene->AddGameObjectHandle(explosion);
 
 	CEnemyFormation* enemyManager = m_EnemyInstanceData.EnemyManager;
@@ -182,7 +195,7 @@ dae::Enemy::Enemy(const EnemyInstanceData& enemyInstanceData, const EnemyType& e
 		{
 			dieAudio->Play();
 			explosion->GetComponent<CLifeTime>()->Respawn(enemy->Transform().GetWorldTransform().Position);
-			enemy->GetComponent<CStatController>()->ResetCurrentStat(StatType::Points);
+			enemy->GetComponent<CGameStatController>()->ResetCurrentStat(GameStatType::Points);
 			enemy->SetActive(false);
 			enemyManager->SendNextTroops(enemy.get());
 		});
@@ -218,14 +231,14 @@ void dae::Enemy::AddActingBehaviour(EnemyBehaviour& enemyBehaviour)
 
 	GameObjectHandle self = m_Self;
 
-	IntStat pointsInFormation = m_PointsInFormation;
+	GameStat pointsInFormation = m_PointsInFormation;
 
 	CEnemyFormation* enemyManager = m_EnemyInstanceData.EnemyManager;
 
 	sequence->AddEndSubAction([self, pointsInFormation, enemyManager]() mutable 
 		{
 
-			self->GetComponent<CStatController>()->CreateStat(StatType::Points, pointsInFormation);
+			self->GetComponent<CGameStatController>()->CreateStat(GameStatType::Points, pointsInFormation);
 			enemyManager->SendNextTroops(self.get());
 
 		});
@@ -248,7 +261,7 @@ const dae::CMovementActionSequence& dae::Enemy::Act()
 		m_EnemyActingSequences[chosenIndex]->RestartSequence();
 	}
 
-	m_Self->GetComponent<CStatController>()->CreateStat(StatType::Points, m_PointsWhileDiving);
+	m_Self->GetComponent<CGameStatController>()->CreateStat(GameStatType::Points, m_PointsWhileDiving);
 
 	m_CurrentEnemyActingSequence = chosenIndex;
 
@@ -279,5 +292,5 @@ const dae::EnemyType& dae::Enemy::GetEnemyType() const
 
 dae::Event<>& dae::Enemy::OnDie()
 {
-	return m_Self->GetComponent<CStatController>()->OnCurrentStatZeroOrLess(StatType::Health);
+	return m_Self->GetComponent<CGameStatController>()->OnCurrentStatZeroOrLess(GameStatType::Health);
 }

@@ -1,12 +1,12 @@
 #include "CCaptureZone.h"
 #include "Scene.h"
-#include "MovementActionSequence.h"
-#include "Texture.h"
+#include "CMovementActionSequence.h"
+#include "SpriteSheet.h"
 #include "GameTime.h"
-#include "Animation.h"
-#include "Collider.h"
+#include "CAnimation.h"
+#include "CCollider.h"
 #include "CollisionLayers.h"
-#include "GalagaStats.h"
+#include "CGameStatController.h"
 
 
 dae::CCaptureZone::CCaptureZone(const CaptureZoneData& data) :
@@ -111,11 +111,11 @@ dae::GameObjectHandle dae::CCaptureZone::CreateCaptureZone(GameObjectHandle targ
 	Timer timer{ secondsToWaitBeforeOffsettingStat, true };
 	timer.GetOnEndEvent().Subscribe([target, captureZoneDamage, TIMERSYSTEM]() mutable {
 
-		CStatController* statController = target->GetComponent<CStatController>();
+		CGameStatController* statController = target->GetComponent<CGameStatController>();
 
 		if (statController)
 		{
-			statController->OffsetStat(StatType::Health, captureZoneDamage);
+			statController->OffsetStat(GameStatType::Health, captureZoneDamage);
 		}
 
 		});
@@ -193,7 +193,7 @@ dae::GameObjectHandle dae::CCaptureZone::CreatePlayerDummy(dae::Scene& scene, co
 			return true;
 		}
 
-		glm::vec2 pos = movementPath * (Time::GetInstance().GetElapsedSeconds() / movementDuration);
+		glm::vec2 pos = movementPath * (GameTime::GetInstance().GetElapsedSeconds() / movementDuration);
 
 		dummy->Transform().MoveLocalPositionX(pos.x);
 		dummy->Transform().MoveLocalPositionY(pos.y);
@@ -203,7 +203,7 @@ dae::GameObjectHandle dae::CCaptureZone::CreatePlayerDummy(dae::Scene& scene, co
 		});
 	actionSequence.AddActionFunction([dummy, rotationSpeed](float, const MovementData&) mutable {
 
-		float rotationDelta = rotationSpeed * Time::GetInstance().GetElapsedSeconds();
+		float rotationDelta = rotationSpeed * GameTime::GetInstance().GetElapsedSeconds();
 
 		dummy->Transform().MoveLocalRotationZ(rotationDelta);
 

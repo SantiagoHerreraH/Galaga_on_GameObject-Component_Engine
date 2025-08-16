@@ -13,9 +13,9 @@ namespace dae {
 
 	struct EnemyFormationType {
 
-		EnemyUnitSwirlData EnemyUnitSwirlData; // list of names
-		EnemyGridData EnemyGridData; // name : small, medium, large
-		EnemyType EnemyType; //name : Bee, Bird, Butterfly
+		EnemyUnitSwirlData EnemyUnitSwirlData{};
+		EnemyGridData EnemyGridData{};
+		EnemyType EnemyType{};
 	};
 
 	inline void from_json(const nlohmann::json& j, EnemyFormationType& managerType) {

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Scene.h"
-#include "Text.h"
 
 #include "Settings.h"
 
@@ -16,8 +15,8 @@ namespace dae {
 
 	private:
 
-		GameObjectHandle m_RoundNumBeginning;
-		GameObjectHandle m_RoundNum;
+		GameObjectHandle m_RoundNumBeginning{};
+		GameObjectHandle m_RoundNum{};
 
 		GameObjectHandle CreateRoundNum(dae::Scene& scene, int roundNumber, const glm::vec2& startPos);
 

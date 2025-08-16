@@ -4,7 +4,7 @@
 #include <map>
 #include <memory>
 
-#include "Command.h"
+#include "ICommand.h"
 #include "EventSystem.h"
 
 #include <SDL.h>

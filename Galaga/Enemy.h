@@ -2,8 +2,8 @@
 #include <functional>
 #include "Scene.h"
 #include "EnemyInstanceData.h"
-#include "GalagaStats.h"
-#include "MovementActionSequence.h"
+#include "CGameStatController.h"
+#include "CMovementActionSequence.h"
 #include "SwirlData.h"
 
 
@@ -22,13 +22,15 @@ namespace dae {
 	};
 
 	struct EnemyType {
-		std::string TextureName;
-		int MaxHealth;
-		int PointsInFormation;
-		int PointOnDive;
-		std::vector<std::shared_ptr<EnemyBehaviour>> Behaviours;
+		std::string TextureName{};
+		std::string SecondStageTextureName{};
+		int MaxHealth{};
+		int PointsInFormation{};
+		int PointOnDive{};
+		std::vector<std::shared_ptr<EnemyBehaviour>> Behaviours{};
 	};
 
+	//GameObject Creator and Wrapper for enemy behaviour
 	class Enemy final{
 
 	public:
@@ -54,19 +56,19 @@ namespace dae {
 
 	private:
 
-		GameObjectHandle m_Self;
+		GameObjectHandle m_Self{nullptr};
 
-		EnemyInstanceData m_EnemyInstanceData;
-		EnemyType m_EnemyType;
-		std::shared_ptr<CMovementActionSequence> m_StartFormationSequence;
-		std::vector<std::shared_ptr<CMovementActionSequence>> m_EnemyActingSequences;
+		EnemyInstanceData m_EnemyInstanceData{};
+		EnemyType m_EnemyType{};
+		std::shared_ptr<CMovementActionSequence> m_StartFormationSequence{};
+		std::vector<std::shared_ptr<CMovementActionSequence>> m_EnemyActingSequences{};
 		int m_CurrentEnemyActingSequence{0};
 
-		std::shared_ptr<Event<GameObject&>> m_OnEndStartingFormationSequence;
-		std::shared_ptr<CAudio> m_OnActAudio;
+		std::shared_ptr<Event<GameObject&>> m_OnEndStartingFormationSequence{};
+		std::shared_ptr<CAudio> m_OnActAudio{};
 
-		IntStat m_PointsWhileDiving;
-		IntStat m_PointsInFormation;
+		GameStat m_PointsWhileDiving{};
+		GameStat m_PointsInFormation{};
 
 	};
 }

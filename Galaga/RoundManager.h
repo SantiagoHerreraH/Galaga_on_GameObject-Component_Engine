@@ -1,12 +1,12 @@
 #pragma once
 
-#include "EnemyFormation.h"
+#include "CEnemyFormation.h"
 #include "Player.h"
 
 
 namespace dae {
 
-	class HighscoreScene;
+	class Scene_Highscore;
 
 	struct RoundType {
 		EnemyFormationType FirstEnemyFormation;

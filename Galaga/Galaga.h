@@ -1,8 +1,8 @@
 #pragma once
 
 #include "RoundManager.h"
-#include "PlayerVsScene.h"
-#include "MainMenu.h"
+#include "Scene_PlayerVs.h"
+#include "Scene_MainMenu.h"
 #include "DefineData_EnemyGridData.h"
 #include "DefineData_EnemyType.h"
 #include "DefineData_SwirlData.h"
@@ -11,14 +11,14 @@ namespace dae {
 
 	void Galaga() {
 
-		DefineEnemyGridData::DefineTypes();
-		DefineEnemyType::DefineTypes();
-		DefineSwirlData::DefineTypes();
+		DefineData_EnemyGridData::DefineTypes();
+		DefineData_EnemyType::DefineTypes();
+		DefineData_SwirlData::DefineTypes();
 
-		MainMenu mainMenu{};
+		Scene_MainMenu mainMenu{};
 		RoundManager onePlayerVsNPCs{"GameModes/OnePlayerVsEnemies.txt"};
 		RoundManager twoPlayersVsNPCs{"GameModes/TwoPlayersVsEnemies.txt"};
-		PlayerVsScene playerVsScene{};
+		Scene_PlayerVs playerVsScene{};
 
 		mainMenu.AddSceneChangeButton(onePlayerVsNPCs.GetNameAssignerSceneName(), "ONE");
 		mainMenu.AddSceneChangeButton(twoPlayersVsNPCs.GetNameAssignerSceneName(), "TWO");

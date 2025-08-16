@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Text.h"
+#include "CText.h"
 
 namespace dae {
 
@@ -12,9 +12,9 @@ namespace dae {
 			m_TextTransform(transformData){}
 		void Start()override;
 	private:
-		std::shared_ptr<CText> m_Text;
-		TextData m_TextData;
-		TransformData m_TextTransform;
+		std::shared_ptr<CText> m_Text{};
+		TextData m_TextData{};
+		TransformData m_TextTransform{};
 	};
 }
 

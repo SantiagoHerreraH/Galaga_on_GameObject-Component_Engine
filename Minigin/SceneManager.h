@@ -16,6 +16,7 @@ namespace dae
 		};
 
 	public:
+
 		Scene& AddScene(const std::string& name, const std::function<void(dae::Scene&)>& sceneCreationFunction);
 		
 		Scene* GetScene(const std::string& name);
@@ -30,6 +31,7 @@ namespace dae
 		void Update();
 		void Render()const;
 
+		void Clear();
 	private:
 		void CheckChangeScene();
 

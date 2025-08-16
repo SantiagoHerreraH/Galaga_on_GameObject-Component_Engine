@@ -22,43 +22,47 @@ namespace dae {
 
 	void AudioManager::Initialize()
 	{
+
 		int flags = MIX_INIT_MP3;
-		int result = Mix_Init(flags);
-		if ((result & flags) != flags) {
-			printf("Mix_Init: Failed to init required ogg and mod support!\n");
-			printf("Mix_Init: %s\n", Mix_GetError());
+		if ((Mix_Init(flags) & flags) != flags) {
+			std::cerr << "Mix_Init failed: " << Mix_GetError() << "\n";
 		}
 
-		// start SDL with audio support
-		if (SDL_Init(SDL_INIT_AUDIO) == -1) {
-			printf("SDL_Init: %s\n", SDL_GetError());
-			exit(1);
+		if (SDL_InitSubSystem(SDL_INIT_AUDIO) != 0) {
+			std::cerr << "SDL_InitSubSystem(SDL_INIT_AUDIO) failed: " << SDL_GetError() << "\n";
+			return;
 		}
-		// open 44.1KHz, signed 16bit, system byte order,
-		//      stereo audio, using 1024 byte chunks
+
 		if (Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 1024) == -1) {
-			printf("Mix_OpenAudio: %s\n", Mix_GetError());
-			exit(2);
+			std::cerr << "Mix_OpenAudio failed: " << Mix_GetError() << "\n";
+			return;
 		}
-		// 8 mixing channels get created
-		MIX_CHANNELS;
+		Mix_AllocateChannels(16);
+		m_AudioOpen.store(true, std::memory_order_relaxed);
+
 	}
 
 	void AudioManager::Update()
 	{
-		while(m_Running)
-		{
-			std::unique_lock<std::mutex> lock(m_Mutex);
-			m_ConditionVariable.wait(lock);
+		// Wait briefly for new work, then drain the queue and return.
+		// This makes Update() cooperative and responsive to shutdown.
+		std::unique_lock<std::mutex> lock(m_Mutex);
+		// Wake either when there's a notify, or after 10ms to re-check running state.
+		m_ConditionVariable.wait_for(lock, std::chrono::milliseconds(10), [&] {
+			return !m_Queue.empty() || !m_Running.load(std::memory_order_relaxed);
+			});
 
-			while (!m_Queue.empty() && m_Running)
-			{
-				int id = m_Queue.front();
-				m_Queue.pop();
-				Mix_PlayChannel(-1, m_Sounds.at(id).Mix_Chunk, m_Sounds.at(id).LoopNumber);
-			}
+		while (!m_Queue.empty() && m_Running.load(std::memory_order_relaxed)) {
+			int id = m_Queue.front();
+			m_Queue.pop();
+			auto& s = m_Sounds.at(static_cast<size_t>(id));
+			Mix_PlayChannel(-1, s.Mix_Chunk, s.LoopNumber);
 		}
-		std::cout << "Exiting console audio update" << std::endl;
+	}
+
+	void AudioManager::RequestStop() {
+		m_Running.store(false, std::memory_order_relaxed);
+		m_ConditionVariable.notify_all();   // wake Update() if waiting
 	}
 
 	void AudioManager::PlaySound(SoundKey soundID)
@@ -74,13 +78,19 @@ namespace dae {
 		Mix_HaltChannel(channelId);
 	}
 
-	void AudioManager::StopAllSounds()
+	void AudioManager::Shutdown()
 	{
-		//Dont use mix functions after this, else call openAudio first
+
+		if (!m_AudioOpen.exchange(false, std::memory_order_acq_rel))
+			return; // already closed
+
+		// Stop playback safely
+		Mix_HaltChannel(-1);
+		if (Mix_PlayingMusic()) 
+		{
+			Mix_HaltMusic();
+		}
 		Mix_CloseAudio();
-	
-		m_Running = false;
-		m_ConditionVariable.notify_one();
 	}
 
 	void AudioManager::PlayMusic()

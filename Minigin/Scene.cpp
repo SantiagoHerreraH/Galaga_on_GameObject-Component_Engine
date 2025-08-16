@@ -23,7 +23,9 @@ bool dae::Scene::AddSystem(std::shared_ptr<ISystem> system)
 	return true;
 }
 
-Scene::~Scene() = default;
+Scene::~Scene() {
+	Reset();
+}
 
 GameObjectHandle dae::Scene::CreateGameObject()
 {
@@ -55,6 +57,20 @@ void dae::Scene::RemoveGameObjectHandle(const GameObjectHandle& gameObjectHandle
 
 void dae::Scene::DestroyAllGameObjects()
 {
+	m_HandlesSet.clear();
+	m_HandlesVec.clear();
+}
+
+
+void dae::Scene::Reset() 
+{
+
+	for (size_t i = 0; i < m_Systems.size(); i++)
+	{
+		m_Systems[i]->Reset();
+	}
+
+	m_Systems.clear();
 	m_HandlesSet.clear();
 	m_HandlesVec.clear();
 }

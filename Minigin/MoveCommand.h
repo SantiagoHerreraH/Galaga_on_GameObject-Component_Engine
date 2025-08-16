@@ -1,8 +1,9 @@
 #pragma once
 
 #include <glm.hpp>
-#include "Command.h"
-#include "Movement.h"
+#include "ICommand.h"
+#include "CMovement2D.h"
+#include "Rect.h"
 
 namespace dae {
 
@@ -10,22 +11,31 @@ namespace dae {
 	class MoveCommand : public ICommand
 	{
 	public:
-		MoveCommand(glm::vec2 direction, float speed) : m_Direction(direction), m_Speed(speed){}
+		MoveCommand(glm::vec2 direction, const Rect& bounds) : m_Bounds(bounds), m_Direction(direction){}
 		virtual ~MoveCommand() = default;
 		virtual void Execute(GameObject& gameObject) {
 
 			CMovement2D* movement = gameObject.GetComponent<CMovement2D>();
+			glm::vec2 pos = gameObject.Transform().GetWorldTransform().Position;
 
 			if (movement)
 			{
-				movement->SetMaxSpeed(m_Speed);
-				movement->AddSingleFrameMovementInput(m_Direction);
+				if (m_Bounds.IsInBounds( pos.x, pos.y))
+				{
+					movement->AddSingleFrameMovementInput(m_Direction);
+				}
+				else
+				{
+					pos = m_Bounds.KeepInBounds(pos);
+					gameObject.Transform().SetLocalPositionX(pos.x);
+					gameObject.Transform().SetLocalPositionY(pos.y);
+				}
 			}
 		}
 
 	private:
-		glm::vec2 m_Direction;
-		float m_Speed;
+		Rect m_Bounds{};
+		glm::vec2 m_Direction{};
 	};
 
 }

@@ -21,7 +21,7 @@
     <ClCompile Include="Enemy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="EnemyFormation.cpp">
+    <ClCompile Include="CEnemyFormation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RoundManager.cpp">
@@ -30,46 +30,61 @@
     <ClCompile Include="Player.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerLife.cpp">
+    <ClCompile Include="CPlayerLife.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Gun.cpp">
+    <ClCompile Include="CGun.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Lifetime.cpp">
+    <ClCompile Include="CLifetime.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RoundUI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="StatDisplayer.cpp">
+    <ClCompile Include="CStatDisplayer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MainMenu.cpp">
+    <ClCompile Include="Scene_MainMenu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ScoreSaver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerVsScene.cpp">
+    <ClCompile Include="Scene_PlayerVs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Behaviour_CaptureZone.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CaptureZoneWeaponType.cpp">
+    <ClCompile Include="WeaponType_CaptureZone.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CCaptureZone.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="HighscoreScene.cpp">
+    <ClCompile Include="Scene_Highscore.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="NameAssignerScene.cpp">
+    <ClCompile Include="Scene_NameAssigner.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CNameDisplayer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Behaviour_Swirl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Behaviour_UDive.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Behaviour_ZigZagDive.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WeaponType_Gun.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TextCreator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -77,16 +92,16 @@
     <ClInclude Include="Player.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GalagaStats.h">
+    <ClInclude Include="CGameStatController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CollisionLayers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="StatDisplayer.h">
+    <ClInclude Include="CStatDisplayer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Bullet.h">
+    <ClInclude Include="Create_Bullet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Behaviour_Swirl.h">
@@ -104,16 +119,7 @@
     <ClInclude Include="Behaviour_CaptureZone.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Enemy_Bird.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="EnemyPointsIndicator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Enemy_Butterfly.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Enemy_Bee.h">
+    <ClInclude Include="Create_PointIndicator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RoundUI.h">
@@ -140,7 +146,7 @@
     <ClInclude Include="DefineData_EnemyType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="EnemyFormation.h">
+    <ClInclude Include="CEnemyFormation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="EnemyFormationType.h">
@@ -149,52 +155,61 @@
     <ClInclude Include="DefineData_SwirlData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerLife.h">
+    <ClInclude Include="CPlayerLife.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Gun.h">
+    <ClInclude Include="CGun.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Lifetime.h">
+    <ClInclude Include="CLifetime.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Galaga.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MainMenu.h">
+    <ClInclude Include="Scene_MainMenu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ScoreSaver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ShootCommand.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="StartSequenceCommand.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerVsScene.h">
+    <ClInclude Include="Scene_PlayerVs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="WeaponType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CaptureZoneWeaponType.h">
+    <ClInclude Include="WeaponType_CaptureZone.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CCaptureZone.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="HighscoreScene.h">
+    <ClInclude Include="Scene_Highscore.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Misc_CreationFunctions.h">
+    <ClInclude Include="Create_Highscore.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="NameAssignerScene.h">
+    <ClInclude Include="Scene_NameAssigner.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CNameDisplayer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WeaponType_Gun.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Create_ParticleSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Create_Explosion.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TextCreator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

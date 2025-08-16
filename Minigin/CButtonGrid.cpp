@@ -1,7 +1,7 @@
 #include "CButtonGrid.h"
 #include "GameObject.h"
 #include "InputManager.h"
-#include "PlayerController.h"
+#include "CPlayerController.h"
 #include "EventTriggerCommand.h"
 
 dae::CButtonGrid::CButtonGrid(const ButtonGridData& buttonGridData) :

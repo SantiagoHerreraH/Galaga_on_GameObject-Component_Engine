@@ -1,18 +1,21 @@
 #include "RoundManager.h"
-#include "StatDisplayer.h"
+
 #include <fstream>
 #include <iostream>
+
+#include "CStatDisplayer.h"
 #include "RoundUI.h"
-#include "ParticleSystem.h"
 #include "ScoreSaver.h"
-#include "Gun.h"
-#include "Misc_CreationFunctions.h"
-#include "HighscoreScene.h"
+#include "CGun.h"
+#include "Create_ParticleSystem.h"
+#include "Create_Highscore.h"
+#include "Scene_Highscore.h"
+#include "Scene_NameAssigner.h"
 #include "ResourceManager.h"
-#include "NameAssignerScene.h"
-#include "PlayerController.h"
+#include "CPlayerController.h"
 #include "EventTriggerCommand.h"
 #include "ServiceLocator.h"
+#include "WeaponType_Gun.h"
 
 dae::RoundManager::RoundManager(const std::string& fileName) :
     m_RoundManagerData(std::make_shared<RoundManagerData>(fileName)),
@@ -20,7 +23,7 @@ dae::RoundManager::RoundManager(const std::string& fileName) :
 {
     if (LoadRoundManagerType(fileName))
     {
-        m_RoundManagerData->ParticleSystemGameObj = CreateParticleSystem();
+        m_RoundManagerData->ParticleSystemGameObj = Create_ParticleSystem();
         CreatePlayers();
         CreateNameAssignerScene();
         CreateHighscoreScene();
@@ -49,8 +52,9 @@ void dae::RoundManager::CreatePlayers()
     PlayerType playerType{};
     playerType.PlayerCollisionLayer = CollisionLayers::Player;
     playerType.TextureName = "galaga.png";
+    playerType.TextureScale = 0.5f;
     playerType.HasVerticalMovement = true;
-    playerType.WeaponType = std::make_shared<GunWeaponType>(CollisionLayers::PlayerBullets, CollisionLayers::Enemies);
+    playerType.WeaponType = std::make_shared<WeaponType_Gun>(CollisionLayers::PlayerBullets, CollisionLayers::Enemies);
 
     auto nextScene = [data](GameObject&) mutable
         {
@@ -95,7 +99,7 @@ void dae::RoundManager::CreatePlayers()
 
 void dae::RoundManager::CreateNameAssignerScene()
 {
-    NameAssignerSceneData data{};
+    SceneData_NameAssigner data{};
 
     for (size_t i = 0; i < m_RoundManagerData->Players.size(); i++)
     {
@@ -105,7 +109,7 @@ void dae::RoundManager::CreateNameAssignerScene()
     data.SceneName = GetNameAssignerSceneName();
     data.SceneNameUponCompletion = m_RoundManagerData->GetRoundName(0); //first round name
 
-    NameAssignerScene nameAssignerScene{data};
+    Scene_NameAssigner nameAssignerScene{data};
 }
 
 bool dae::RoundManager::LoadRoundManagerType(const std::string& fileName)
@@ -141,7 +145,7 @@ void dae::RoundManager::CreateRounds()
 
             InputManager::GetFromScene(&scene).SetData(inputData);
 
-            CreateHighscore(scene, "HI-SCORE", { g_WindowWidth * 4.3f / 5.f , (g_WindowHeight * 0.8f / 5.f) });
+            Create_Highscore(scene, "HI-SCORE", { g_WindowWidth * 4.3f / 5.f , (g_WindowHeight * 0.8f / 5.f) });
 
             scene.AddGameObjectHandle(data->ParticleSystemGameObj);
 
@@ -243,6 +247,6 @@ void dae::RoundManager::CreateRounds()
 
 void dae::RoundManager::CreateHighscoreScene()
 {
-    HighscoreScene highscoreScene{ m_RoundManagerData->Players, "HighScoreScene_" + std::to_string(m_RoundManagerData->Players.size()), m_FileName};
+    Scene_Highscore highscoreScene{ m_RoundManagerData->Players, "HighScoreScene_" + std::to_string(m_RoundManagerData->Players.size()), m_FileName};
     m_RoundManagerData->HighscoreSceneName = highscoreScene.GetName();
 }

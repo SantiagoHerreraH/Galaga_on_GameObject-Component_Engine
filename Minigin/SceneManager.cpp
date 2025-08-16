@@ -24,6 +24,12 @@ void dae::SceneManager::Render()const
 	m_Scenes[m_CurrentSceneIndex]->Render();
 }
 
+
+void  dae::SceneManager::Clear() {
+	m_Scenes.clear();
+	m_Scenes.shrink_to_fit();
+}
+
 void dae::SceneManager::CheckChangeScene()
 {
 	if (m_CurrentSceneIndex != m_NextSceneIndex)

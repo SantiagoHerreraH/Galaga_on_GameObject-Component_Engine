@@ -12,6 +12,13 @@ dae::GameObject::GameObject(const std::string& name) : m_Transform(*this), m_Nam
 
 dae::GameObject::~GameObject() = default;
 
+
+void dae::GameObject::SetRenderTransformSettings(bool render, const SDL_Color& color) {
+
+	m_RenderColor = color;
+	m_RenderTransform = render;
+}
+
 dae::Transform& dae::GameObject::Transform()
 {
 	return m_Transform;
@@ -98,7 +105,7 @@ void dae::GameObject::Render() const
 	if (m_RenderTransform)
 	{
 		glm::vec2 pos = TransformConst().GetWorldTransform().Position;
-		Renderer::GetInstance().DrawCross(pos, 5, { 0,255,0 });
+		Renderer::GetInstance().DrawCross(pos, 5, m_RenderColor);
 	}
 }
 

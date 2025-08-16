@@ -20,7 +20,9 @@ namespace dae {
 		virtual void Update() = 0;
 
         virtual void StopSound(int channelId = -1) = 0;
-        virtual void StopAllSounds() = 0;
+        virtual void Shutdown() = 0;
+        virtual void RequestStop() = 0;
+        virtual bool IsRunning() const = 0;
 
         virtual void PlaySound(SoundKey soundID) = 0;
         virtual void PlayMusic() = 0;
@@ -42,7 +44,9 @@ namespace dae {
         virtual void Update() {}
 
         virtual void StopSound(int) {}
-        virtual void StopAllSounds() {}
+        virtual void Shutdown() {}
+        virtual void RequestStop() {}
+        virtual bool IsRunning() const {}
 
         virtual void PlaySound(SoundKey ) {}
         virtual void PlayMusic() {}

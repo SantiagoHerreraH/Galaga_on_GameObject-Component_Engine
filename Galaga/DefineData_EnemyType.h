@@ -11,7 +11,7 @@ namespace dae {
 	using StringToEnemyType = StringToDataModifier<EnemyType>;
 
 
-	class DefineEnemyType {
+	class DefineData_EnemyType {
 
 	public:
 
@@ -47,6 +47,7 @@ namespace dae {
 		static void CreateBirdEnemy(EnemyType& enemyType) {
 
 			enemyType.TextureName = "boss.png";
+			enemyType.SecondStageTextureName = "boss2.png";
 			enemyType.MaxHealth = 2;
 			enemyType.PointsInFormation = 150;
 			enemyType.PointOnDive = 400;

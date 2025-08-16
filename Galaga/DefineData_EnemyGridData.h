@@ -8,7 +8,7 @@ namespace dae {
 
 	using StringToEnemyGridData = StringToDataModifier<EnemyGridData>;
 
-	class DefineEnemyGridData {
+	class DefineData_EnemyGridData {
 
 	public:
 		static void DefineTypes() {

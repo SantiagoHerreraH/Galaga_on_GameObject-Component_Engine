@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include <string>
+#include "SDL.h"
 #include "Transform.h"
 #include "Component.h"
 
@@ -38,7 +39,7 @@ namespace dae
 
 		const dae::Transform& TransformConst()const;
 		dae::Transform& Transform();
-		void RenderTransform(bool render) { m_RenderTransform = render; }
+		void SetRenderTransformSettings(bool render, const SDL_Color& color = { 0,255,0 });
 
 		template <DerivedFromComponent ComponentType>
 		std::shared_ptr<ComponentType> AddComponent(const ComponentType& component);
@@ -58,7 +59,8 @@ namespace dae
 		bool SetComponent(const ComponentType& component);
 
 	private:
-		bool m_RenderTransform{ true };
+		bool m_RenderTransform{ false };
+		SDL_Color m_RenderColor{ 0,255,0 };
 		std::string m_Name;
 		dae::Transform m_Transform;
 		bool m_IsActive{ true };

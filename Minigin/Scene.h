@@ -24,6 +24,7 @@ namespace dae
 		void AddGameObjectHandle(const GameObjectHandle& gameObjectHandle);
 		void RemoveGameObjectHandle(const GameObjectHandle& gameObjectHandle);
 		void DestroyAllGameObjects();
+		void Reset();
 
 		bool AddSystem(std::shared_ptr<ISystem> system);
 

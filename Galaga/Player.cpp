@@ -1,24 +1,25 @@
 #include "Player.h"
-#include "PlayerController.h"
-#include "Collider.h"
-#include "Rigidbody.h"
-#include "Movement.h"
-#include "Texture.h"
-#include "StatSystem.h"
-#include "Text.h"
+#include "CPlayerController.h"
+#include "CCollider.h"
+#include "CRigidbody2D.h"
+#include "CMovement2D.h"
+#include "CTextureHandle.h"
+#include "CStatController.h"
+#include "CText.h"
 #include "TimerSystem.h"
 #include "EventTriggerCommand.h"
 
-#include "PlayerLife.h"
-#include "GalagaStats.h"
+#include "CPlayerLife.h"
+#include "CGameStatController.h"
 #include "CollisionLayers.h"
-#include "StatDisplayer.h"
-#include "Bullet.h"
-#include "Gun.h"
+#include "CStatDisplayer.h"
+#include "Create_Bullet.h"
+#include "CGun.h"
 #include "CNameDisplayer.h"
-#include "Misc_CreationFunctions.h"
-#include "Audio.h"
+#include "Create_Explosion.h"
+#include "CAudio.h"
 #include "ServiceLocator.h"
+#include "MoveCommand.h"
 
 #undef max
 #undef min
@@ -38,15 +39,6 @@ dae::Player::Player(const glm::vec2& startPos, float zRotation, int playerNum, c
 	shootingPivot->Transform().SetParent(*currentPlayer, dae::ETransformReparentType::KeepLocalTransform);
 
 	//----- COMPONENTS -----
-
-	Rect rect{};
-	rect.Height = 32;
-	rect.Width = 32;
-
-	dae::CCollider collider{ rect, (int)playerType.PlayerCollisionLayer };
-	collider.CenterRect();
-
-	currentPlayer->AddComponent(collider);
 
 	//-----
 
@@ -75,7 +67,7 @@ dae::Player::Player(const glm::vec2& startPos, float zRotation, int playerNum, c
 	//-----
 
 	TransformData textureTransform{};
-	textureTransform.Scale = { 0.5f, 0.5f , 0.5f };
+	textureTransform.Scale = { playerType.TextureScale, playerType.TextureScale, playerType.TextureScale };
 	dae::CTextureHandle currentTexture{ playerType.TextureName };// { "galaga.png" };
 	currentTexture.SetTextureTransform(textureTransform);
 	currentTexture.Center();
@@ -84,26 +76,40 @@ dae::Player::Player(const glm::vec2& startPos, float zRotation, int playerNum, c
 
 	//-----
 
+	Rect rect{};
+
+	auto textureSize = currentTexture.GetScaledSize();
+
+	rect.Height = textureSize.y;
+	rect.Width = textureSize.x;
+
+	dae::CCollider collider{ rect, (int)playerType.PlayerCollisionLayer };
+	collider.CenterRect();
+
+	currentPlayer->AddComponent(collider);
+
+	//-----
+
 	auto playerControllerRef = currentPlayer->AddComponent(CPlayerController{});
 
 	//-----
 
-	CStatController statController{};
+	CGameStatController statController{};
 
-	IntStat initialHealth{ 3, 3, 3 };
+	GameStat initialHealth{ 3, 3, 3 };
 
 
 	constexpr int maxInt = std::numeric_limits<int>::max();
 
-	IntStat initialPoints{ 0, maxInt, maxInt };
-	IntStat initialShotsFired{ 0, maxInt, maxInt };
-	IntStat initialNumberOfHits{ 0, maxInt, maxInt };
+	GameStat initialPoints{ 0, maxInt, maxInt };
+	GameStat initialShotsFired{ 0, maxInt, maxInt };
+	GameStat initialNumberOfHits{ 0, maxInt, maxInt };
 
-	statController.CreateStat(StatType::Health, initialHealth);
+	statController.CreateStat(GameStatType::Health, initialHealth);
 
-	statController.CreateStat(StatType::Points, initialPoints);
-	statController.CreateStat(StatType::ShotsFired, initialShotsFired);
-	statController.CreateStat(StatType::NumberOfHits, initialNumberOfHits);
+	statController.CreateStat(GameStatType::Points, initialPoints);
+	statController.CreateStat(GameStatType::ShotsFired, initialShotsFired);
+	statController.CreateStat(GameStatType::NumberOfHits, initialNumberOfHits);
 
 	currentPlayer->AddComponent(statController);
 
@@ -114,7 +120,7 @@ dae::Player::Player(const glm::vec2& startPos, float zRotation, int playerNum, c
 	statDisplayData.StatNameTextData.FontData.FontSize = 13;
 	statDisplayData.StatNameTextData.Color = {255, 0, 0 };
 	statDisplayData.StatNameTextData.Text = "1UP ";
-	statDisplayData.StatTypeToDisplay = StatType::Points;
+	statDisplayData.StatTypeToDisplay = GameStatType::Points;
 	statDisplayData.StatValueColor = { 255, 255, 255 };
 	statDisplayData.StatValueBaseOffsetMultiplierX = 0;
 	statDisplayData.StatValueBaseOffsetMultiplierY = 1;
@@ -155,103 +161,46 @@ dae::Player::Player(const glm::vec2& startPos, float zRotation, int playerNum, c
 
 	//----- ACTIONS -----
 
-	 const float limitXLeft = 50;
-	 const float limitXRight = 200;
-	 const float limitY = 50;
+	 Rect movementBounds{};
+	 movementBounds.Left = 50;
+	 movementBounds.Width = (g_WindowWidth - movementBounds.Left) - 200;
+	 movementBounds.Top = 50;
+	 movementBounds.Height = g_WindowHeight - movementBounds.Top - movementBounds.Top;
 
-	// - Movement Action
-	auto moveLeft	= [limitXLeft](GameObject& gameObj) mutable
-		{
-			if (gameObj.Transform().GetWorldTransform().Position.x < limitXLeft)
-			{
-				gameObj.Transform().SetLocalPositionX(limitXLeft);
-			}
-			else
-			{
-				gameObj.GetComponent<CMovement2D>()->AddSingleFrameMovementInput(glm::vec2{ -1,  0 });
-			}
-		};
-	auto moveRight	= [limitXRight](GameObject& gameObj) mutable
-		{
-			if (gameObj.Transform().GetWorldTransform().Position.x > (g_WindowWidth - limitXRight))
-			{
-				gameObj.Transform().SetLocalPositionX(g_WindowWidth - limitXRight);
-			}
-			else
-			{
-				gameObj.GetComponent<CMovement2D>()->AddSingleFrameMovementInput(glm::vec2{ 1,  0 });
-			}		
-		};
-	auto moveUp		= [limitY](GameObject& gameObj) mutable
-		{
-			if (gameObj.Transform().GetWorldTransform().Position.y < limitY)
-			{
-				gameObj.Transform().SetLocalPositionY(limitY);
-			}
-			else
-			{
-				gameObj.GetComponent<CMovement2D>()->AddSingleFrameMovementInput(glm::vec2{ 0,  -1 });
-			}	
-		};
-	auto moveDown	= [limitY](GameObject& gameObj) mutable
-		{
-			if (gameObj.Transform().GetWorldTransform().Position.y > g_WindowHeight - limitY)
-			{
-				gameObj.Transform().SetLocalPositionY(g_WindowHeight - limitY);
-			}
-			else
-			{
-				gameObj.GetComponent<CMovement2D>()->AddSingleFrameMovementInput(glm::vec2{ 0,  1 });
-			}	
-		};
+	 auto moveLeft	{ std::make_shared<MoveCommand>( glm::vec2{-1, 0}, movementBounds ) };
+	 auto moveRight	{ std::make_shared<MoveCommand>(glm::vec2{1, 0}, movementBounds ) };
+	 auto moveUp	{ std::make_shared<MoveCommand>(glm::vec2{0, -1}, movementBounds ) };
+	 auto moveDown	{ std::make_shared<MoveCommand>(glm::vec2{0, 1}, movementBounds ) };
 
 
-	// - Shooting Action
-
-	auto shootAction = [currentPlayer, weaponType](GameObject&) mutable { weaponType->Execute(*currentPlayer); };
-
-	//Events
-
-	Event<GameObject&> shootEvent{};
-	Event<GameObject&> moveLeftEvent{};
-	Event<GameObject&> moveRightEvent{};
-	Event<GameObject&> moveUpEvent{};
-	Event<GameObject&> moveDownEvent{};
-
-	moveLeftEvent.Subscribe(moveLeft);
-	moveRightEvent.Subscribe(moveRight);
-	moveUpEvent.Subscribe(moveUp);
-	moveDownEvent.Subscribe(moveDown);
-	shootEvent.Subscribe(shootAction);
-
-	playerControllerRef->BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_SPACE,	std::make_shared<EventTriggerCommand>(shootEvent) });
-	playerControllerRef->BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_LEFT,	std::make_shared<EventTriggerCommand>(moveLeftEvent) });
-	playerControllerRef->BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_RIGHT,	std::make_shared<EventTriggerCommand>(moveRightEvent) });
+	playerControllerRef->BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_SPACE,	weaponType });
+	playerControllerRef->BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_LEFT,	moveLeft });
+	playerControllerRef->BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_RIGHT,	moveRight });
 
 	if (playerType.HasVerticalMovement)
 	{
-		playerControllerRef->BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_UP,		std::make_shared<EventTriggerCommand>(moveUpEvent) });
-		playerControllerRef->BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_DOWN,	std::make_shared<EventTriggerCommand>(moveDownEvent) });
+		playerControllerRef->BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_UP,		moveUp	 });
+		playerControllerRef->BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_DOWN,	moveDown });
 	}
 
-	playerControllerRef->BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_A,	 std::make_shared<EventTriggerCommand>(moveLeftEvent) });
-	playerControllerRef->BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_D,	 std::make_shared<EventTriggerCommand>(moveRightEvent) });
+	playerControllerRef->BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_A,	 moveLeft });
+	playerControllerRef->BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_D,	 moveRight });
 
 	if (playerType.HasVerticalMovement)
 	{
-		playerControllerRef->BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_W,	 std::make_shared<EventTriggerCommand>(moveUpEvent) });
-		playerControllerRef->BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_S,	 std::make_shared<EventTriggerCommand>(moveDownEvent) });
+		playerControllerRef->BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_W,	 moveUp });
+		playerControllerRef->BindKey(dae::PlayerKeyboardKeyData{ ButtonState::BUTTON_PRESSED, SDL_SCANCODE_S,	 moveDown });
 	}
 
 
-	playerControllerRef->BindKey(dae::PlayerGamepadKeyData{ ButtonState::BUTTON_PRESSED, GamepadButton::ButtonX,	 std::make_shared<EventTriggerCommand>(shootEvent) });
-	playerControllerRef->BindKey(dae::PlayerGamepadKeyData{ ButtonState::BUTTON_PRESSED, GamepadButton::DpadLeft,	 std::make_shared<EventTriggerCommand>(moveLeftEvent) });
-	playerControllerRef->BindKey(dae::PlayerGamepadKeyData{ ButtonState::BUTTON_PRESSED, GamepadButton::DpadRight,	 std::make_shared<EventTriggerCommand>(moveRightEvent) });
+	playerControllerRef->BindKey(dae::PlayerGamepadKeyData{ ButtonState::BUTTON_PRESSED, GamepadButton::ButtonX,	 weaponType });
+	playerControllerRef->BindKey(dae::PlayerGamepadKeyData{ ButtonState::BUTTON_PRESSED, GamepadButton::DpadLeft,	 moveLeft });
+	playerControllerRef->BindKey(dae::PlayerGamepadKeyData{ ButtonState::BUTTON_PRESSED, GamepadButton::DpadRight,	 moveRight });
 	
 	if (playerType.HasVerticalMovement)
 	{
-		playerControllerRef->BindKey(dae::PlayerGamepadKeyData{ ButtonState::BUTTON_PRESSED, GamepadButton::DpadUp,		 std::make_shared<EventTriggerCommand>(moveUpEvent) });
-		playerControllerRef->BindKey(dae::PlayerGamepadKeyData{ ButtonState::BUTTON_PRESSED, GamepadButton::DpadDown,	 std::make_shared<EventTriggerCommand>(moveDownEvent) });
+		playerControllerRef->BindKey(dae::PlayerGamepadKeyData{ ButtonState::BUTTON_PRESSED, GamepadButton::DpadUp,		 moveUp });
+		playerControllerRef->BindKey(dae::PlayerGamepadKeyData{ ButtonState::BUTTON_PRESSED, GamepadButton::DpadDown,	 moveDown });
 	}
 
 
@@ -270,7 +219,7 @@ dae::Player::Player(const glm::vec2& startPos, float zRotation, int playerNum, c
 
 	m_CurrentPlayer = currentPlayer;
 
-	m_CurrentExplosion = CreateExplosion("playerExplosion.png");
+	m_CurrentExplosion = Create_Explosion("playerExplosion.png");
 	 
 
 	

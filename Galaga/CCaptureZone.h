@@ -1,8 +1,7 @@
 #pragma once
 
 #include <glm.hpp>
-#include "Component.h"
-#include "Audio.h"
+#include "CAudio.h"
 
 
 namespace dae {
@@ -10,10 +9,10 @@ namespace dae {
 	class Scene;
 
 	struct CaptureZoneData {
-		GameObjectHandle Target;
-		glm::vec2 RelativePos;
-		AudioData OnActivateAudioData;
-		AudioData OnHitAudioData;
+		GameObjectHandle Target{};
+		glm::vec2 RelativePos{};
+		AudioData OnActivateAudioData{};
+		AudioData OnHitAudioData{};
 	};
 
 	class CCaptureZone final: public Component {
@@ -31,14 +30,14 @@ namespace dae {
 		dae::GameObjectHandle CreatePlayerDummy(dae::Scene& scene, const glm::vec2& relativePos);
 		GameObjectHandle CreateCaptureZone(GameObjectHandle player, dae::Scene& scene, const glm::vec2& relativePos, std::shared_ptr<bool>& outCapturedEnemy);
 		
-		CaptureZoneData m_CaptureZoneData;
+		CaptureZoneData m_CaptureZoneData{};
 
-		std::shared_ptr<CAudio> m_OnActivateAudio;
+		std::shared_ptr<CAudio> m_OnActivateAudio{};
 
-		GameObjectHandle m_CaptureZone;
-		GameObjectHandle m_PlayerDummy;
+		GameObjectHandle m_CaptureZone{};
+		GameObjectHandle m_PlayerDummy{};
 
-		std::shared_ptr<bool> m_CapturedTarget;
+		std::shared_ptr<bool> m_CapturedTarget{};
 
 		
 	};

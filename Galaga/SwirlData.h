@@ -8,8 +8,8 @@ namespace dae {
 
 	struct SwirlData {
 
-		glm::ivec2 StartWorldPos;
-		glm::vec2 PreSwirlMovementDirection;
+		glm::ivec2 StartWorldPos{};
+		glm::vec2 PreSwirlMovementDirection{};
 		float PreSwirlGoalDistance{ 100 };
 		float PreSwirlSpeed{ 100 };//m/s
 
@@ -18,14 +18,14 @@ namespace dae {
 		float SwirlSpeed{ 300 };
 		float SwirlOrthogonalMovementRadius{ 30 };
 		float SwirlPerpendicularMovementRadius{ 30 };
-		float SwirlNumberOfCircles = 1;
+		float SwirlNumberOfCircles{ 1 };
 
 		float PostSwirlSpeedToReturn{ 50 };
 		float PostSwirlRadiusToAttach{ 10 };
 	};
 
 	struct EnemyUnitSwirlData {
-		std::vector<SwirlData> SwirlDataPerUnit;
+		std::vector<SwirlData> SwirlDataPerUnit{};
 		int EnemiesInAUnit{ 4 };
 	};
 

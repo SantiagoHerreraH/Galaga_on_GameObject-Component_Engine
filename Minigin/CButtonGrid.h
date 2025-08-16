@@ -3,8 +3,7 @@
 #include <vector>
 #include <glm.hpp>
 #include "EventSystem.h"
-#include "Button.h"
-#include "PlayerController.h"
+#include "CButton.h"
 
 namespace dae {
 

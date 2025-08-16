@@ -4,12 +4,12 @@
 
 namespace dae {
 
-	class Time : public Singleton<Time>
+	class GameTime : public Singleton<GameTime>
 	{
 		friend class Minigin;
 
 	public:
-		int GetFramesPerSecond() { return int(1.f / Time::GetInstance().GetElapsedSeconds()); }
+		int GetFramesPerSecond() { return int(1.f / GameTime::GetInstance().GetElapsedSeconds()); }
 		float GetElapsedSeconds() { return m_ElapsedSeconds; };
 		float GetFixedTimeStep() { return m_FixedTimeStep; }
 

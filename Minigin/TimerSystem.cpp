@@ -1,6 +1,5 @@
 #include "TimerSystem.h"
 #include "GameTime.h"
-#include "MovementActionSequence.h"
 
 dae::Timer::Timer()
 {
@@ -26,7 +25,7 @@ void dae::Timer::Update()
 			m_OnStart.Invoke();
 		}
 
-		m_CurrentTime += Time::GetInstance().GetElapsedSeconds();
+		m_CurrentTime += GameTime::GetInstance().GetElapsedSeconds();
 
 		m_OnUpdate.Invoke();
 

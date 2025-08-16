@@ -18,12 +18,12 @@ void dae::ResourceManager::Init(const std::filesystem::path& dataPath)
 	}
 }
 
-std::shared_ptr<dae::TextureData> dae::ResourceManager::GetTextureData(const std::string& file)
+std::shared_ptr<dae::Texture> dae::ResourceManager::GetTextureData(const std::string& file)
 {
 	const auto fullPath = m_dataPath/file;
 	const auto filename = fs::path(fullPath).filename().string();
 	if(m_TextureName_To_Texture.find(filename) == m_TextureName_To_Texture.end())
-		m_TextureName_To_Texture.insert(std::pair(filename,std::make_shared<TextureData>(fullPath.string())));
+		m_TextureName_To_Texture.insert(std::pair(filename,std::make_shared<Texture>(fullPath.string())));
 	return m_TextureName_To_Texture.at(filename);
 }
 

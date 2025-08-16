@@ -1,5 +1,6 @@
 #include "RoundUI.h"
-#include "Lifetime.h"
+#include "CLifetime.h"
+#include "CText.h"
 
 dae::RoundUI::RoundUI(dae::Scene& scene, int roundNumber)
 {

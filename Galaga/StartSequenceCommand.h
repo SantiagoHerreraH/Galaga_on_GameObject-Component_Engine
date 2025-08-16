@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Command.h"
-#include "MovementActionSequence.h"
+#include "ICommand.h"
+#include "CMovementActionSequence.h"
 
 namespace dae {
 

@@ -6,18 +6,17 @@
 #include "Scene.h"
 #include "WeaponType.h"
 #include "CollisionLayers.h"
-#include "Audio.h"
-
-
 
 namespace dae {
 
-	//finish this and do the main scene set up
+	class CAudio;
+
 	struct PlayerType {
-		std::string TextureName;
+		std::string TextureName{};
+		float TextureScale{ 1.f };
 		CollisionLayers PlayerCollisionLayer{ CollisionLayers::Player};
 		bool HasVerticalMovement{ true };
-		std::shared_ptr<WeaponType> WeaponType;
+		std::shared_ptr<WeaponType> WeaponType{};
 	};
 
 	class Player 

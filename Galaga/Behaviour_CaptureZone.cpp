@@ -1,4 +1,18 @@
 #include "Behaviour_CaptureZone.h"
+
+#define _USE_MATH_DEFINES
+#include <cmath>
+#include "Scene.h"
+#include "SwirlData.h"
+#include "WaveMovement.h"
+#include "GameTime.h"
+#include "CAnimation.h"
+#include "CCollider.h"
+#include "CollisionLayers.h"
+#include "CGameStatController.h"
+#include "Settings.h"
+#include "MathTools.h"
+#include "WeaponType.h"
 #include "CCaptureZone.h"
 
 dae::MovementActionSequenceHandle dae::CaptureZoneBehaviour::CreateInstance(Enemy& enemyCreator)
@@ -137,7 +151,7 @@ dae::MovementActionSequenceHandle dae::CaptureZoneBehaviour::CreateInstance(Enem
 			const MovementData& data) mutable
 		{
 
-			enemy->Transform().MoveLocalPositionY(speedToReturn * Time::GetInstance().GetElapsedSeconds());
+			enemy->Transform().MoveLocalPositionY(speedToReturn * GameTime::GetInstance().GetElapsedSeconds());
 
 			glm::vec2 endPos{ enemy->Transform().GetWorldTransform().Position };
 
@@ -174,7 +188,7 @@ dae::MovementActionSequenceHandle dae::CaptureZoneBehaviour::CreateInstance(Enem
 				if (glm::length(delta) > radiusToAttach)
 				{
 
-					delta = glm::normalize(delta) * speedToReturn * Time::GetInstance().GetElapsedSeconds();
+					delta = glm::normalize(delta) * speedToReturn * GameTime::GetInstance().GetElapsedSeconds();
 
 					enemy->Transform().MoveLocalPositionX(delta.x);
 					enemy->Transform().MoveLocalPositionY(delta.y);

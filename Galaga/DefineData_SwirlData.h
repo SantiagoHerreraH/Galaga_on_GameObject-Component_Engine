@@ -7,7 +7,7 @@ namespace dae {
 
 	using StringToSwirlType = StringToDataModifier<EnemyUnitSwirlData>;
 
-	class DefineSwirlData {
+	class DefineData_SwirlData {
 
 	public:
 

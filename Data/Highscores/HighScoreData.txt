@@ -353,5 +353,100 @@
         "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
         "PlayerName": "SANTI",
         "Score": 150
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "SANTI",
+        "Score": 0
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "SANTI",
+        "Score": 2110
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "JIME",
+        "Score": 22650
+    },
+    {
+        "GameModeName": "GameModes/TwoPlayersVsEnemies.txt",
+        "PlayerName": "SANTI",
+        "Score": 0
+    },
+    {
+        "GameModeName": "GameModes/TwoPlayersVsEnemies.txt",
+        "PlayerName": "JIME",
+        "Score": 2340
+    },
+    {
+        "GameModeName": "GameModes/TwoPlayersVsEnemies.txt",
+        "PlayerName": "JIME",
+        "Score": 0
+    },
+    {
+        "GameModeName": "GameModes/TwoPlayersVsEnemies.txt",
+        "PlayerName": "SANTI",
+        "Score": 2640
+    },
+    {
+        "GameModeName": "GameModes/TwoPlayersVsEnemies.txt",
+        "PlayerName": "JIME",
+        "Score": 0
+    },
+    {
+        "GameModeName": "GameModes/TwoPlayersVsEnemies.txt",
+        "PlayerName": "SANTI",
+        "Score": 2640
+    },
+    {
+        "GameModeName": "GameModes/TwoPlayersVsEnemies.txt",
+        "PlayerName": "MAJI",
+        "Score": 0
+    },
+    {
+        "GameModeName": "GameModes/TwoPlayersVsEnemies.txt",
+        "PlayerName": "JIME",
+        "Score": 0
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "JIME",
+        "Score": 2890
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "JIME",
+        "Score": 2890
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "JIME",
+        "Score": 200
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "JIME",
+        "Score": 200
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "SANTI",
+        "Score": 9790
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "SANTI",
+        "Score": 9790
+    },
+    {
+        "GameModeName": "GameModes/TwoPlayersVsEnemies.txt",
+        "PlayerName": "JIME",
+        "Score": 0
+    },
+    {
+        "GameModeName": "GameModes/TwoPlayersVsEnemies.txt",
+        "PlayerName": "SANTI",
+        "Score": 3290
     }
 ]

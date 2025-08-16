@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Command.h"
+#include "ICommand.h"
 #include "EventSystem.h"
 
 namespace dae {

@@ -33,7 +33,8 @@ namespace dae {
         void Update() override;
 
         void StopSound(int channelId = -1) override;
-        void StopAllSounds()override;
+        void Shutdown()override;
+        void RequestStop()override;
 
         void PlaySound(SoundKey soundID) override;
         void PlayMusic() override;
@@ -48,11 +49,15 @@ namespace dae {
 
         void ToggleMute() override;
 
+        bool IsRunning() const override{ return m_Running.load(std::memory_order_relaxed); }
+
     private:
         void Initialize();
 
-        bool m_IsMute{false};
-        bool m_Running;
+
+        bool m_IsMute{ false };
+        std::atomic<bool> m_AudioOpen{ false };  // set true after Mix_OpenAudio succeeds
+        std::atomic<bool> m_Running{ true };       // was bool
         MusicData m_Music;
         std::mutex m_Mutex;
         std::condition_variable m_ConditionVariable;

@@ -48,7 +48,7 @@ void dae::Renderer::Destroy()
 	}
 }
 
-void dae::Renderer::RenderTexture(const TextureData& texture, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale, const Rect* textureView)
+void dae::Renderer::RenderTexture(const Texture& texture, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale, const Rect* textureView)
 {
 	// Query texture dimensions
 	int texWidth, texHeight;
@@ -66,8 +66,8 @@ void dae::Renderer::RenderTexture(const TextureData& texture, glm::vec3 position
 	{
 		srcRect = { textureView->Left, textureView->Top, textureView->Width, textureView->Height };
 		srcRectPtr = &srcRect;
-		texWidth   = textureView->Width;
-		texHeight  = textureView->Height;
+		texWidth   = int(textureView->Width * scale.x);
+		texHeight  = int(textureView->Height * scale.y);
 	}
 
 	SDL_Rect dstRect = { static_cast<int>(position.x), static_cast<int>(position.y), texWidth, texHeight };
@@ -76,7 +76,7 @@ void dae::Renderer::RenderTexture(const TextureData& texture, glm::vec3 position
 	SDL_RenderCopyEx(GetSDLRenderer(), texture.GetSDLTexture(), srcRectPtr, &dstRect, rotation.z, NULL, SDL_FLIP_NONE);
 }
 
-void dae::Renderer::RenderTexture(const TextureData& texture, const float x, const float y) const
+void dae::Renderer::RenderTexture(const Texture& texture, const float x, const float y) const
 {
 	SDL_Rect dst{};
 	dst.x = static_cast<int>(x);
@@ -85,7 +85,7 @@ void dae::Renderer::RenderTexture(const TextureData& texture, const float x, con
 	SDL_RenderCopy(GetSDLRenderer(), texture.GetSDLTexture(), nullptr, &dst);
 }
 
-void dae::Renderer::RenderTexture(const TextureData& texture, const float x, const float y, const float width, const float height) const
+void dae::Renderer::RenderTexture(const Texture& texture, const float x, const float y, const float width, const float height) const
 {
 	SDL_Rect dst{};
 	dst.x = static_cast<int>(x);

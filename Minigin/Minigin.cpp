@@ -100,9 +100,13 @@ void dae::Minigin::Run(const std::function<void()>& load)
 	auto& sceneManager = SceneManager::GetInstance();
 	auto& eventSystem = EventSystem::GetInstance();
 
-	
 
-	std::thread audioThread(&IAudioService::Update, audioService);
+
+	std::jthread audioThread([&](std::stop_token st) {
+		while (!st.stop_requested() && audioService->IsRunning()) {
+			audioService->Update();  // returns quickly
+		}
+		});
 
 	// todo: this update loop could use some work.
 	const float fixedTimeStep{ 0.02f };
@@ -110,17 +114,30 @@ void dae::Minigin::Run(const std::function<void()>& load)
 	bool doContinue = true;
 	auto lastTime = std::chrono::high_resolution_clock::now();
 	float lag = 0.0f;
-	Time::GetInstance().m_FixedTimeStep = fixedTimeStep;
+	GameTime::GetInstance().m_FixedTimeStep = fixedTimeStep;
 
 	sceneManager.Start(); //if you need delta seconds, call it inside loop
+
 
 	while (doContinue)
 	{
 		const auto currentTime = std::chrono::high_resolution_clock::now();
 		const float deltaTime = std::chrono::duration<float>(currentTime - lastTime).count();
-		Time::GetInstance().m_ElapsedSeconds = deltaTime;
+		GameTime::GetInstance().m_ElapsedSeconds = deltaTime;
 		lastTime = currentTime;
 		lag += deltaTime;
+
+		SDL_Event e;
+		while (SDL_PollEvent(&e)) {
+			if (e.type == SDL_QUIT) {
+				doContinue = false;
+				break;
+			}
+			else if (e.type == SDL_WINDOWEVENT && e.window.event == SDL_WINDOWEVENT_CLOSE) {
+				doContinue = false;
+			}
+			// route other input to your InputManager here
+		}
 
 		while (lag >= fixedTimeStep)
 		{
@@ -140,5 +157,14 @@ void dae::Minigin::Run(const std::function<void()>& load)
 		std::this_thread::sleep_for(sleepTime);
 	}
 
-	audioThread.join();
+	sceneManager.Clear();
+	sceneManager.Clear();
+
+	// On shutdown:
+	audioService->RequestStop();  // signal our flag + wake Update()
+	audioThread.request_stop();   // ends the outer jthread loop
+	// jthread will join automatically at scope end (or do it explicitly by ending scope here)
+
+	// After the worker is done, do the actual teardown ONCE:
+	audioService->Shutdown();
 }

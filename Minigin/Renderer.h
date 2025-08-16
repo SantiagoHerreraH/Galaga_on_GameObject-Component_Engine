@@ -6,7 +6,7 @@
 
 namespace dae
 {
-	class TextureData;
+	class Texture;
 	/**
 	 * Simple RAII wrapper for the SDL renderer
 	 */
@@ -20,9 +20,9 @@ namespace dae
 		void Render() const;
 		void Destroy();
 
-		void RenderTexture(const TextureData& texture, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale, const Rect* textureView = nullptr);
-		void RenderTexture(const TextureData& texture, float x, float y) const;
-		void RenderTexture(const TextureData& texture, float x, float y, float width, float height) const;
+		void RenderTexture(const Texture& texture, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale, const Rect* textureView = nullptr);
+		void RenderTexture(const Texture& texture, float x, float y) const;
+		void RenderTexture(const Texture& texture, float x, float y, float width, float height) const;
 
 		void DrawRect(int left, int top, int width, int height, bool fill = false, const SDL_Color& color = {255, 255, 255, 255})const;
 		void DrawCross(const glm::ivec2& center, int size, const SDL_Color& color)const;
