@@ -23,7 +23,7 @@ I adapted the base functionalities of Minigin, which are described below, and ad
 		- lets you control which transformation variables you want the Transform to be affected by its parent transformation
 			- for instance, have rotation and translation be affected by scene graph, but not scale
 - Physics systems
-	- 2d collision systems for solid and nonsolid rects
+	- 2d collision systems for solid and nonsolid rectangles
 	- 2d Rigidbody systems
 	- Movement system for physics interaction
 - A State Machine that functions as a state graph
@@ -33,15 +33,15 @@ I adapted the base functionalities of Minigin, which are described below, and ad
 - A templated Stat Controller with various events that are triggered upon stat modification
 - A player controller that receives input from keyboard and gamepad, where you can link Commands to input (through ICommand interface)
 - Different rendering systems that include
-	- Spritesheet: for managing grid like textures
+	- SpriteSheet: for managing grid like textures
 	- Animation: animating textures and controlling framerate
 	- Simple particle system: where you can control different variables for movable particles
 	- Improved ResourceManager for limited loading of resources such as textures
 - A ServiceLocator for interacting with and changing different services at runtime depending on needs
 - A SceneSingleton templated class for having unique instances of classes per scene and having them automatically update and reset upon scene change
-- A TimerSystem for controlling execution through various Events (OnStart, OnUpdate, OnEnd, etc..c) in the time of your choice
-- Simple but effective math classe for 
-	- Getting randomvalue between range
+- A TimerSystem for controlling execution through various Events (OnStart, OnUpdate, OnEnd, etc...) in the time of your choice
+- Simple but effective math classes for 
+	- Getting random value between range
 	- Controlling sine and cosine movement with x direction and time
 - A MovementActionSequence system that lets you
 	- chain actions one after another and set their duration to be conditional or time dependent
@@ -56,7 +56,7 @@ I adapted the base functionalities of Minigin, which are described below, and ad
 	- Prototype for enemy creation and player creation
 	- Builder for enemy creation and CAnimation Component
 	- Factory and Command patterns for WeaponType
-- Usage of all game engine features in a concrete game, whichh was Galaga in this case
+- Usage of all game engine features in a concrete game, which was Galaga in this case
 
 # GitHub repo Link
 
