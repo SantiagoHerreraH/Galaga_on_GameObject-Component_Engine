@@ -39,7 +39,7 @@ I adapted the base functionalities of Minigin, which are described below, and ad
 	- Improved ResourceManager for limited loading of resources such as textures
 - A ServiceLocator for interacting with and changing different services at runtime depending on needs
 - A SceneSingleton templated class for having unique instances of classes per scene and having them automatically update and reset upon scene change
-- A TimerSystem for controlling execution through various Events (OnStart, OnUpdate, OnEnd, etc...) in the time of your choice
+- A TimerSystem for controlling execution through various Events (OnStart, OnUpdate, OnEnd, etc...) in the time of your choice, and that stays lean by keeping active timers contiguous in memory.
 - Simple but effective math classes for 
 	- Getting random value between range
 	- Controlling sine and cosine movement with x direction and time

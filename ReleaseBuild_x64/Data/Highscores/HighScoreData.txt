@@ -1,0 +1,27 @@
+[
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "SANTI",
+        "Score": 2890
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "SANTI",
+        "Score": 2890
+    },
+    {
+        "GameModeName": "GameModes/OnePlayerVsEnemies.txt",
+        "PlayerName": "SANTI",
+        "Score": 2890
+    },
+    {
+        "GameModeName": "GameModes/TwoPlayersVsEnemies.txt",
+        "PlayerName": "SAM",
+        "Score": 0
+    },
+    {
+        "GameModeName": "GameModes/TwoPlayersVsEnemies.txt",
+        "PlayerName": "AL",
+        "Score": 1150
+    }
+]
